@@ -1,5 +1,10 @@
+#Excel files#
 *.xlsx
 *.xls
 *.odt
 
+# NIfTI Images #
 *.nii
+
+# Python class files #
+*.pyc
