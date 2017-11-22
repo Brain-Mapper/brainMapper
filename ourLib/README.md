@@ -19,6 +19,8 @@ yada yada yada
 yada yada yada
 
 ### Dependencies
+ - Python 2
+ - NiBabel 2.2.0 (see http://nipy.org/nibabel/)
  
 ## Authors
 This librairie was designed and developped by :
