@@ -1,3 +1,11 @@
+# Eclipse files (for those who use it) #
+bin/
+target/
+.settings/
+
+.project
+.classpath 
+
 #Excel files#
 *.xlsx
 *.xls
