@@ -1,4 +1,6 @@
 # brainMapper
+![alt text](https://github.com/TELECOMNancy/brainMapper/blob/master/UI/ressources/logo.png)
+
 An open source application that aims to automatize treatments to create a brain function atlas - Industrial Project 
 
 ## About this project
