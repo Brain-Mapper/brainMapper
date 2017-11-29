@@ -19,7 +19,7 @@ def file_exists(fichier):
    except:
       return False
       
-#On créer un nouveau fichier csv avec les entêtes pour chacun des attributs
+#Créer un nouveau fichier csv avec les entêtes pour chacun des attributs
 def create_New_CSV(nomFichierCSV):
     entetes = [
      u'File_Name_Nifti',
@@ -38,10 +38,10 @@ def create_New_CSV(nomFichierCSV):
     ligneEntete = ",".join(entetes) + "\n"
     f.write(ligneEntete)
     
-    print '\"'+nomFichierCSV+'\" has been created\n'
+    print '\"'+nomFichierCSV+'\" has been created'
     f.close()
 
-#On ajoute un point dans un csv uniquement si celui ci n'existe pas déja
+#Ajoute un point dans un csv uniquement si celui ci n'existe pas déja
 def add_Point(nomFichierCSV,attributs):
     file = open(nomFichierCSV, 'a+')
     exist = False
@@ -58,7 +58,7 @@ def add_Point(nomFichierCSV,attributs):
     finally:
         file.close()
  
-#On remplit le csv à partir du csv donné par le Dr.Reich 
+#Remplit le csv à partir du csv donné par le Dr.Reich 
 def generate_CSV_point_data_file(nomFichierCSV,newCSV):
     create_New_CSV(newCSV)
     file = open(nomFichierCSV, "rb")   
@@ -79,7 +79,7 @@ def generate_CSV_point_data_file(nomFichierCSV,newCSV):
     finally:
         file.close()
         
-#On fait la fusion de deux csv que l'on place dans un troisieme csv résultant
+#Fait la fusion de deux csv que l'on place dans un troisieme csv résultant
 def merge_CSV(csv_1,csv_2):
     file = open(csv_2, "rb") 
     try:
@@ -90,6 +90,7 @@ def merge_CSV(csv_1,csv_2):
         file.close()
     print('\"'+csv_2+'\" has been merged with the file \"'+csv_1+'\"')
     
+#Fusion d'une liste de fichier CSV    
 def merge_multiple_CSV(output_CSV,list_CSV):
     if file_exists(output_CSV)==False:
         create_New_CSV(output_CSV)
@@ -99,6 +100,3 @@ def merge_multiple_CSV(output_CSV,list_CSV):
 
 generate_CSV_point_data_file('data_CHRU.csv','template_data.csv')
 merge_multiple_CSV('csv_merged.csv',['file1.csv','file2.csv','file3.csv'])
-#create_New_CSV('/home/etudiants/cluchagu1u/Bureau/test.csv')   
-#add_Point('/home/etudiants/cluchagu1u/Bureau/test.csv','test1','test1','test1','test1','test1','test1','test1','test1','test1')
-#add_Point('/home/etudiants/cluchagu1u/Bureau/test.csv','test2','test2','test2','test2','test2','test2','test2','test2','test2')
