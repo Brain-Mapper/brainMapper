@@ -15,15 +15,15 @@ def comma_to_Point(string):
 #On créer un nouveau fichier csv avec les entêtes pour chacun des attributs
 def create_New_CSV(nomFichierCSV):
     entetes = [
-     u'nom_Fichier_Nifti',
-     u'ID_Chirurgien',
-     u'ID_Patient',
+     u'File_Name_Nifti',
+     u'Surgeon_ID',
+     u'Patient_ID',
      u'Localisation',
-     u'Type_De_Reponse',
+     u'Type_Of_Answer',
      u'X',
      u'Y',
      u'Z',
-     u'Intensite'
+     u'Intensity'
     ]
 
     f = open(nomFichierCSV, 'w')
