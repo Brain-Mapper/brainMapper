@@ -30,7 +30,7 @@ def create_New_CSV(nomFichierCSV):
     ligneEntete = ",".join(entetes) + "\n"
     f.write(ligneEntete)
     
-    print '\nfichier créer avec succès !\n'
+    print '\nFile created successfully !\n'
     f.close()
 
 #On ajoute un point dans le jeu de données représenté par le csv
