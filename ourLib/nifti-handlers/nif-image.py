@@ -24,11 +24,62 @@ import nibabel as nib
 class NifImage(object):
     # Declare class attributes
 
-    # Initialize instance attributes
-    def __init__(self, filename, nibabel_image):
+    # Initialize instance attributes with empty values because several constructors needed
+    def __init__(self, filename=None, nibabel_image=None):
         # type: (str, object) -> NifImage
         self.filename = filename
         self.nib_image = nibabel_image
+
+    @classmethod
+    def from_file(cls, one_filename):
+        """
+           Create a new NifImage from file path
+           Nibabel chooses automatically to create a Spatial Image of class NIfTI1 or NIfTI2
+           :param one_filename: the path to the .nii file to store
+           :return: a NifImage instance
+           """
+        return cls(one_filename, nib.load(one_filename))
+
+    @classmethod
+    def from_array(cls, new_filename, image_data_array, affine, nifti_format=1):
+        """
+        Create a new NifImage from a data array
+        Default format is NIfTI1
+        :param new_filename: the new image's filename (for future saving)
+        :param image_data_array: the new image's data
+        :param affine: the affine transformation matrix (real world -> MNI)
+        :param nifti_format: the NIfTI file format required (1 or 2, other values raise error)
+
+        :return: a NifImage instance
+        """
+        if nifti_format == 2:
+            nib_nifti_class = nib.Nifti2Image
+        elif nifti_format == 1:
+            nib_nifti_class = nib.Nifti1Image
+        else:
+            raise ValueError('nifti_format must be 1 or 2,  %s was given' % nifti_format)
+
+        return cls(new_filename, nib_nifti_class(image_data_array, affine))
+
+    @classmethod
+    def like(cls, new_filename, ref_img, image_data_array, same_header=False):
+        """
+        :param new_filename: the new image's filename (for future saving)
+        :param ref_img: a NifImage instance that will serve as reference
+        :param image_data_array: the new image's data
+        :param same_header: TRUE if we must use the same header as the ref_img's, FALSE if not (default)
+
+        :return: a new NifImage instance
+        """
+        affine = ref_img.get_affine_matrix()
+
+        header = None
+        if same_header:
+            header = copy.deepcopy(ref_img.get_header)
+
+        nib_nifti_class = ref_img.get_img_class()
+
+        return cls(new_filename, nib_nifti_class(image_data_array, affine, header=header))
 
     def set_filename(self, new_filename):
         self.filename = new_filename
@@ -80,55 +131,3 @@ class NifImage(object):
     def save_to_file(self):
         self.nib_image.to_filename(self.filename)
 
-
-# ----- METHODS THAT USE OR CREATE NifImages -----
-
-def create_img_from_file(one_filename):
-    """
-    Create a new NifImage from file path
-    Nibabel chooses automatically to create a Spatial Image of class NIfTI1 or NIfTI2
-    :param one_filename: the path to the .nii file to store
-    :return: a NifImage instance
-    """
-    return NifImage(one_filename, nib.load(one_filename))
-
-
-def create_img_from_array(new_filename, image_data_array, affine, nifti_format=1):
-    """
-    Create a new NifImage from a data array
-    Default format is NIfTI1
-    :param new_filename: the new image's filename (for future saving)
-    :param image_data_array: the new image's data
-    :param affine: the affine transformation matrix (real world -> MNI)
-    :param nifti_format: the NIfTI file format required (1 or 2, other values raise error)
-
-    :return: a NifImage instance
-    """
-    if nifti_format == 2:
-        nib_nifti_class = nib.Nifti2Image
-    elif nifti_format == 1:
-        nib_nifti_class = nib.Nifti1Image
-    else:
-        raise ValueError('nifti_format must be 1 or 2,  %s was given' % nifti_format)
-
-    return NifImage(new_filename, nib_nifti_class(image_data_array, affine))
-
-
-def create_img_like(new_filename, ref_img, image_data_array, same_header=False):
-    """
-    :param new_filename: the new image's filename (for future saving)
-    :param ref_img: a NifImage instance that will serve as reference
-    :param image_data_array: the new image's data
-    :param same_header: TRUE if we must use the same header as the ref_img's, FALSE if not (default)
-
-    :return: a new NifImage instance
-    """
-    affine = ref_img.get_affine_matrix()
-
-    header = None
-    if same_header:
-        header = copy.deepcopy(ref_img.get_header)
-
-    nib_nifti_class = ref_img.get_img_class()
-
-    return NifImage(new_filename, nib_nifti_class(image_data_array, affine, header=header))
