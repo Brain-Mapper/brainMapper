@@ -30,6 +30,15 @@ class Help(QMainWindow):
         title.setGeometry(QtCore.QRect(210, 20, 400, 100))
         self.show()
 
+class Error(QMainWindow):
+    def __init__(self, message):
+        QMainWindow.__init__(self)
+        self.setWindowTitle('Error')
+        self.setWindowIcon(QtGui.QIcon('ressources/error.png'))
+        self.setGeometry(QRect(100, 100, 400, 200))
+        self.show()
+        print message
+
 
 class UI(QtGui.QMainWindow):
     
@@ -94,8 +103,12 @@ class UI(QtGui.QMainWindow):
 
     def fromNiFile(self):
         file = str(QFileDialog.getOpenFileName())
-        open_nifti(file)
-        
+        try :
+            open_nifti(file)
+        except :
+            #print "Unexpected error:", sys.exc_info()[0]
+            self.w = Error(sys.exc_info()[0])
+            
     def showHelp(self):
         self.w = Help()
         
