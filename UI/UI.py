@@ -1,7 +1,15 @@
 import sys, os
 from PyQt4 import QtGui, QtCore
-
 from PyQt4.Qt import *
+
+if __name__ == '__main__':
+    if __package__ is None:
+        import sys
+        from os import path
+        sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+        from BrainMapper import * 
+    else:
+        from ..BrainMapper import * 
 
 class Help(QMainWindow):
     def __init__(self):
@@ -31,15 +39,15 @@ class UI(QtGui.QMainWindow):
         self.initUI()
         
     def initUI(self):
-        self.statusBar() # Fait apparaitre la bar en bas, ou l'on peut mettre des tips
-        menubar = self.menuBar() #Creation de la bar de menu
+        self.statusBar() # lower bar for tips
+        menubar = self.menuBar() #menu bar
         
-        # PARAMETRES FENETRE
+        # WINDOW PARAMETERS
         self.setGeometry(300, 200, 800, 500)
         self.setWindowTitle('BrainMapper')
         self.setWindowIcon(QtGui.QIcon('ressources/logo.png'))
         
-        # DEFINITION DES ACTIONS DES MENUS
+        # ACTIONS AVAILABLE FOR MENUS
         exitAction = QtGui.QAction('&Exit', self)        
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
@@ -60,10 +68,10 @@ class UI(QtGui.QMainWindow):
 
         niftiAction = QtGui.QAction('&Import from NIfTI file', self)    
         niftiAction.setStatusTip('Import from NIfTI file')
-        niftiAction.triggered.connect(self.buttonClicked)
+        niftiAction.triggered.connect(self.fromNiFile)
         
         
-        # AJOUT DES ACTIONS AU MENU CORRESPONDANT
+        # ADDING ACTIONS TO MENUS
         fileMenu = menubar.addMenu('&Program')
         fileMenu.addAction(saveAction)
         fileMenu.addAction(exitAction)
@@ -72,18 +80,22 @@ class UI(QtGui.QMainWindow):
         SetMenu.addAction(excelAction)
         SetMenu.addAction(niftiAction)
 
-        # DEFINITION DES BOUTONS 
+        # BUTTONS 
         btnNS = QtGui.QPushButton('Set 1 : Speech', self)
         btnNS.setStatusTip('Set 1 : Speech')
         btnNS.setFixedWidth(150)
         btnNS.move(1, 27)
-        btnNS.clicked.connect(self.buttonClicked) # Action du bouton           
+        btnNS.clicked.connect(self.buttonClicked) # Action for button          
         
         self.show()
 
     def buttonClicked(self):
         print "Test passed. SUCCESS!"
 
+    def fromNiFile(self):
+        file = str(QFileDialog.getOpenFileName())
+        open_nifti(file)
+        
     def showHelp(self):
         self.w = Help()
         
