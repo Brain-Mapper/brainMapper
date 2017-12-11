@@ -137,3 +137,7 @@ class NifImage(object):
     def plot_img(self):
         nilplot.plot_img(self.nib_image, title=self.filename)
         nilplot.show()
+
+    def plot_glass(self):
+        nilplot.plot_glass_brain(self.nib_image, title="Glass brain plot")
+        nilplot.show()
