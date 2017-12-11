@@ -20,6 +20,8 @@ import os
 # Lib dependency imports
 import numpy as np
 import nibabel as nib
+import nilearn.plotting as nilplot
+
 
 
 class NifImage(object):
@@ -131,3 +133,7 @@ class NifImage(object):
 
     def save_to_file(self, folder_path):
         self.nib_image.to_filename(os.path.join(folder_path, self.filename))
+
+    def plot_img(self):
+        nilplot.plot_img(self.nib_image, title=self.filename)
+        nilplot.show()
