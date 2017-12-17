@@ -2,3 +2,4 @@ ImagesTest/
 *.pyc
 *.nii
 .idea/
+*.csv
