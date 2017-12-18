@@ -31,17 +31,19 @@ print(ni_patient.get_img_class())
 
 #print data
 print(ni_patient.get_copy_img_data())
-print(ni3.get_copy_img_data(True)>0)
 
 ## Testing if given image contains only 0 and 1
 print('patient binary ? '+ str(ni_patient.is_binary_image()))  #expected :false
 
 print('P92_UL_RMI1 binary ? '+ str(ni3.is_binary_image()))     #expected : true
 
-us_data=ni3.get_copy_img_data(True)[ni3.get_copy_img_data(True)>0].T
+# Masking and fast extraction
+mask = ni3.get_copy_img_data(True)>0
+print(mask)
+us_data=ni3.get_copy_img_data(True)[mask].T
 print(us_data)
-print(us_data[122])
-#print(ni_patient.get_copy_img_data(True))
+
+
 
 
 
