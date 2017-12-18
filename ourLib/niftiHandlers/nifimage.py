@@ -5,12 +5,11 @@
 #
 #       'nif-image' contains methods and the class 'ImageCollection' that represent and allow to
 #       open, create and save a single NIfTI file
-#       It will allow us to store image data and other information as in-memory representations
-#       of the users' NIfTI files
+#       It will allow us to have a folder representation of the NIfTI files
 #
 # HISTORY
 #
-# 2 december 2017 - Initial design and coding. (@vz-chameleon, Valentina Z.)
+# 12 december 2017 - Initial design and coding. (Raphaël A.)
 
 
 # System imports
