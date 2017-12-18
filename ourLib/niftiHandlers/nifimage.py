@@ -109,7 +109,7 @@ class NifImage(object):
                                 TRUE if NaN and inf are to be replaced by 0
         :return: array
         """
-        img_data = copy.deepcopy(self.nib_image.get_data())
+        img_data = np.array(copy.deepcopy(self.nib_image.get_data()))
 
         # Some nifti images have NaN and inf as data values...
         if finite_values:
@@ -129,6 +129,9 @@ class NifImage(object):
         except:
             pass
         return info
+
+    def is_binary_image(self):
+        return np.array_equal(self.nib_image.get_data(), self.get_copy_img_data().astype(bool))
 
     def save_to_file(self, folder_path):
         self.nib_image.to_filename(os.path.join(folder_path, self.filename))
