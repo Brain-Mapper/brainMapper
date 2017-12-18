@@ -26,7 +26,7 @@ def extract(a_nifti_img_obj):
     # Check if given param is NifImage class instance
     if not isinstance(a_nifti_img_obj, NifImage):
         raise ValueError(
-            'extract function takes a NifImage class instance but ' + a_nifti_object.___class___ + ' instance was given')
+            'extract function takes a NifImage class instance but ' + a_nifti_img_obj.___class___ + ' instance was given')
 
     # Array stacking is memory consuming
     # We must create an array that will be the size of extracted data
