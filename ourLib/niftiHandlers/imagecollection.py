@@ -67,3 +67,6 @@ class ImageCollection(object):
         else:
             for i in indexes_array :
                 self.nifimage_dict[i].save_to_file(output_folder)
+
+    def get_img_list(self):
+        return self.nifimage_dict.values()
