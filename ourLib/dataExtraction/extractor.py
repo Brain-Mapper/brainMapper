@@ -15,16 +15,15 @@
 # 18 december 2017 - Added Maxime's functions for data extraction (@maximeCluchague)
 
 # Lib dependency imports
-from imagecollection import ImageCollection
-from nifimage import NifImage
+from niftiHandlers.imagecollection import ImageCollection
+from niftiHandlers.nifimage import NifImage
 import numpy as np
-import inspect as inspector
+import inspect
 
 
-def extract(a_nifti_object):
-
-    #Check if given param is NifImage class instance
-    if not inspector.isinstance(a_nifti_object, NifImage):
+def extract(a_nifti_img_obj):
+    # Check if given param is NifImage class instance
+    if not isinstance(a_nifti_img_obj, NifImage):
         raise ValueError(
             'extract function takes a NifImage class instance but ' + a_nifti_object.___class___ + ' instance was given')
 
@@ -35,7 +34,7 @@ def extract(a_nifti_object):
 
     # Safe copy the data so you won't modify the original image data (see NifImage class)
     # finite=True is given as an argument to replace NaN or Inf values by zeros
-    img_data = a_nifti_object.get_copy_img_data(True)
+    img_data = a_nifti_img_obj.get_copy_img_data(True)
 
     # img_data>0 returns a boolean mask the same size as the image with :
     #     False if voxel value is not >0, True if it is
@@ -67,3 +66,18 @@ def extract(a_nifti_object):
     del img_data  # deleting safe copy of image data saves a lot of memory !
 
     return usable_data
+
+
+def extract_from_collection(a_nifti_imgcoll_obj):
+    # Check if given param is ImageCollection class instance
+    if not isinstance(a_nifti_imgcoll_obj, ImageCollection):
+        raise ValueError(
+            'extract_from_collection function takes a ImageCollection class instance but ' + a_nifti_imgcoll_obj.___class___ + ' instance was given')
+
+    res = np.zeros(shape=(1, 4)) # an empty line of zeros to start with
+
+    # For each NifImage istance in the collection, extract data and stack results
+    for nifimg in a_nifti_imgcoll_obj.get_img_list():
+        res=np.concatenate((res, extract(nifimg)), axis=0)
+
+    return res
