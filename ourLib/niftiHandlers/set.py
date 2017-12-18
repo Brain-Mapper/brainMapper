@@ -11,9 +11,11 @@
 # HISTORY
 #
 # 2 december 2017 - Initial design and coding. (@vz-chameleon, Valentina Z.)
+# 16 december 2017 - Modified to encapsulate subset or image collection dict (Raph Agathon)
 
 # Lib dependency imports
 from imagecollection import ImageCollection
+
 
 class Set(object):
     def __init__(self, name):
@@ -54,5 +56,4 @@ class Set(object):
             del self.collection_dict[number]
             self.index_collection = self.index_collection - 1
 
-#   def export_to_csv(self,filename):
-
+# def export_to_csv(self,filename):
