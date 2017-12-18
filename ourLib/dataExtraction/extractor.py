@@ -1,12 +1,13 @@
 # NAME
-#        set
+#        extractor
 #
 # DESCRIPTION
 #
-#       'set' contains methods and the class 'Set' that represent a collection of 'ImageCollection' and a collection
-#       of 'Set'
-#       It will allow us to store image data and other information as in-memory representations
-#       of the users' NIfTI files
+#       The module 'extractor.py' contains all the functions necessary to extract
+#       the interesting data from NifTi files (the voxels with a non-zero intensity)
+#       These interesting voxels are returned as a usable data array :
+#           lines = nb_interesting_voxels
+#           columns = X, Y, Z, Intensity
 #
 # HISTORY
 #
