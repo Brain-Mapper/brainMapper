@@ -3,3 +3,5 @@ ImagesTest/
 *.nii
 .idea/
 *.csv
+
+UI/nilearn_cache
