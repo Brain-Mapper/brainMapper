@@ -31,6 +31,10 @@ print(ni_patient.get_img_class())
 
 #print data
 print(ni_patient.get_copy_img_data())
+print(ni3.get_copy_img_data(True)>0)
+us_data=ni3.get_copy_img_data(True)[ni3.get_copy_img_data(True)>0].T
+print(us_data)
+print(us_data[122])
 #print(ni_patient.get_copy_img_data(True))
 
 
