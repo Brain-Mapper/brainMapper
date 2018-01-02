@@ -9,7 +9,7 @@
 #
 # HISTORY
 #
-# 12 december 2017 - Initial design and coding. (Raphaël A.)
+# 12 december 2017 - Initial design and coding. (Valentina Zelaya, @vz-chameleon)
 
 
 # System imports
