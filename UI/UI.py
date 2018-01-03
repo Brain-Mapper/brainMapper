@@ -101,7 +101,7 @@ class UI(QtGui.QMainWindow):
 
         # - Vertical box for sets layout
         setAccessBox = QtGui.QVBoxLayout()
-        #setAccessBox.addStretch(2)
+
 
         # BUTTONS (SET ACCESS)
         btnNS = QtGui.QPushButton('Set 1 : Speech', self)
@@ -116,16 +116,18 @@ class UI(QtGui.QMainWindow):
         edit1 = QtGui.QLineEdit()
         edit2 = QtGui.QLineEdit()
         edit3 = QtGui.QTextEdit()
+        coll_title = QtGui.QLabel('Set\'s Image collections')
         collectionsDisplayBox.addWidget(edit1)
         collectionsDisplayBox.addWidget(edit2)
+        collectionsDisplayBox.addWidget(coll_title)
         collectionsDisplayBox.addWidget(edit3)
 
         # Add the previous vertical boxes to horizontal box
         middleBox.addLayout(setAccessBox)
         middleBox.addLayout(collectionsDisplayBox)
 
-        # This horizontal Box will contain two vertical boxes, one for the set access bar and another for image collec
-        # tions display
+        # This horizontal Box will contain a button bar to access all other windows and functionalitites once the data
+        # in image collection display has been selected
         buttonsBox = QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
 
