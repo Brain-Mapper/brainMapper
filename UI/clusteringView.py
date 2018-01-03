@@ -10,9 +10,8 @@
 #
 # 2 january 201- Initial design and coding. (@vz-chameleon, Valentina Z.)
 
-import sys, os
-from PyQt4 import QtGui, QtCore
-from PyQt4.Qt import *
+from PyQt4 import QtGui
+from PyQt4.QtCore import pyqtSignal
 
 if __name__ == '__main__':
     if __package__ is None:
@@ -24,7 +23,16 @@ if __name__ == '__main__':
         from ..BrainMapper import *
 
 
-class ClusteringView(QtGui.QMainWindow):
+class ClusteringView(QtGui.QWidget):
+    # -- ! ATTRIBUTES SHARED by EVERY class instance ! --
+
+    # ------ pyqt Signals ------
+    # We will use signals to know when to change the central view (central widget) of our app
+    # In our custom widgets (like this one), buttons will emit a given signal, and the change of views will be handled
+    # by the HomePage widgets' instances (see UI.py, class HomePage)
+
+    showMain = pyqtSignal()
+
     def __init__(self):
         super(ClusteringView, self).__init__()
 
@@ -33,10 +41,15 @@ class ClusteringView(QtGui.QMainWindow):
     def initClusteringView(self):
 
         # ---------- Box Layout Set up ---------
-        # Since we cannot change the layout of a QtMainWindow, we will use a CENTRAL WIDGET (var homepage)
-        # to which we will add a box layout containing other boxes with their own widgets
+        # Here, the instance IS a Widget, so we'll add the layouts to itself
 
-        clustering_view = QtGui.QWidget()
+        # - Horizontal box for go back home button
+        backHomeBox= QtGui.QHBoxLayout()
+
+        goHomeButton = QtGui.QPushButton('Go back to Home page')
+        goHomeButton.clicked.connect(self.showMain.emit) # When go back home button is clicked, change central views
+
+        backHomeBox.addWidget(goHomeButton)
 
 
         # - Vertical box for future script Environnement
@@ -86,13 +99,16 @@ class ClusteringView(QtGui.QMainWindow):
         clustResultsBox.addLayout(graphBox)
 
         # Set the layout of clustering widget and set it as the central widget for QtMainWindow
-        containerVbox = QtGui.QHBoxLayout()
-        containerVbox.addLayout(scriptEnvBox)
-        containerVbox.addLayout(clustResultsBox)
+        hbox=QtGui.QHBoxLayout()
+        hbox.addLayout(scriptEnvBox)
+        hbox.addLayout(clustResultsBox)
 
-        clustering_view.setLayout(containerVbox)
+        containerVbox = QtGui.QVBoxLayout()
+        containerVbox.addLayout(backHomeBox)
+        containerVbox.addLayout(hbox)
 
-        self.setCentralWidget(clustering_view)
+        self.setLayout(containerVbox)
+
         self.show()
 
 
