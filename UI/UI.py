@@ -4,6 +4,8 @@ from PyQt4.Qt import *
 
 from functools import partial
 
+import resources
+
 from mainView import MainView
 from clusteringView import ClusteringView
 
@@ -12,21 +14,19 @@ if __name__ == '__main__':
         import sys
         from os import path
         sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-        from BrainMapper import * 
+        from BrainMapper import *
     else:
         from ..BrainMapper import *
 
-path = os.path.dirname(os.path.abspath(__file__))
-icons_dir = os.path.join(path, 'ressources/')
 
 class Help(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.setWindowTitle('Help')
-        self.setWindowIcon(QtGui.QIcon(os.path.join(icons_dir, 'help.png')))
+        self.setWindowIcon(QtGui.QIcon(':ressources/help.png'))
         self.setGeometry(QRect(100, 100, 400, 200))
         label = QLabel(self)
-        pixmap = QPixmap(os.path.join(icons_dir, 'logo.png'))
+        pixmap = QPixmap(':ressources/logo.png')
         label.setPixmap(pixmap)
         label.resize(pixmap.width(), pixmap.height())
         label.move(10,10)
@@ -46,7 +46,7 @@ class Error(QMainWindow):
     def __init__(self, message):
         QMainWindow.__init__(self)
         self.setWindowTitle('Error')
-        self.setWindowIcon(QtGui.QIcon(os.path.join(icons_dir, 'error.png')))
+        self.setWindowIcon(QtGui.QIcon(':ressources/error.png'))
         self.setGeometry(QRect(100, 100, 400, 200))
         self.show()
         print message
@@ -113,7 +113,7 @@ class UI(QtGui.QMainWindow):
         screenWidth = rec.width()
         self.setGeometry(300, 200, screenWidth/1.5, screenHeight/1.4)
         self.setWindowTitle('BrainMapper')
-        self.setWindowIcon(QtGui.QIcon(os.path.join(icons_dir,'logo.png')))
+        self.setWindowIcon(QtGui.QIcon(':ressources/logo.png'))
 
         menubar = self.menuBar()  # menu bar
         # ACTIONS AVAILABLE FOR MENUS

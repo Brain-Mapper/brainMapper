@@ -24,6 +24,8 @@ if __name__ == '__main__':
     else:
         from ..BrainMapper import *
         
+import resources
+
 class MainView(QtGui.QWidget):
 
     # -- ! ATTRIBUTES SHARED by EVERY class instance ! --
@@ -33,11 +35,6 @@ class MainView(QtGui.QWidget):
     # In our custom widgets (like this one), buttons will emit a given signal, and the change of views will be handled
     # by the HomePage widgets' instances (see UI.py, class HomePage)
     showClust = pyqtSignal()
-
-
-    # Icons dir path (ok with all os)
-    path = os.path.dirname(os.path.abspath(__file__))
-    icons_dir = os.path.join(path, 'ressources/app_icons_png/')
 
     def __init__(self):
         super(MainView, self).__init__()
@@ -83,16 +80,16 @@ class MainView(QtGui.QWidget):
 
         # - Buttons to access other windows
         editButton = QtGui.QPushButton("Edit")
-        editButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'writing.png')))
-        editButton.setStatusTip("Edit selected image collections")
+        editButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/writing.png'))
+        editButton.setToolTip("Edit selected image collections")
 
         exportButton = QtGui.QPushButton("Export data")
-        exportButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'libreoffice.png')))
-        exportButton.setStatusTip("Export as xlsx or NIfTI")
+        exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
+        exportButton.setToolTip("Export as xlsx or NIfTI")
 
         clusterButton = QtGui.QPushButton("Clustering")
-        clusterButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'square.png')))
-        clusterButton.setStatusTip("Apply clustering on selected data")
+        clusterButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/square.png'))
+        clusterButton.setToolTip("Apply clustering on selected data")
         clusterButton.clicked.connect(self.showClust.emit) # When clusterButton is clicked, change central views
 
 
