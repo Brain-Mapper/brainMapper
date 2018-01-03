@@ -16,10 +16,21 @@
 # 18 december 2017 - Added Maxime's functions for data extraction (@maximeCluchague)
 
 # Lib dependency imports
-from niftiHandlers.imagecollection import ImageCollection
-from niftiHandlers.nifimage import NifImage
-import numpy as np
-import inspect
+
+if __package__ is None:
+    import numpy as np
+    import inspect
+    import sys
+    from os import path
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from niftiHandlers.imagecollection import ImageCollection
+    from niftiHandlers.nifimage import NifImage
+else:
+    from ..niftiHandlers.nifimage import NifImage
+    from ..niftiHandlers.imagecollection import ImageCollection
+
+
+
 
 
 def extract(a_nifti_img_obj):

@@ -102,18 +102,26 @@ class UI(QtGui.QMainWindow):
         print "Test passed. SUCCESS!"
 
     def fromNiFile(self):
-        files = QFileDialog.getOpenFileNames()
-        for file in files:
+        file = QFileDialog.getOpenFileNames()
+        if len(file)==1:
             try :
-                open_nifti(str(file))
+                open_nifti(str(file[0]))
             except :
-            #print "Unexpected error:", sys.exc_info()[0]
                 self.w = Error(sys.exc_info()[0])
-            
+        else:
+            try :
+                collec = do_image_collection(file)
+                self.show_coll(collec)
+            except :
+                self.w = Error(sys.exc_info()[0])
+                
     def showHelp(self):
         self.w = Help()
         
+    def show_coll(self, coll):
+        print coll
         
+    
 def main():
     
     app = QtGui.QApplication(sys.argv)
