@@ -27,6 +27,7 @@ def do_image_collection(files):
         coll.add(image)
     #extracted_data = xt.extract_from_collection(coll)
     #print(extracted_data)
+    add_coll(coll)
     return coll
     
 def add_coll(coll):

@@ -143,8 +143,9 @@ class UI(QtGui.QMainWindow):
         excelAction.setStatusTip('Import from Excel file')
         excelAction.triggered.connect(self.buttonClicked)
 
-        niftiAction = QtGui.QAction('&Import from NIfTI file', self)
-        niftiAction.setStatusTip('Import from NIfTI file')
+        niftiAction = QtGui.QAction('&Import from NIfTI file(s)', self)
+        niftiAction.setStatusTip('Create a collection of one or several NIfTI images')
+        niftiAction.setShortcut('Ctrl+N')
         niftiAction.triggered.connect(self.fromNiFile)
 
         # ADDING ACTIONS TO MENUS
@@ -153,8 +154,9 @@ class UI(QtGui.QMainWindow):
         fileMenu.addAction(exitAction)
         SetMenu = menubar.addMenu('&New Set')
         SetMenu.addAction(setAction)
-        SetMenu.addAction(excelAction)
-        SetMenu.addAction(niftiAction)
+        CollecMenu = menubar.addMenu('&New Collection')
+        CollecMenu.addAction(excelAction) 
+        CollecMenu.addAction(niftiAction) 
 
         self.show()
 

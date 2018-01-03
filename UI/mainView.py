@@ -15,14 +15,10 @@ from PyQt4 import QtGui
 from PyQt4.Qt import *
 import platform
 from datetime import *
-if __name__ == '__main__':
-    if __package__ is None:
-        import sys
-        from os import path
-        sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-        from BrainMapper import * 
-    else:
-        from ..BrainMapper import *
+import sys
+from os import path
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+from BrainMapper import * 
         
 import resources
 
@@ -82,20 +78,20 @@ class MainView(QtGui.QWidget):
         # - Buttons to access other windows
         editButton = QtGui.QPushButton("Edit")
         editButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/writing.png'))
-        editButton.setToolTip("Edit selected image collections")
+        editButton.setStatusTip("Edit selected image collections")
         editButton.clicked.connect(self.showEdit.emit)
 
         exportButton = QtGui.QPushButton("Export data")
         exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
-        exportButton.setToolTip("Export as xlsx or NIfTI")
+        exportButton.setStatusTip("Export as xlsx or NIfTI")
 
         calcButton = QtGui.QPushButton("Calculations")
         calcButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/calculator.png'))
-        calcButton.setToolTip("Perform calculations on selected data")
+        calcButton.setStatusTip("Perform calculations on selected data")
 
         clusterButton = QtGui.QPushButton("Clustering")
         clusterButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/square.png'))
-        clusterButton.setToolTip("Apply clustering on selected data")
+        clusterButton.setStatusTip("Apply clustering on selected data")
         clusterButton.clicked.connect(self.showClust.emit) # When clusterButton is clicked, change central views
 
 
@@ -134,6 +130,7 @@ class MainView(QtGui.QWidget):
             add_coll(coll)
         else:
             rm_coll(coll)
+        print get_selected()
 
     def creation_date(self,path_to_file):
         if platform.system() == 'Windows':
