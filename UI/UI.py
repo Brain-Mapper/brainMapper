@@ -100,7 +100,10 @@ class UI(QtGui.QMainWindow):
 
         
         # WINDOW PARAMETERS
-        self.setGeometry(300, 200, 800, 500)
+        rec = QApplication.desktop().availableGeometry()
+        screenHeight = rec.height()
+        screenWidth = rec.width()
+        self.setGeometry(300, 200, screenWidth/1.5, screenHeight/1.4)
         self.setWindowTitle('BrainMapper')
         self.setWindowIcon(QtGui.QIcon('ressources/logo.png'))
 
