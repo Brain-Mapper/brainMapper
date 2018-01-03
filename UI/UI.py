@@ -49,37 +49,37 @@ class UI(QtGui.QMainWindow):
         
     def initUI(self):
         self.statusBar() # lower bar for tips
-        menubar = self.menuBar() #menu bar
+
         
         # WINDOW PARAMETERS
         self.setGeometry(300, 200, 800, 500)
         self.setWindowTitle('BrainMapper')
         self.setWindowIcon(QtGui.QIcon('ressources/logo.png'))
-        
+
+        menubar = self.menuBar()  # menu bar
         # ACTIONS AVAILABLE FOR MENUS
-        exitAction = QtGui.QAction('&Exit', self)        
+        exitAction = QtGui.QAction('&Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(QtGui.qApp.quit)
 
-        saveAction = QtGui.QAction('&Help', self)        
+        saveAction = QtGui.QAction('&Help', self)
         saveAction.setShortcut('Ctrl+H')
         saveAction.setStatusTip('Help')
         saveAction.triggered.connect(self.showHelp)
 
-        setAction = QtGui.QAction('&Create new set', self)     
+        setAction = QtGui.QAction('&Create new set', self)
         setAction.setStatusTip('Create new set')
         setAction.triggered.connect(self.buttonClicked)
 
-        excelAction = QtGui.QAction('&Import from Excel file', self)     
+        excelAction = QtGui.QAction('&Import from Excel file', self)
         excelAction.setStatusTip('Import from Excel file')
         excelAction.triggered.connect(self.buttonClicked)
 
-        niftiAction = QtGui.QAction('&Import from NIfTI file', self)    
+        niftiAction = QtGui.QAction('&Import from NIfTI file', self)
         niftiAction.setStatusTip('Import from NIfTI file')
         niftiAction.triggered.connect(self.fromNiFile)
-        
-        
+
         # ADDING ACTIONS TO MENUS
         fileMenu = menubar.addMenu('&Program')
         fileMenu.addAction(saveAction)
@@ -89,30 +89,88 @@ class UI(QtGui.QMainWindow):
         SetMenu.addAction(excelAction)
         SetMenu.addAction(niftiAction)
 
-        # BUTTONS 
+        # ---------- Box Layout Set up ---------
+        # Since we cannot change the layout of a QtMainWindow, we will use a CENTRAL WIDGET (var homepage)
+        # to which we will add a box layout containing other boxes with their own widgets
+
+        homepage = QtGui.QWidget()
+
+        # This horizontal Box will contain two vertical boxes, one for the set access bar and another for image collec
+        # tions display
+        middleBox = QtGui.QHBoxLayout()
+
+        # - Vertical box for sets layout
+        setAccessBox = QtGui.QVBoxLayout()
+        #setAccessBox.addStretch(2)
+
+        # BUTTONS (SET ACCESS)
         btnNS = QtGui.QPushButton('Set 1 : Speech', self)
         btnNS.setStatusTip('Set 1 : Speech')
         btnNS.setFixedWidth(150)
-        btnNS.move(1, 27)
-        btnNS.clicked.connect(self.buttonClicked) # Action for button          
-        
+        btnNS.clicked.connect(self.buttonClicked)  # Action for button
+
+        setAccessBox.addWidget(btnNS, 0, Qt.AlignTop)
+
+        # - Vertical box for image collections display
+        collectionsDisplayBox = QtGui.QVBoxLayout()
+        edit1 = QtGui.QLineEdit()
+        edit2 = QtGui.QLineEdit()
+        edit3 = QtGui.QTextEdit()
+        collectionsDisplayBox.addWidget(edit1)
+        collectionsDisplayBox.addWidget(edit2)
+        collectionsDisplayBox.addWidget(edit3)
+
+        # Add the previous vertical boxes to horizontal box
+        middleBox.addLayout(setAccessBox)
+        middleBox.addLayout(collectionsDisplayBox)
+
+        # This horizontal Box will contain two vertical boxes, one for the set access bar and another for image collec
+        # tions display
+        buttonsBox = QtGui.QHBoxLayout()
+        buttonsBox.addStretch(1)
+
+        # - Buttons to access other windows
+        editButton = QtGui.QPushButton("Edit")
+        exportButton = QtGui.QPushButton("Export data")
+        clusterButton = QtGui.QPushButton("Apply Clustering")
+        buttonsBox.addWidget(editButton)
+        buttonsBox.addWidget(exportButton)
+        buttonsBox.addWidget(clusterButton)
+
+        # Set the layout of homepage widget and set it as the central widget for QtMainWindow
+        containerVbox = QtGui.QVBoxLayout()
+        containerVbox.addLayout(middleBox)
+        containerVbox.addLayout(buttonsBox)
+
+        homepage.setLayout(containerVbox)
+
+        self.setCentralWidget(homepage)
         self.show()
 
     def buttonClicked(self):
         print "Test passed. SUCCESS!"
 
     def fromNiFile(self):
-        file = str(QFileDialog.getOpenFileName())
-        try :
-            open_nifti(file)
-        except :
-            #print "Unexpected error:", sys.exc_info()[0]
-            self.w = Error(sys.exc_info()[0])
-            
+        file = QFileDialog.getOpenFileNames()
+        if len(file)==1:
+            try :
+                open_nifti(str(file[0]))
+            except :
+                self.w = Error(sys.exc_info()[0])
+        else:
+            try :
+                collec = do_image_collection(file)
+                self.show_coll(collec)
+            except :
+                self.w = Error(sys.exc_info()[0])
+                
     def showHelp(self):
         self.w = Help()
         
+    def show_coll(self, coll):
+        print coll
         
+    
 def main():
     
     app = QtGui.QApplication(sys.argv)

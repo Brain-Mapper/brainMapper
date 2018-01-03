@@ -1,4 +1,8 @@
 from ourLib.niftiHandlers.nifimage import NifImage as ni
+from ourLib.niftiHandlers.imagecollection import ImageCollection
+from ourLib.dataExtraction import extractor as xt
+
+
 import threading as th
 
 def open_nifti(path):
@@ -6,8 +10,22 @@ def open_nifti(path):
     print(image.get_affine_matrix())
     # DO SOMETHING WITH THE IMAGE
 
-    draw_img_thread = th.Thread(target=image.plot_img())
-    draw_img_thread.start()
+    #draw_img_thread = th.Thread(target=image.plot_img())
+    #draw_img_thread.start()
 
-    draw_glass_thread = th.Thread(target=image.plot_glass())
-    draw_glass_thread.start()
+    #draw_glass_thread = th.Thread(target=image.plot_glass())
+    #draw_glass_thread.start()
+
+def do_image_collection(files):
+    coll = ImageCollection()
+    for file in files:
+        image = ni.from_file(str(file))
+        coll.add(image)
+    list = coll.get_img_list()
+    for item in list :
+        print item.get_affine_matrix()
+    #extracted_data = xt.extract_from_collection(coll)
+    #print(extracted_data)
+    return coll
+    
+    
