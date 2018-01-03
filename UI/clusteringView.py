@@ -51,7 +51,6 @@ class ClusteringView(QtGui.QWidget):
 
         backHomeBox.addWidget(goHomeButton)
 
-
         # - Vertical box for future script Environnement
         scriptEnvBox = QtGui.QVBoxLayout()
 
@@ -72,7 +71,9 @@ class ClusteringView(QtGui.QWidget):
         tableBox = QtGui.QVBoxLayout()
 
         table_title = QtGui.QLabel('Data - Clustering Results')
-        table_displayer = QtGui.QTextEdit()
+        table_displayer = QtGui.QTableWidget()
+        table_displayer.setRowCount(10)
+        table_displayer.setColumnCount(15);
         tableBox.addWidget(table_title)
         tableBox.addWidget(table_displayer)
 
