@@ -35,7 +35,6 @@ class MainView(QtGui.QWidget):
         self.initMainView()
 
     def initMainView(self):
-
         # This horizontal Box will contain two vertical boxes, one for the set access bar and another for image collec
         # tions display
         middleBox = QtGui.QHBoxLayout()
@@ -74,15 +73,15 @@ class MainView(QtGui.QWidget):
         # - Buttons to access other windows
         editButton = QtGui.QPushButton("Edit")
         editButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'writing.png')))
-        editButton.setToolTip("Edit selected image collections")
+        editButton.setStatusTip("Edit selected image collections")
 
         exportButton = QtGui.QPushButton("Export data")
         exportButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'libreoffice.png')))
-        exportButton.setToolTip("Export as xlsx or NIfTI")
+        exportButton.setStatusTip("Export as xlsx or NIfTI")
 
         clusterButton = QtGui.QPushButton("Clustering")
         clusterButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'square.png')))
-        clusterButton.setToolTip("Apply clustering on selected data")
+        clusterButton.setStatusTip("Apply clustering on selected data")
         clusterButton.clicked.connect(self.showClust.emit) # When clusterButton is clicked, change central views
 
 

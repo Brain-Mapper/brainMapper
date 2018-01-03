@@ -54,11 +54,11 @@ class ClusteringView(QtGui.QWidget):
 
         runClusteringButton = QtGui.QPushButton('Run')
         runClusteringButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'play.png')))
-        runClusteringButton.setToolTip("Run selected clustering")
+        runClusteringButton.setStatusTip("Run selected clustering")
 
         goHomeButton = QtGui.QPushButton('Go back')
         goHomeButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'home-2.png')))
-        goHomeButton.setToolTip("Return to main page")
+        goHomeButton.setStatusTip("Return to main page")
         goHomeButton.clicked.connect(self.showMain.emit)# When go back home button is clicked, change central views
 
         buttonsBox.addWidget(runClusteringButton)
