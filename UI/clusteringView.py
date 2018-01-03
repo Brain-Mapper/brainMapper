@@ -44,6 +44,7 @@ class ClusteringView(QtGui.QWidget):
 
     def initClusteringView(self):
 
+        title_style = "QLabel { background-color : #ffcc33 ; color : black;  font-style : bold; font-size : 14px;}"
         # ---------- Box Layout Set up ---------
         # Here, the instance IS a Widget, so we'll add the layouts to itself
 
@@ -67,6 +68,7 @@ class ClusteringView(QtGui.QWidget):
         scriptEnvBox = QtGui.QVBoxLayout()
 
         scriptEnv_title = QtGui.QLabel('Script Environment')
+        scriptEnv_title.setStyleSheet(title_style)
 
         editor = QtGui.QVBoxLayout()
         edit_input=QtGui.QTextEdit()
@@ -83,9 +85,10 @@ class ClusteringView(QtGui.QWidget):
         tableBox = QtGui.QVBoxLayout()
 
         table_title = QtGui.QLabel('Data - Clustering Results')
+        table_title.setStyleSheet(title_style)
         table_displayer = QtGui.QTableWidget()
         table_displayer.setRowCount(10)
-        table_displayer.setColumnCount(15);
+        table_displayer.setColumnCount(15)
         tableBox.addWidget(table_title)
         tableBox.addWidget(table_displayer)
 
@@ -93,6 +96,7 @@ class ClusteringView(QtGui.QWidget):
         graphBox = QtGui.QVBoxLayout()
 
         graph_title = QtGui.QLabel('Results Graphs')
+        graph_title.setStyleSheet(title_style)
 
         grid = QtGui.QGridLayout()
         grid.setSpacing(8)
