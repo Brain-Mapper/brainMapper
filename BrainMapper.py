@@ -39,3 +39,11 @@ def rm_coll(coll):
 def get_selected():
     return selected
 
+def export_nifti():
+    print("Export into NIfTI...")
+    print selected
+
+def export_excel():
+    print("Export into Excel...")
+    print selected
+

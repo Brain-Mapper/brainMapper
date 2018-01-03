@@ -84,6 +84,7 @@ class MainView(QtGui.QWidget):
         exportButton = QtGui.QPushButton("Export data")
         exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
         exportButton.setStatusTip("Export as xlsx or NIfTI")
+        exportButton.clicked.connect(self.export)
 
         calcButton = QtGui.QPushButton("Calculations")
         calcButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/calculator.png'))
@@ -130,7 +131,6 @@ class MainView(QtGui.QWidget):
             add_coll(coll)
         else:
             rm_coll(coll)
-        print get_selected()
 
     def creation_date(self,path_to_file):
         if platform.system() == 'Windows':
@@ -142,3 +142,15 @@ class MainView(QtGui.QWidget):
             except AttributeError:
                 # We're probably on Linux.
                 return stat.st_mtime
+            
+    def export(self):
+        if(get_selected()):
+            choice = QtGui.QMessageBox.question(self, 'Export selected files',
+                                                "Export into a NIfTI file? (if No : Excel file)",
+                                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+            if choice == QtGui.QMessageBox.Yes:
+                export_nifti()
+            else:
+                export_excel()
+        else:
+            QtGui.QMessageBox.information(self, "Selection empty","There's nothing to export.")

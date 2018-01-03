@@ -166,11 +166,12 @@ class UI(QtGui.QMainWindow):
 
     def fromNiFile(self):
         file = QFileDialog.getOpenFileNames()
-        try:
-            collec = do_image_collection(file)
-        except:
-            self.w = Error(sys.exc_info()[0])
-        homepage.mainview.show_coll(collec)
+        if (file != ""):
+            try:
+                collec = do_image_collection(file)
+                homepage.mainview.show_coll(collec)
+            except:
+                self.w = Error(sys.exc_info()[0])
         
     def showHelp(self):
         self.w = Help()
