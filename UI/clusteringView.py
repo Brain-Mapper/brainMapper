@@ -9,9 +9,9 @@
 # HISTORY
 #
 # 2 january 201- Initial design and coding. (@vz-chameleon, Valentina Z.)
-
+import os
 from PyQt4 import QtGui
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal,QCoreApplication
 
 if __name__ == '__main__':
     if __package__ is None:
@@ -43,13 +43,22 @@ class ClusteringView(QtGui.QWidget):
         # ---------- Box Layout Set up ---------
         # Here, the instance IS a Widget, so we'll add the layouts to itself
 
-        # - Horizontal box for go back home button
-        backHomeBox= QtGui.QHBoxLayout()
+        path = os.path.dirname(os.path.abspath(__file__))
+        icons_dir=os.path.join(path, 'ressources/app_icons_png/')
 
-        goHomeButton = QtGui.QPushButton('Go back to Home page')
+        # - Horizontal box for go back home button
+        buttonsBox= QtGui.QHBoxLayout()
+        buttonsBox.addStretch(1)
+
+        runClusteringButton = QtGui.QPushButton()
+        runClusteringButton.setIcon(QtGui.QIcon(os.path.join(icons_dir, 'play.png')))
+
+        goHomeButton = QtGui.QPushButton()
+        goHomeButton.setIcon(QtGui.QIcon(os.path.join(icons_dir, 'home-2.png')))
         goHomeButton.clicked.connect(self.showMain.emit) # When go back home button is clicked, change central views
 
-        backHomeBox.addWidget(goHomeButton)
+        buttonsBox.addWidget(runClusteringButton)
+        buttonsBox.addWidget(goHomeButton)
 
         # - Vertical box for future script Environnement
         scriptEnvBox = QtGui.QVBoxLayout()
@@ -105,7 +114,7 @@ class ClusteringView(QtGui.QWidget):
         hbox.addLayout(clustResultsBox)
 
         containerVbox = QtGui.QVBoxLayout()
-        containerVbox.addLayout(backHomeBox)
+        containerVbox.addLayout(buttonsBox)
         containerVbox.addLayout(hbox)
 
         self.setLayout(containerVbox)

@@ -16,24 +16,29 @@ if __name__ == '__main__':
     else:
         from ..BrainMapper import *
 
+path = os.path.dirname(os.path.abspath(__file__))
+icons_dir = os.path.join(path, 'ressources/')
 
 class Help(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.setWindowTitle('Help')
-        self.setWindowIcon(QtGui.QIcon('ressources/help.png'))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(icons_dir, 'help.png')))
         self.setGeometry(QRect(100, 100, 400, 200))
         label = QLabel(self)
-        pixmap = QPixmap(os.getcwd() + '/ressources/logo.png')
+        pixmap = QPixmap(os.path.join(icons_dir, 'logo.png'))
         label.setPixmap(pixmap)
-        label.resize(pixmap.width(),pixmap.height())
+        label.resize(pixmap.width(), pixmap.height())
         label.move(10,10)
         names = QLabel("Raphael Agathon & Maxime Cluchague",self)
         names2 = QLabel("  Graziella Husson & Valentina Zelaya", self)
         title= QLabel("BrainMapper", self)
+        icons_credits=QLabel("BrainMapper icon made by Graziella Husson \nApp icons made by Icomoon from www.flaticon."
+                             "com ", self)
         names.setGeometry(QtCore.QRect(70, 110, 400, 100))
         names2.setGeometry(QtCore.QRect(73, 130, 400, 100))
         title.setGeometry(QtCore.QRect(210, 20, 400, 100))
+        icons_credits.setGeometry(QtCore.QRect(10, 80, 400, 100))
         self.show()
 
 
@@ -41,7 +46,7 @@ class Error(QMainWindow):
     def __init__(self, message):
         QMainWindow.__init__(self)
         self.setWindowTitle('Error')
-        self.setWindowIcon(QtGui.QIcon('ressources/error.png'))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(icons_dir, 'error.png')))
         self.setGeometry(QRect(100, 100, 400, 200))
         self.show()
         print message
@@ -105,7 +110,7 @@ class UI(QtGui.QMainWindow):
         screenWidth = rec.width()
         self.setGeometry(300, 200, screenWidth/1.5, screenHeight/1.4)
         self.setWindowTitle('BrainMapper')
-        self.setWindowIcon(QtGui.QIcon('ressources/logo.png'))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(icons_dir,'logo.png')))
 
         menubar = self.menuBar()  # menu bar
         # ACTIONS AVAILABLE FOR MENUS
