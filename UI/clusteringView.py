@@ -33,6 +33,10 @@ class ClusteringView(QtGui.QWidget):
 
     showMain = pyqtSignal()
 
+    # Icons dir path (ok with all os)
+    path = os.path.dirname(os.path.abspath(__file__))
+    icons_dir = os.path.join(path, 'ressources/app_icons_png/')
+
     def __init__(self):
         super(ClusteringView, self).__init__()
 
@@ -43,19 +47,18 @@ class ClusteringView(QtGui.QWidget):
         # ---------- Box Layout Set up ---------
         # Here, the instance IS a Widget, so we'll add the layouts to itself
 
-        path = os.path.dirname(os.path.abspath(__file__))
-        icons_dir=os.path.join(path, 'ressources/app_icons_png/')
-
         # - Horizontal box for go back home button
         buttonsBox= QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
 
-        runClusteringButton = QtGui.QPushButton()
-        runClusteringButton.setIcon(QtGui.QIcon(os.path.join(icons_dir, 'play.png')))
+        runClusteringButton = QtGui.QPushButton('Run')
+        runClusteringButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'play.png')))
+        runClusteringButton.setToolTip("Run selected clustering")
 
-        goHomeButton = QtGui.QPushButton()
-        goHomeButton.setIcon(QtGui.QIcon(os.path.join(icons_dir, 'home-2.png')))
-        goHomeButton.clicked.connect(self.showMain.emit) # When go back home button is clicked, change central views
+        goHomeButton = QtGui.QPushButton('Go back')
+        goHomeButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'home-2.png')))
+        goHomeButton.setToolTip("Return to main page")
+        goHomeButton.clicked.connect(self.showMain.emit)# When go back home button is clicked, change central views
 
         buttonsBox.addWidget(runClusteringButton)
         buttonsBox.addWidget(goHomeButton)
