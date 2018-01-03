@@ -42,17 +42,6 @@ class Help(QMainWindow):
         icons_credits.setGeometry(QtCore.QRect(10, 80, 400, 100))
         self.show()
 
-
-class Error(QMainWindow):
-    def __init__(self, message):
-        QMainWindow.__init__(self)
-        self.setWindowTitle('Error')
-        self.setWindowIcon(QtGui.QIcon(':ressources/error.png'))
-        self.setGeometry(QRect(100, 100, 400, 200))
-        self.show()
-        print message
-
-
 # In PyQt we cannot open two windows at a time easily, so we will have to change the central widget of our app
 # according to what the user clicks on... To do so, we will use an instance of the following class
 
@@ -171,7 +160,8 @@ class UI(QtGui.QMainWindow):
                 collec = do_image_collection(file)
                 homepage.mainview.show_coll(collec)
             except:
-                self.w = Error(sys.exc_info()[0])
+                err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
+                print (sys.exc_info()[0])
         
     def showHelp(self):
         self.w = Help()
