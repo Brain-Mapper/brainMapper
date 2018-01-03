@@ -9,9 +9,9 @@
 # HISTORY
 #
 # 2 january 201- Initial design and coding. (@vz-chameleon, Valentina Z.)
-
+import os
 from PyQt4 import QtGui
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal,QCoreApplication
 
 if __name__ == '__main__':
     if __package__ is None:
@@ -33,6 +33,10 @@ class ClusteringView(QtGui.QWidget):
 
     showMain = pyqtSignal()
 
+    # Icons dir path (ok with all os)
+    path = os.path.dirname(os.path.abspath(__file__))
+    icons_dir = os.path.join(path, 'ressources/app_icons_png/')
+
     def __init__(self):
         super(ClusteringView, self).__init__()
 
@@ -40,22 +44,31 @@ class ClusteringView(QtGui.QWidget):
 
     def initClusteringView(self):
 
+        title_style = "QLabel { background-color : #ffcc33 ; color : black;  font-style : bold; font-size : 14px;}"
         # ---------- Box Layout Set up ---------
         # Here, the instance IS a Widget, so we'll add the layouts to itself
 
         # - Horizontal box for go back home button
-        backHomeBox= QtGui.QHBoxLayout()
+        buttonsBox= QtGui.QHBoxLayout()
+        buttonsBox.addStretch(1)
 
-        goHomeButton = QtGui.QPushButton('Go back to Home page')
-        goHomeButton.clicked.connect(self.showMain.emit) # When go back home button is clicked, change central views
+        runClusteringButton = QtGui.QPushButton('Run')
+        runClusteringButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'play.png')))
+        runClusteringButton.setToolTip("Run selected clustering")
 
-        backHomeBox.addWidget(goHomeButton)
+        goHomeButton = QtGui.QPushButton('Go back')
+        goHomeButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'home-2.png')))
+        goHomeButton.setToolTip("Return to main page")
+        goHomeButton.clicked.connect(self.showMain.emit)# When go back home button is clicked, change central views
 
+        buttonsBox.addWidget(runClusteringButton)
+        buttonsBox.addWidget(goHomeButton)
 
         # - Vertical box for future script Environnement
         scriptEnvBox = QtGui.QVBoxLayout()
 
         scriptEnv_title = QtGui.QLabel('Script Environment')
+        scriptEnv_title.setStyleSheet(title_style)
 
         editor = QtGui.QVBoxLayout()
         edit_input=QtGui.QTextEdit()
@@ -72,7 +85,10 @@ class ClusteringView(QtGui.QWidget):
         tableBox = QtGui.QVBoxLayout()
 
         table_title = QtGui.QLabel('Data - Clustering Results')
-        table_displayer = QtGui.QTextEdit()
+        table_title.setStyleSheet(title_style)
+        table_displayer = QtGui.QTableWidget()
+        table_displayer.setRowCount(10)
+        table_displayer.setColumnCount(15)
         tableBox.addWidget(table_title)
         tableBox.addWidget(table_displayer)
 
@@ -80,6 +96,7 @@ class ClusteringView(QtGui.QWidget):
         graphBox = QtGui.QVBoxLayout()
 
         graph_title = QtGui.QLabel('Results Graphs')
+        graph_title.setStyleSheet(title_style)
 
         grid = QtGui.QGridLayout()
         grid.setSpacing(8)
@@ -104,7 +121,7 @@ class ClusteringView(QtGui.QWidget):
         hbox.addLayout(clustResultsBox)
 
         containerVbox = QtGui.QVBoxLayout()
-        containerVbox.addLayout(backHomeBox)
+        containerVbox.addLayout(buttonsBox)
         containerVbox.addLayout(hbox)
 
         self.setLayout(containerVbox)

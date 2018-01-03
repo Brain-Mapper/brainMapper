@@ -10,6 +10,7 @@
 #
 # 2 january 201- Initial design and coding. (@vz-chameleon, Valentina Z.)
 
+import os
 from PyQt4 import QtGui
 from PyQt4.Qt import *
 
@@ -22,6 +23,11 @@ class MainView(QtGui.QWidget):
     # In our custom widgets (like this one), buttons will emit a given signal, and the change of views will be handled
     # by the HomePage widgets' instances (see UI.py, class HomePage)
     showClust = pyqtSignal()
+
+
+    # Icons dir path (ok with all os)
+    path = os.path.dirname(os.path.abspath(__file__))
+    icons_dir = os.path.join(path, 'ressources/app_icons_png/')
 
     def __init__(self):
         super(MainView, self).__init__()
@@ -67,10 +73,18 @@ class MainView(QtGui.QWidget):
 
         # - Buttons to access other windows
         editButton = QtGui.QPushButton("Edit")
-        exportButton = QtGui.QPushButton("Export data")
+        editButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'writing.png')))
+        editButton.setToolTip("Edit selected image collections")
 
-        clusterButton = QtGui.QPushButton("Apply Clustering")
+        exportButton = QtGui.QPushButton("Export data")
+        exportButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'libreoffice.png')))
+        exportButton.setToolTip("Export as xlsx or NIfTI")
+
+        clusterButton = QtGui.QPushButton("Clustering")
+        clusterButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'square.png')))
+        clusterButton.setToolTip("Apply clustering on selected data")
         clusterButton.clicked.connect(self.showClust.emit) # When clusterButton is clicked, change central views
+
 
         buttonsBox.addWidget(editButton)
         buttonsBox.addWidget(exportButton)
