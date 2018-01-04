@@ -30,16 +30,26 @@ class CollectionAccessButton(QtGui.QPushButton):
 class CollectionsAccessBar(QtGui.QWidget):
     def __init__(self, labels_array):
         super(CollectionsAccessBar, self).__init__()
-        vbox = QtGui.QVBoxLayout()
 
-        grid = QtGui.QButtonGroup(self)
+        group = QtGui.QGroupBox()
+        vbox = QtGui.QVBoxLayout()
+        access_bar_title = QtGui.QLabel("Selected Image Collections")
+        vbox.addWidget(access_bar_title)
 
         for lab in labels_array :
-            btn=CollectionAccessButton(lab)
-            grid.addButton(btn)
-            vbox.addWidget(btn)
+            vbox.addWidget(CollectionAccessButton(lab))
 
-        self.setLayout(vbox)
+        vbox.addStretch(1)
+        group.setLayout(vbox)
+
+        hbox=QtGui.QHBoxLayout()
+        hbox.addWidget(group)
+
+        self.setLayout(hbox)
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()/1.4
+        mainwind_w = rec.width()/1.5
+        self.setMaximumSize(QSize(mainwind_w/4.5, mainwind_h))
 
 class EditCollectionsView(QtGui.QWidget):
     # -- ! ATTRIBUTES SHARED by EVERY class instance ! --
