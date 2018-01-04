@@ -110,7 +110,10 @@ class UI(QtGui.QMainWindow):
         
     def initUI(self):
         self.statusBar() # lower bar for tips
-
+        
+        global homepage
+        homepage = HomePage()
+        self.setCentralWidget(homepage)
         
         # WINDOW PARAMETERS
         rec = QApplication.desktop().availableGeometry()
@@ -153,31 +156,20 @@ class UI(QtGui.QMainWindow):
         SetMenu.addAction(excelAction)
         SetMenu.addAction(niftiAction)
 
-        homepage = HomePage()
-        self.setCentralWidget(homepage)
         self.show()
 
 
     def buttonClicked(self):
         print "Test passed. SUCCESS!"
 
-    def show_coll(self, coll):
-        print coll
-
     def fromNiFile(self):
         file = QFileDialog.getOpenFileNames()
-        if len(file) == 1:
-            try:
-                open_nifti(str(file[0]))
-            except:
-                self.w = Error(sys.exc_info()[0])
-        else:
-            try:
-                collec = do_image_collection(file)
-                self.show_coll(collec)
-            except:
-                self.w = Error(sys.exc_info()[0])
-
+        try:
+            collec = do_image_collection(file)
+        except:
+            self.w = Error(sys.exc_info()[0])
+        homepage.mainview.show_coll(collec)
+        
     def showHelp(self):
         self.w = Help()
 

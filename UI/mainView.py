@@ -13,7 +13,17 @@
 import os
 from PyQt4 import QtGui
 from PyQt4.Qt import *
-
+import platform
+from datetime import *
+if __name__ == '__main__':
+    if __package__ is None:
+        import sys
+        from os import path
+        sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+        from BrainMapper import * 
+    else:
+        from ..BrainMapper import *
+        
 import resources
 
 class MainView(QtGui.QWidget):
@@ -49,15 +59,16 @@ class MainView(QtGui.QWidget):
         setAccessBox.addWidget(btnNS, 0, Qt.AlignTop)
 
         # - Vertical box for image collections display
+        global collectionsDisplayBox
         collectionsDisplayBox = QtGui.QVBoxLayout()
         edit1 = QtGui.QLineEdit()
-        edit2 = QtGui.QLineEdit()
-        edit3 = QtGui.QTextEdit()
-        coll_title = QtGui.QLabel('Set\'s Image collections')
+        #edit2 = QtGui.QLineEdit()
+        #coll_title = QtGui.QLabel('Set\'s Image collections')
         collectionsDisplayBox.addWidget(edit1)
-        collectionsDisplayBox.addWidget(edit2)
-        collectionsDisplayBox.addWidget(coll_title)
-        collectionsDisplayBox.addWidget(edit3)
+        #collectionsDisplayBox.addWidget(edit2)
+        #collectionsDisplayBox.addWidget(coll_title)
+        collectionsDisplayBox.addStretch(0)
+        collectionsDisplayBox.setSizeConstraint(QtGui.QLayout.SetFixedSize)
 
         # Add the previous vertical boxes to horizontal box
         middleBox.addLayout(setAccessBox)
@@ -104,4 +115,33 @@ class MainView(QtGui.QWidget):
         print "Test passed. SUCCESS!"
 
     def show_coll(self, coll):
-        print coll
+        list = coll.get_img_list()
+        dates = []
+        for l in list :
+            dates.append(self.creation_date(str(l.filename)))
+        date = max(dates)
+        d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
+        label = "Patient : \nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
+        cb = QtGui.QCheckBox(label, self)
+        cb.toggle()
+        cb.stateChanged.connect(lambda : self.selectColl(cb, coll))
+        collectionsDisplayBox.addWidget(cb)
+        collectionsDisplayBox.addStretch(0)
+        collectionsDisplayBox.setSizeConstraint(QtGui.QLayout.SetFixedSize)
+
+    def selectColl(self, cb, coll):
+        if(cb.isChecked()):
+            add_coll(coll)
+        else:
+            rm_coll(coll)
+
+    def creation_date(self,path_to_file):
+        if platform.system() == 'Windows':
+            return os.path.getctime(path_to_file)
+        else:
+            stat = os.stat(path_to_file)
+            try:
+                return stat.st_birthtime
+            except AttributeError:
+                # We're probably on Linux.
+                return stat.st_mtime
