@@ -78,6 +78,10 @@ class MainView(QtGui.QWidget):
         exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
         exportButton.setToolTip("Export as xlsx or NIfTI")
 
+        calcButton = QtGui.QPushButton("Calculations")
+        calcButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/calculator.png'))
+        calcButton.setToolTip("Perform calculations on selected data")
+
         clusterButton = QtGui.QPushButton("Clustering")
         clusterButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/square.png'))
         clusterButton.setToolTip("Apply clustering on selected data")
@@ -86,6 +90,7 @@ class MainView(QtGui.QWidget):
 
         buttonsBox.addWidget(editButton)
         buttonsBox.addWidget(exportButton)
+        buttonsBox.addWidget(calcButton)
         buttonsBox.addWidget(clusterButton)
 
         # Set the layout of homepage widget and set it as the central widget for QtMainWindow
