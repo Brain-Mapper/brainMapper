@@ -13,14 +13,14 @@ import os
 from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSignal,QCoreApplication
 
-if __name__ == '__main__':
-    if __package__ is None:
-        import sys
-        from os import path
-        sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-        from BrainMapper import *
-    else:
-        from ..BrainMapper import *
+
+class ClusteringDataTable(QtGui.QTableWidget):
+    def __init__(self, row_num):
+        super(ClusteringDataTable, self).__init__()
+        self.setRowCount(row_num)
+        self.setColumnCount(5)
+        self.setHorizontalHeaderLabels(["PatientID_imgColl", "X", "Y", "Z", "Intensity"])
+
 
 
 class ClusteringView(QtGui.QWidget):
@@ -86,9 +86,7 @@ class ClusteringView(QtGui.QWidget):
 
         table_title = QtGui.QLabel('Data - Clustering Results')
         table_title.setStyleSheet(title_style)
-        table_displayer = QtGui.QTableWidget()
-        table_displayer.setRowCount(10)
-        table_displayer.setColumnCount(15)
+        table_displayer = ClusteringDataTable(20)
         tableBox.addWidget(table_title)
         tableBox.addWidget(table_displayer)
 
