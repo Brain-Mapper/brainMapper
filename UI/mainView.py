@@ -32,7 +32,6 @@ class MainView(QtGui.QWidget):
         self.initMainView()
 
     def initMainView(self):
-
         # This horizontal Box will contain two vertical boxes, one for the set access bar and another for image collec
         # tions display
         middleBox = QtGui.QHBoxLayout()
