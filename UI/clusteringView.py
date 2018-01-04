@@ -13,6 +13,7 @@ import os
 from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSignal,QCoreApplication
 
+import resources
 
 class ClusteringDataTable(QtGui.QTableWidget):
     def __init__(self, row_num):
@@ -33,10 +34,6 @@ class ClusteringView(QtGui.QWidget):
 
     showMain = pyqtSignal()
 
-    # Icons dir path (ok with all os)
-    path = os.path.dirname(os.path.abspath(__file__))
-    icons_dir = os.path.join(path, 'ressources/app_icons_png/')
-
     def __init__(self):
         super(ClusteringView, self).__init__()
 
@@ -53,11 +50,11 @@ class ClusteringView(QtGui.QWidget):
         buttonsBox.addStretch(1)
 
         runClusteringButton = QtGui.QPushButton('Run')
-        runClusteringButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'play.png')))
+        runClusteringButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/play.png'))
         runClusteringButton.setToolTip("Run selected clustering")
 
         goHomeButton = QtGui.QPushButton('Go back')
-        goHomeButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'home-2.png')))
+        goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
         goHomeButton.setToolTip("Return to main page")
         goHomeButton.clicked.connect(self.showMain.emit)# When go back home button is clicked, change central views
 
