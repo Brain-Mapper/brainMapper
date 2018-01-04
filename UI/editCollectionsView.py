@@ -17,11 +17,29 @@ from PyQt4.QtCore import pyqtSignal,QCoreApplication
 import resources
 
 
-# class CollectionAccessButton(QtGui.QPushButton):
-#
-#
-# class CollectionsAccessBar(QtGui.QVBoxLayout):
+class CollectionAccessButton(QtGui.QPushButton):
 
+    styler = "CollectionAccessButton {background-color: white; border-bottom: 1px solid black;} " \
+             "CollectionAccessButton:hover {background-color : #ccff99;}"
+
+    def __init__(self, label):
+        super(CollectionAccessButton, self).__init__(label)
+        self.setStyleSheet(self.styler)
+
+
+class CollectionsAccessBar(QtGui.QWidget):
+    def __init__(self, labels_array):
+        super(CollectionsAccessBar, self).__init__()
+        vbox = QtGui.QVBoxLayout()
+
+        grid = QtGui.QButtonGroup(self)
+
+        for lab in labels_array :
+            btn=CollectionAccessButton(lab)
+            grid.addButton(btn)
+            vbox.addWidget(btn)
+
+        self.setLayout(vbox)
 
 class EditCollectionsView(QtGui.QWidget):
     # -- ! ATTRIBUTES SHARED by EVERY class instance ! --
@@ -35,7 +53,6 @@ class EditCollectionsView(QtGui.QWidget):
 
     def __init__(self):
         super(EditCollectionsView, self).__init__()
-
         self.initEditCollectionsView()
 
     def initEditCollectionsView(self):
@@ -44,9 +61,9 @@ class EditCollectionsView(QtGui.QWidget):
         buttonsBox = QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
 
-        runClusteringButton = QtGui.QPushButton('Run')
-        runClusteringButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/play.png'))
-        runClusteringButton.setToolTip("Run selected clustering")
+        runClusteringButton = QtGui.QPushButton('OK')
+        runClusteringButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
+        runClusteringButton.setToolTip("Save changes")
 
         goHomeButton = QtGui.QPushButton('Go back')
         goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
@@ -58,8 +75,7 @@ class EditCollectionsView(QtGui.QWidget):
 
         hbox = QtGui.QHBoxLayout()
 
-        topleft = QtGui.QFrame()
-        topleft.setFrameShape(QtGui.QFrame.StyledPanel)
+        topleft=CollectionsAccessBar(['Image Collection P92','Image Collection P95','Image Collection P98'])
         bottom = QtGui.QFrame()
         bottom.setFrameShape(QtGui.QFrame.StyledPanel)
 
@@ -80,12 +96,3 @@ class EditCollectionsView(QtGui.QWidget):
         containerVbox.addLayout(hbox)
 
         self.setLayout(containerVbox)
-
-def main():
-    app = QtGui.QApplication(sys.argv)
-    ex = EditCollectionsView()
-    sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    main()
