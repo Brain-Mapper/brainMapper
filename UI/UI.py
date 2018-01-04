@@ -8,6 +8,7 @@ import resources
 
 from mainView import MainView
 from clusteringView import ClusteringView
+from editCollectionsView import EditCollectionsView
 
 if __name__ == '__main__':
     if __package__ is None:
@@ -72,9 +73,11 @@ class HomePage(QWidget):
         # Here are the custom widgets we will put on the stack
         self.mainview = MainView()
         self.clustering = ClusteringView()
+        self.edit_colls = EditCollectionsView()
         # -- Add them to stack widget
         self.stack.addWidget(self.mainview)
         self.stack.addWidget(self.clustering)
+        self.stack.addWidget(self.edit_colls)
 
         # Define behaviour when widget emit certain signals (see class MainView and Clustering View for more details
         #  on signals and events)
@@ -83,6 +86,11 @@ class HomePage(QWidget):
         self.mainview.showClust.connect(partial(self.stack.setCurrentWidget, self.clustering))
         # -- when clustering widget emits signal showMain, change current Widget in stack to main view widget
         self.clustering.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
+
+        # -- when mainView widget emits signal showEdit, change current Widget in stack to clustering widget
+        self.mainview.showEdit.connect(partial(self.stack.setCurrentWidget, self.edit_colls))
+        # -- when collection edition widget emits signal showMain, change current Widget in stack to main view widget
+        self.edit_colls.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
 
         # Set current widget to main view by default
         self.stack.setCurrentWidget(self.mainview)

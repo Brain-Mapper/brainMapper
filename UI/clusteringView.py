@@ -8,12 +8,13 @@
 #
 # HISTORY
 #
-# 2 january 201- Initial design and coding. (@vz-chameleon, Valentina Z.)
+# 2 january 2018- Initial design and coding. (@vz-chameleon, Valentina Z.)
 import os
 from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSignal,QCoreApplication
 
 import resources
+
 
 class ClusteringDataTable(QtGui.QTableWidget):
     def __init__(self, row_num):
@@ -21,7 +22,6 @@ class ClusteringDataTable(QtGui.QTableWidget):
         self.setRowCount(row_num)
         self.setColumnCount(5)
         self.setHorizontalHeaderLabels(["PatientID_imgColl", "X", "Y", "Z", "Intensity"])
-
 
 
 class ClusteringView(QtGui.QWidget):

@@ -25,6 +25,7 @@ class MainView(QtGui.QWidget):
     # In our custom widgets (like this one), buttons will emit a given signal, and the change of views will be handled
     # by the HomePage widgets' instances (see UI.py, class HomePage)
     showClust = pyqtSignal()
+    showEdit = pyqtSignal()
 
     def __init__(self):
         super(MainView, self).__init__()
@@ -71,6 +72,7 @@ class MainView(QtGui.QWidget):
         editButton = QtGui.QPushButton("Edit")
         editButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/writing.png'))
         editButton.setToolTip("Edit selected image collections")
+        editButton.clicked.connect(self.showEdit.emit)
 
         exportButton = QtGui.QPushButton("Export data")
         exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
