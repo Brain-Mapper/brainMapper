@@ -11,7 +11,8 @@
 # 2 january 2018- Initial design and coding. (@vz-chameleon, Valentina Z.)
 import os
 from PyQt4 import QtGui
-from PyQt4.QtCore import pyqtSignal,QCoreApplication
+from PyQt4.QtCore import pyqtSignal
+from PyQt4.Qt import *
 
 import resources
 
@@ -61,6 +62,9 @@ class ClusteringView(QtGui.QWidget):
         buttonsBox.addWidget(runClusteringButton)
         buttonsBox.addWidget(goHomeButton)
 
+
+        # -------------- Script Environemment Widget --------------
+        scriptWidget=QtGui.QWidget()
         # - Vertical box for future script Environnement
         scriptEnvBox = QtGui.QVBoxLayout()
 
@@ -75,8 +79,18 @@ class ClusteringView(QtGui.QWidget):
 
         scriptEnvBox.addLayout(editor)
 
-        # - Vertical box for clustering results display
-        clustResultsBox = QtGui.QVBoxLayout()
+        # Add the layout to script widget
+        scriptWidget.setLayout(scriptEnvBox)
+
+
+        # -------------- Clustering Widget -----------------------
+        clustWidget = QtGui.QWidget()
+
+        # - A splitter for clustering results display
+        clust_res_splitter = QtGui.QSplitter(Qt.Vertical)
+
+        # === A table widget ===
+        table_clust=QtGui.QWidget()
 
         # Horizontal box for table display
         tableBox = QtGui.QVBoxLayout()
@@ -86,6 +100,12 @@ class ClusteringView(QtGui.QWidget):
         table_displayer = ClusteringDataTable(20)
         tableBox.addWidget(table_title)
         tableBox.addWidget(table_displayer)
+
+        # set table clust widget's layout
+        table_clust.setLayout(tableBox)
+
+        # === A graphs widget ===
+        graphWidget=QtGui.QWidget()
 
         # Horizontal box for mini graphs display
         graphBox = QtGui.QVBoxLayout()
@@ -106,22 +126,33 @@ class ClusteringView(QtGui.QWidget):
         graphBox.addWidget(graph_title)
         graphBox.addLayout(grid)
 
-        # Add the previous vertical boxes to horizontal box
-        clustResultsBox.addLayout(tableBox)
-        clustResultsBox.addLayout(graphBox)
+        # Set graph widgets's layout
+        graphWidget.setLayout(graphBox)
+
+        # Add the previous widgets to clustering splitter
+        clust_res_splitter.addWidget(table_clust)
+        clust_res_splitter.addWidget(graphWidget)
+
+        hbox=QtGui.QHBoxLayout()
+        hbox.addWidget(clust_res_splitter)
+        clustWidget.setLayout(hbox)
+
+
+        # ----- Now that we have our two main widgets, we can add them to the main splitter of this view -----
 
         # Set the layout of clustering widget and set it as the central widget for QtMainWindow
-        hbox=QtGui.QHBoxLayout()
-        hbox.addLayout(scriptEnvBox)
-        hbox.addLayout(clustResultsBox)
+        main_splitter = QtGui.QSplitter(Qt.Horizontal)
+        main_splitter.addWidget(scriptWidget)
+        main_splitter.addWidget(clustWidget)
+
+        hbox = QtGui.QHBoxLayout()
+        hbox.addWidget(main_splitter)
 
         containerVbox = QtGui.QVBoxLayout()
         containerVbox.addLayout(buttonsBox)
         containerVbox.addLayout(hbox)
 
         self.setLayout(containerVbox)
-
-        self.show()
 
 
 def main():
