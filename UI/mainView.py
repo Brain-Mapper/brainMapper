@@ -13,6 +13,18 @@
 import os
 from PyQt4 import QtGui
 from PyQt4.Qt import *
+import platform
+from datetime import *
+if __name__ == '__main__':
+    if __package__ is None:
+        import sys
+        from os import path
+        sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+        from BrainMapper import * 
+    else:
+        from ..BrainMapper import *
+        
+import resources
 
 class MainView(QtGui.QWidget):
 
@@ -23,11 +35,7 @@ class MainView(QtGui.QWidget):
     # In our custom widgets (like this one), buttons will emit a given signal, and the change of views will be handled
     # by the HomePage widgets' instances (see UI.py, class HomePage)
     showClust = pyqtSignal()
-
-
-    # Icons dir path (ok with all os)
-    path = os.path.dirname(os.path.abspath(__file__))
-    icons_dir = os.path.join(path, 'ressources/app_icons_png/')
+    showEdit = pyqtSignal()
 
     def __init__(self):
         super(MainView, self).__init__()
@@ -35,7 +43,6 @@ class MainView(QtGui.QWidget):
         self.initMainView()
 
     def initMainView(self):
-
         # This horizontal Box will contain two vertical boxes, one for the set access bar and another for image collec
         # tions display
         middleBox = QtGui.QHBoxLayout()
@@ -52,15 +59,16 @@ class MainView(QtGui.QWidget):
         setAccessBox.addWidget(btnNS, 0, Qt.AlignTop)
 
         # - Vertical box for image collections display
+        global collectionsDisplayBox
         collectionsDisplayBox = QtGui.QVBoxLayout()
         edit1 = QtGui.QLineEdit()
-        edit2 = QtGui.QLineEdit()
-        edit3 = QtGui.QTextEdit()
-        coll_title = QtGui.QLabel('Set\'s Image collections')
+        #edit2 = QtGui.QLineEdit()
+        #coll_title = QtGui.QLabel('Set\'s Image collections')
         collectionsDisplayBox.addWidget(edit1)
-        collectionsDisplayBox.addWidget(edit2)
-        collectionsDisplayBox.addWidget(coll_title)
-        collectionsDisplayBox.addWidget(edit3)
+        #collectionsDisplayBox.addWidget(edit2)
+        #collectionsDisplayBox.addWidget(coll_title)
+        collectionsDisplayBox.addStretch(0)
+        collectionsDisplayBox.setSizeConstraint(QtGui.QLayout.SetFixedSize)
 
         # Add the previous vertical boxes to horizontal box
         middleBox.addLayout(setAccessBox)
@@ -73,21 +81,27 @@ class MainView(QtGui.QWidget):
 
         # - Buttons to access other windows
         editButton = QtGui.QPushButton("Edit")
-        editButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'writing.png')))
+        editButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/writing.png'))
         editButton.setToolTip("Edit selected image collections")
+        editButton.clicked.connect(self.showEdit.emit)
 
         exportButton = QtGui.QPushButton("Export data")
-        exportButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'libreoffice.png')))
+        exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
         exportButton.setToolTip("Export as xlsx or NIfTI")
 
+        calcButton = QtGui.QPushButton("Calculations")
+        calcButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/calculator.png'))
+        calcButton.setToolTip("Perform calculations on selected data")
+
         clusterButton = QtGui.QPushButton("Clustering")
-        clusterButton.setIcon(QtGui.QIcon(os.path.join(self.icons_dir, 'square.png')))
+        clusterButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/square.png'))
         clusterButton.setToolTip("Apply clustering on selected data")
         clusterButton.clicked.connect(self.showClust.emit) # When clusterButton is clicked, change central views
 
 
         buttonsBox.addWidget(editButton)
         buttonsBox.addWidget(exportButton)
+        buttonsBox.addWidget(calcButton)
         buttonsBox.addWidget(clusterButton)
 
         # Set the layout of homepage widget and set it as the central widget for QtMainWindow
@@ -101,4 +115,33 @@ class MainView(QtGui.QWidget):
         print "Test passed. SUCCESS!"
 
     def show_coll(self, coll):
-        print coll
+        list = coll.get_img_list()
+        dates = []
+        for l in list :
+            dates.append(self.creation_date(str(l.filename)))
+        date = max(dates)
+        d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
+        label = "Patient : \nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
+        cb = QtGui.QCheckBox(label, self)
+        cb.toggle()
+        cb.stateChanged.connect(lambda : self.selectColl(cb, coll))
+        collectionsDisplayBox.addWidget(cb)
+        collectionsDisplayBox.addStretch(0)
+        collectionsDisplayBox.setSizeConstraint(QtGui.QLayout.SetFixedSize)
+
+    def selectColl(self, cb, coll):
+        if(cb.isChecked()):
+            add_coll(coll)
+        else:
+            rm_coll(coll)
+
+    def creation_date(self,path_to_file):
+        if platform.system() == 'Windows':
+            return os.path.getctime(path_to_file)
+        else:
+            stat = os.stat(path_to_file)
+            try:
+                return stat.st_birthtime
+            except AttributeError:
+                # We're probably on Linux.
+                return stat.st_mtime

@@ -1,0 +1,17 @@
+<RCC>
+  <qresource prefix="/">
+    <file>ressources/logo.png</file>
+    <file>ressources/help.png</file>
+    <file>ressources/error.png</file>
+  </qresource>
+
+  <qresource prefix="/">
+    <file>ressources/app_icons_png/writing.png</file>
+    <file>ressources/app_icons_png/libreoffice.png</file>
+    <file>ressources/app_icons_png/square.png</file>
+    <file>ressources/app_icons_png/play.png</file>
+    <file>ressources/app_icons_png/home-2.png</file>
+    <file>ressources/app_icons_png/calculator.png</file>
+    <file>ressources/app_icons_png/checking.png</file>
+  </qresource>
+</RCC>
