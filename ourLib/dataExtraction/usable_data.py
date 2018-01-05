@@ -25,11 +25,10 @@ class UsableDataCollection(object):
         #                                  value : usable data array (numpy array containing extracted data)
         self.extracted_data_dict = dict()
 
-
     def add_extracted_data_entry(self, origin_filename, usable_data_array):
         # Check whether the given array passed in argument has 4 columns (X,Y,Z, Intensity)
-        colnum=usable_data_array.shape(1)
-        if (colnum > 4) or (colnum<4):
+        colnum=(usable_data_array.shape)[1]
+        if (colnum > 4) or (colnum < 4):
             raise ValueError('UsableDataCollection.addExtracted_data_entry : array given as argument'
                              ' has more or less than 4 columns')
 
@@ -47,7 +46,7 @@ class UsableDataCollection(object):
     def export_as_clusterizable(self):
         clusterizable = np.zeros(shape=(1, 4))  # An empty line of zeros to start with
         for data_array in self.extracted_data_dict.values():
-            clusterizable = np.concatenate(clusterizable, data_array, axis=0)
+            clusterizable = np.concatenate((clusterizable, data_array), axis=0)
 
         # Delete the first row containing only zeros
         clusterizable = np.delete(clusterizable, 0, axis=0)
@@ -55,13 +54,13 @@ class UsableDataCollection(object):
         return clusterizable
 
 
-class UsableData(object):
+class UsableDataSet(object):
     def __init__(self,dataset_name):
         self.dataset_name = dataset_name
         # A dictionary to contain the pair key: name of ImageCollection of origin, value : UsableDataCollection instance
         self.usable_data_list=[]
 
-    def add_usable_data_collection(self,aUsableDataCollection_instance):
+    def add_usable_data_collection(self, aUsableDataCollection_instance):
         if not type(aUsableDataCollection_instance) is UsableDataCollection:
             raise ValueError('UsableData.add_usable_data_collection : given argument is not an instance of '
                              'UsableDataCollection class')
@@ -75,7 +74,7 @@ class UsableData(object):
         clusterizable = np.zeros(shape=(1, 4))  # An empty line of zeros to start with
 
         for udcoll in self.usable_data_list:
-            clusterizable = np.concatenate(clusterizable, udcoll.export_as_clusterizable(), axis=0)
+            clusterizable = np.concatenate((clusterizable, udcoll.export_as_clusterizable()), axis=0)
 
         # Delete the first row containing only zeros
         clusterizable = np.delete(clusterizable, 0, axis=0)
