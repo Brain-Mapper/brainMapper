@@ -36,9 +36,9 @@ class ClusteringDataTable(QtGui.QTableWidget):
 
         row_count=0
         for udcoll in self.clustering_usable_dataset.get_usable_data_list():
-            print(str(udcoll))
+
             extracted_data_dictionary = udcoll.get_extracted_data_dict()
-            print(str(extracted_data_dictionary))
+
             for origin_file in extracted_data_dictionary.keys():
                 data_array = extracted_data_dictionary[origin_file]
                 for data_rows in range(0, data_array.shape[0]):

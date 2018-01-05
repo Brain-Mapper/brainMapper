@@ -157,16 +157,15 @@ class MainView(QtGui.QWidget):
         else:
             QtGui.QMessageBox.information(self, "Selection empty","There's nothing to export.")
 
-    def extract_data(self):
+    def extract_and_cluster(self):
         if(get_selected()):
             choice = QtGui.QMessageBox.question(self, 'Extract data for clustering',
                                                 "You have selected (" + str(len(get_selected())) +") image collections \n Confirm to extract data",
                                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
             if choice == QtGui.QMessageBox.Yes:
                 extract_data_from_selected()
+                self.showClust.emit()
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's no data to extract and clusterize.")
 
-    def extract_and_cluster(self):
-        self.extract_data()
-        self.showClust.emit()
+
