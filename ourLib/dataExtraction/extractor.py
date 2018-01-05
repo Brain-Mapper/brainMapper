@@ -13,19 +13,20 @@
 #
 # 8 december 2017 - Initial design and coding. (@vz-chameleon, Valentina Z.)
 # 11 december 2017 - First attempts at masking  (@vz-chameleon, Valentina Z.)
-# 18 december 2017 - Added Maxime's functions for data extraction (@maximeCluchague)
+# 18 december 2017 - Added Maxime's functions for data extraction (@maximeCluchague via @vz-chameleon)
 
 # Lib dependency imports
 
 if __package__ is None:
     import numpy as np
-    import inspect
     import sys
     from os import path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from usable_data import UsableDataCollection,UsableDataSet
     from niftiHandlers.imagecollection import ImageCollection
     from niftiHandlers.nifimage import NifImage
 else:
+    from usable_data import UsableDataCollection, UsableDataSet
     from ..niftiHandlers.nifimage import NifImage
     from ..niftiHandlers.imagecollection import ImageCollection
 
@@ -86,10 +87,25 @@ def extract_from_collection(a_nifti_imgcoll_obj):
         raise ValueError(
             'extract_from_collection function takes a ImageCollection class instance but ' + a_nifti_imgcoll_obj.___class___ + ' instance was given')
 
-    res = np.zeros(shape=(1, 4)) # an empty line of zeros to start with
+    collection_usable_data = UsableDataCollection(a_nifti_imgcoll_obj.get_label())
 
     # For each NifImage istance in the collection, extract data and stack results
     for nifimg in a_nifti_imgcoll_obj.get_img_list():
-        res=np.concatenate((res, extract(nifimg)), axis=0)
+        collection_usable_data.add_extracted_data_entry(nifimg.filename, extract(nifimg))
 
-    return res
+    return collection_usable_data
+
+
+def extract_from_collection_list(a_nifti_imgcoll_list):
+    # Check if all elements of list are ImageCollection class instances
+    if not all(isinstance(x, ImageCollection) for x in a_nifti_imgcoll_list):
+        raise ValueError('extract_from_collection_list function takes an ImageCollection instances list : at least one '
+                         'of given list elements is not an ImageCollection instance ! ')
+
+    clustering_usable_data = UsableDataSet('Test Dataset')
+
+    for imgcoll in a_nifti_imgcoll_list:
+        clustering_usable_data.add_usable_data_collection(extract_from_collection(imgcoll))
+
+    return clustering_usable_data
+

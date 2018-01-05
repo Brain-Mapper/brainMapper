@@ -29,6 +29,7 @@ class ImageCollection(object):
         # replace the precedent associated value
         self.nifimage_dict = dict()
         self.index = 1
+        self.label = ''
 
     def add(self, a_nif_image):
         if isinstance(a_nif_image,NifImage):
@@ -70,3 +71,9 @@ class ImageCollection(object):
 
     def get_img_list(self):
         return self.nifimage_dict.values()
+
+    def set_label(self, a_label):
+        self.label = a_label
+
+    def get_label(self):
+        return self.label
