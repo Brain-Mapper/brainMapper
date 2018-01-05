@@ -72,7 +72,7 @@ class HomePage(QWidget):
         #  on signals and events)
 
         # -- when mainView widget emits signal showClust, change current Widget in stack to clustering widget
-        self.mainview.showClust.connect(partial(self.stack.setCurrentWidget, self.clustering))
+        self.mainview.showClust.connect(self.updateClusteringView)
         # -- when clustering widget emits signal showMain, change current Widget in stack to main view widget
         self.clustering.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
 
@@ -83,6 +83,10 @@ class HomePage(QWidget):
 
         # Set current widget to main view by default
         self.stack.setCurrentWidget(self.mainview)
+
+    def updateClusteringView(self):
+        self.clustering.fill_table(get_current_usableDataset())
+        self.stack.setCurrentWidget(self.clustering)
 
 
 class UI(QtGui.QMainWindow):

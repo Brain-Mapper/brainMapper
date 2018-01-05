@@ -35,10 +35,10 @@ else:
 
 
 def extract(a_nifti_img_obj):
-    # Check if given param is NifImage class instance
-    if not isinstance(a_nifti_img_obj, NifImage):
-        raise ValueError(
-            'extract function takes a NifImage class instance but ' + a_nifti_img_obj.___class___ + ' instance was given')
+    # # Check if given param is NifImage class instance
+    # if not isinstance(a_nifti_img_obj, NifImage):
+    #     raise ValueError(
+    #         'extract function takes a NifImage class instance but ' + a_nifti_img_obj.___class___ + ' instance was given')
 
     # Array stacking is memory consuming
     # We must create an array that will be the size of extracted data
@@ -82,10 +82,10 @@ def extract(a_nifti_img_obj):
 
 
 def extract_from_collection(a_nifti_imgcoll_obj):
-    # Check if given param is ImageCollection class instance
-    if not isinstance(a_nifti_imgcoll_obj, ImageCollection):
-        raise ValueError(
-            'extract_from_collection function takes a ImageCollection class instance but ' + a_nifti_imgcoll_obj.___class___ + ' instance was given')
+    # # Check if given param is ImageCollection class instance
+    # if not a.__class__ is ImageCollection:
+    #     raise ValueError(
+    #         'extract_from_collection function takes a ImageCollection class instance but ' + str(type(a_nifti_imgcoll_obj)) + ' instance was given')
 
     collection_usable_data = UsableDataCollection(a_nifti_imgcoll_obj.get_label())
 
@@ -97,10 +97,12 @@ def extract_from_collection(a_nifti_imgcoll_obj):
 
 
 def extract_from_collection_list(a_nifti_imgcoll_list):
-    # Check if all elements of list are ImageCollection class instances
-    if not all(isinstance(x, ImageCollection) for x in a_nifti_imgcoll_list):
-        raise ValueError('extract_from_collection_list function takes an ImageCollection instances list : at least one '
-                         'of given list elements is not an ImageCollection instance ! ')
+    # # Check if all elements of list are ImageCollection class instances
+    # print(isinstance(x, ImageCollection) for x in a_nifti_imgcoll_list)
+    # print(all(ImageCollection is x.__class___ for x in a_nifti_imgcoll_list))
+    # if not all(isinstance(x, ImageCollection) for x in a_nifti_imgcoll_list):
+    #     raise ValueError('extract_from_collection_list function takes an ImageCollection instances list : at least one '
+    #                      'of given list elements is not an ImageCollection instance ! ')
 
     clustering_usable_data = UsableDataSet('Test Dataset')
 

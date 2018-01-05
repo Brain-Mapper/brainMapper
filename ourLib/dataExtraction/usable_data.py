@@ -25,6 +25,8 @@ class UsableDataCollection(object):
         #                                  value : usable data array (numpy array containing extracted data)
         self.extracted_data_dict = dict()
 
+        self.rownum=0
+
     def add_extracted_data_entry(self, origin_filename, usable_data_array):
         # Check whether the given array passed in argument has 4 columns (X,Y,Z, Intensity)
         colnum=(usable_data_array.shape)[1]
@@ -32,7 +34,8 @@ class UsableDataCollection(object):
             raise ValueError('UsableDataCollection.addExtracted_data_entry : array given as argument'
                              ' has more or less than 4 columns')
 
-        self.extracted_data_dict[origin_filename]=usable_data_array
+        self.rownum = self.rownum + (usable_data_array.shape)[0]
+        self.extracted_data_dict[origin_filename] = usable_data_array
 
     def remove_extracted_data_entry(self,origin_filename):
         del self.extracted_data_dict[origin_filename]
@@ -42,6 +45,9 @@ class UsableDataCollection(object):
 
     def get_extracted_data_dict(self):
         return self.extracted_data_dict
+
+    def get_row_num(self):
+        return self.rownum
 
     def export_as_clusterizable(self):
         clusterizable = np.zeros(shape=(1, 4))  # An empty line of zeros to start with
@@ -58,17 +64,22 @@ class UsableDataSet(object):
     def __init__(self,dataset_name):
         self.dataset_name = dataset_name
         # A dictionary to contain the pair key: name of ImageCollection of origin, value : UsableDataCollection instance
-        self.usable_data_list=[]
+        self.usable_data_list = []
+        self.rownum = 0
 
     def add_usable_data_collection(self, aUsableDataCollection_instance):
         if not type(aUsableDataCollection_instance) is UsableDataCollection:
             raise ValueError('UsableData.add_usable_data_collection : given argument is not an instance of '
                              'UsableDataCollection class')
 
+        self.rownum = self.rownum + aUsableDataCollection_instance.get_row_num()
         self.usable_data_list.append(aUsableDataCollection_instance)
 
     def get_usable_data_list(self):
         return self.usable_data_list
+
+    def get_row_num(self):
+        return self.rownum
 
     def export_as_clusterizable(self):
         clusterizable = np.zeros(shape=(1, 4))  # An empty line of zeros to start with

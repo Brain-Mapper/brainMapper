@@ -1,12 +1,17 @@
 from ourLib.niftiHandlers.nifimage import NifImage as ni
 from ourLib.niftiHandlers.imagecollection import ImageCollection
+
 from ourLib.dataExtraction import extractor as xt
 
 
 import threading as th
 
+# --- global variables ---
 global selected
 selected = []
+
+currentUsableDataset = None
+
 
 def open_nifti(path):
     image = ni.from_file(path)
@@ -20,6 +25,7 @@ def open_nifti(path):
     #draw_glass_thread.start()
     return image
 
+
 def do_image_collection(files):
     coll = ImageCollection()
     for file in files:
@@ -30,20 +36,39 @@ def do_image_collection(files):
     add_coll(coll)
     return coll
     
+
 def add_coll(coll):
     selected.append(coll)
     
+
 def rm_coll(coll):
     selected.remove(coll)
     
+
 def get_selected():
     return selected
+
 
 def export_nifti():
     print("Export into NIfTI...")
     print selected
 
+
 def export_excel():
     print("Export into Excel...")
     print selected
 
+
+def extract_data_from_selected():
+    """
+    Extract the interesting data from the selected image collections using extractor's module functions
+    :return: A UsableDataSet instance (see dataExtraction.usable_data)
+    """
+    for x in selected:
+        print(type(x))
+    global currentUsableDataset
+    currentUsableDataset = xt.extract_from_collection_list(selected)
+
+
+def get_current_usableDataset():
+    return currentUsableDataset

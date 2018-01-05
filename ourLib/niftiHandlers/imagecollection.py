@@ -32,7 +32,7 @@ class ImageCollection(object):
         self.label = ''
 
     def add(self, a_nif_image):
-        if isinstance(a_nif_image,NifImage):
+        if isinstance(a_nif_image, NifImage):
             self.nifimage_dict[self.index] = a_nif_image
             self.index = self.index + 1  # IMPORTANT !!
         else:

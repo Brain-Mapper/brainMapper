@@ -8,21 +8,48 @@
 #
 # HISTORY
 #
-# 2 january 2018- Initial design and coding. (@vz-chameleon, Valentina Z.)
-import os
+# 2 january 2018 - Initial design and coding. (@vz-chameleon, Valentina Z.)
+# 5 january 2018 - Added functions to fill table with extracted data
+
 from PyQt4 import QtGui
-from PyQt4.QtCore import pyqtSignal
 from PyQt4.Qt import *
+
+import sys
+from os import path
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+from BrainMapper import *
 
 import resources
 
 
 class ClusteringDataTable(QtGui.QTableWidget):
-    def __init__(self, row_num):
+    def __init__(self):
         super(ClusteringDataTable, self).__init__()
-        self.setRowCount(row_num)
-        self.setColumnCount(5)
-        self.setHorizontalHeaderLabels(["PatientID_imgColl", "X", "Y", "Z", "Intensity"])
+        self.clustering_usable_dataset = None
+        self.setRowCount(20)
+        self.setColumnCount(7)
+        self.setHorizontalHeaderLabels(["Image Coll ID","Origin filename", "X", "Y", "Z", "Intensity", "Assigned cluster"])
+
+    def fill_with_extracted_data(self, a_usable_dataset_instance):
+        self.clustering_usable_dataset = a_usable_dataset_instance
+        self.setRowCount(a_usable_dataset_instance.get_row_num())
+
+        row_count=0
+        for udcoll in self.clustering_usable_dataset.get_usable_data_list():
+            print(str(udcoll))
+            extracted_data_dictionary = udcoll.get_extracted_data_dict()
+            print(str(extracted_data_dictionary))
+            for origin_file in extracted_data_dictionary.keys():
+                data_array = extracted_data_dictionary[origin_file]
+                for data_rows in range(0, data_array.shape[0]):
+                    self.setItem(row_count, 0, QtGui.QTableWidgetItem(udcoll.get_imgcoll_name()))
+                    self.setItem(row_count, 1, QtGui.QTableWidgetItem(origin_file))
+                    self.setItem(row_count, 2, QtGui.QTableWidgetItem(str(data_array[data_rows, 0]))) # X coodinate at column 0
+                    self.setItem(row_count, 3, QtGui.QTableWidgetItem(str(data_array[data_rows, 1]))) # Y coodinate at column 1
+                    self.setItem(row_count, 4, QtGui.QTableWidgetItem(str(data_array[data_rows, 2]))) # Z coodinate at column 2
+                    self.setItem(row_count, 5, QtGui.QTableWidgetItem(str(data_array[data_rows, 3]))) # Intensity at column 3
+                    self.setItem(row_count, 6,QtGui.QTableWidgetItem("None yet"))
+                    row_count=row_count+1
 
 
 class ClusteringView(QtGui.QWidget):
@@ -37,7 +64,7 @@ class ClusteringView(QtGui.QWidget):
 
     def __init__(self):
         super(ClusteringView, self).__init__()
-
+        self.table_displayer = None
         self.initClusteringView()
 
     def initClusteringView(self):
@@ -97,9 +124,9 @@ class ClusteringView(QtGui.QWidget):
 
         table_title = QtGui.QLabel('Data - Clustering Results')
         table_title.setStyleSheet(title_style)
-        table_displayer = ClusteringDataTable(20)
+        self.table_displayer = ClusteringDataTable()
         tableBox.addWidget(table_title)
-        tableBox.addWidget(table_displayer)
+        tableBox.addWidget(self.table_displayer)
 
         # set table clust widget's layout
         table_clust.setLayout(tableBox)
@@ -154,12 +181,5 @@ class ClusteringView(QtGui.QWidget):
 
         self.setLayout(containerVbox)
 
-
-def main():
-    app = QtGui.QApplication(sys.argv)
-    ex = ClusteringView()
-    sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    main()
+    def fill_table(self, usable_dataset_instance):
+        self.table_displayer.fill_with_extracted_data(usable_dataset_instance)

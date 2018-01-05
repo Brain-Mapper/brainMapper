@@ -13,6 +13,8 @@
 import os
 from PyQt4 import QtGui
 from PyQt4.Qt import *
+from PyQt4.QtCore import pyqtSignal
+
 import platform
 from datetime import *
 import sys
@@ -93,7 +95,7 @@ class MainView(QtGui.QWidget):
         clusterButton = QtGui.QPushButton("Clustering")
         clusterButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/square.png'))
         clusterButton.setStatusTip("Apply clustering on selected data")
-        clusterButton.clicked.connect(self.showClust.emit) # When clusterButton is clicked, change central views
+        clusterButton.clicked.connect(self.extract_and_cluster) # When clusterButton is clicked, change central views
 
 
         buttonsBox.addWidget(editButton)
@@ -154,3 +156,17 @@ class MainView(QtGui.QWidget):
                 export_excel()
         else:
             QtGui.QMessageBox.information(self, "Selection empty","There's nothing to export.")
+
+    def extract_data(self):
+        if(get_selected()):
+            choice = QtGui.QMessageBox.question(self, 'Extract data for clustering',
+                                                "You have selected (" + str(len(get_selected())) +") image collections \n Confirm to extract data",
+                                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+            if choice == QtGui.QMessageBox.Yes:
+                extract_data_from_selected()
+        else:
+            QtGui.QMessageBox.information(self, "Selection empty", "There's no data to extract and clusterize.")
+
+    def extract_and_cluster(self):
+        self.extract_data()
+        self.showClust.emit()
