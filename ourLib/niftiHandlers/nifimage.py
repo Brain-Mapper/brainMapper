@@ -22,7 +22,6 @@ import nibabel as nib
 import nilearn.plotting as nilplot
 
 
-
 class NifImage(object):
     # Declare class attributes
 
