@@ -13,7 +13,7 @@
 #
 # 8 december 2017 - Initial design and coding. (@vz-chameleon, Valentina Z.)
 # 11 december 2017 - First attempts at masking  (@vz-chameleon, Valentina Z.)
-# 18 december 2017 - Added Maxime's functions for data extraction (@maximeCluchague)
+# 18 december 2017 - Added Maxime's functions for data extraction (@maximeCluchague via @vz-chameleon)
 
 # Lib dependency imports
 
