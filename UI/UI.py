@@ -42,17 +42,6 @@ class Help(QMainWindow):
         icons_credits.setGeometry(QtCore.QRect(10, 80, 400, 100))
         self.show()
 
-
-class Error(QMainWindow):
-    def __init__(self, message):
-        QMainWindow.__init__(self)
-        self.setWindowTitle('Error')
-        self.setWindowIcon(QtGui.QIcon(':ressources/error.png'))
-        self.setGeometry(QRect(100, 100, 400, 200))
-        self.show()
-        print message
-
-
 # In PyQt we cannot open two windows at a time easily, so we will have to change the central widget of our app
 # according to what the user clicks on... To do so, we will use an instance of the following class
 
@@ -83,7 +72,7 @@ class HomePage(QWidget):
         #  on signals and events)
 
         # -- when mainView widget emits signal showClust, change current Widget in stack to clustering widget
-        self.mainview.showClust.connect(partial(self.stack.setCurrentWidget, self.clustering))
+        self.mainview.showClust.connect(self.updateClusteringView)
         # -- when clustering widget emits signal showMain, change current Widget in stack to main view widget
         self.clustering.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
 
@@ -94,6 +83,10 @@ class HomePage(QWidget):
 
         # Set current widget to main view by default
         self.stack.setCurrentWidget(self.mainview)
+
+    def updateClusteringView(self):
+        self.clustering.fill_table(get_current_usableDataset())
+        self.stack.setCurrentWidget(self.clustering)
 
 
 class UI(QtGui.QMainWindow):
@@ -143,8 +136,9 @@ class UI(QtGui.QMainWindow):
         excelAction.setStatusTip('Import from Excel file')
         excelAction.triggered.connect(self.buttonClicked)
 
-        niftiAction = QtGui.QAction('&Import from NIfTI file', self)
-        niftiAction.setStatusTip('Import from NIfTI file')
+        niftiAction = QtGui.QAction('&Import from NIfTI file(s)', self)
+        niftiAction.setStatusTip('Create a collection of one or several NIfTI images')
+        niftiAction.setShortcut('Ctrl+N')
         niftiAction.triggered.connect(self.fromNiFile)
 
         # ADDING ACTIONS TO MENUS
@@ -153,8 +147,9 @@ class UI(QtGui.QMainWindow):
         fileMenu.addAction(exitAction)
         SetMenu = menubar.addMenu('&New Set')
         SetMenu.addAction(setAction)
-        SetMenu.addAction(excelAction)
-        SetMenu.addAction(niftiAction)
+        CollecMenu = menubar.addMenu('&New Collection')
+        CollecMenu.addAction(excelAction) 
+        CollecMenu.addAction(niftiAction) 
 
         self.show()
 
@@ -164,11 +159,13 @@ class UI(QtGui.QMainWindow):
 
     def fromNiFile(self):
         file = QFileDialog.getOpenFileNames()
-        try:
-            collec = do_image_collection(file)
-        except:
-            self.w = Error(sys.exc_info()[0])
-        homepage.mainview.show_coll(collec)
+        if (file != ""):
+            try:
+                collec = do_image_collection(file)
+                homepage.mainview.show_coll(collec)
+            except:
+                err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
+                print (sys.exc_info()[0])
         
     def showHelp(self):
         self.w = Help()

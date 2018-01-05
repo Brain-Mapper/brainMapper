@@ -13,16 +13,14 @@
 import os
 from PyQt4 import QtGui
 from PyQt4.Qt import *
+from PyQt4.QtCore import pyqtSignal
+
 import platform
 from datetime import *
-if __name__ == '__main__':
-    if __package__ is None:
-        import sys
-        from os import path
-        sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-        from BrainMapper import * 
-    else:
-        from ..BrainMapper import *
+import sys
+from os import path
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+from BrainMapper import * 
         
 import resources
 
@@ -82,21 +80,22 @@ class MainView(QtGui.QWidget):
         # - Buttons to access other windows
         editButton = QtGui.QPushButton("Edit")
         editButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/writing.png'))
-        editButton.setToolTip("Edit selected image collections")
+        editButton.setStatusTip("Edit selected image collections")
         editButton.clicked.connect(self.showEdit.emit)
 
         exportButton = QtGui.QPushButton("Export data")
         exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
-        exportButton.setToolTip("Export as xlsx or NIfTI")
+        exportButton.setStatusTip("Export as xlsx or NIfTI")
+        exportButton.clicked.connect(self.export)
 
         calcButton = QtGui.QPushButton("Calculations")
         calcButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/calculator.png'))
-        calcButton.setToolTip("Perform calculations on selected data")
+        calcButton.setStatusTip("Perform calculations on selected data")
 
         clusterButton = QtGui.QPushButton("Clustering")
         clusterButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/square.png'))
-        clusterButton.setToolTip("Apply clustering on selected data")
-        clusterButton.clicked.connect(self.showClust.emit) # When clusterButton is clicked, change central views
+        clusterButton.setStatusTip("Apply clustering on selected data")
+        clusterButton.clicked.connect(self.extract_and_cluster) # When clusterButton is clicked, change central views
 
 
         buttonsBox.addWidget(editButton)
@@ -145,3 +144,29 @@ class MainView(QtGui.QWidget):
             except AttributeError:
                 # We're probably on Linux.
                 return stat.st_mtime
+            
+    def export(self):
+        if(get_selected()):
+            choice = QtGui.QMessageBox.question(self, 'Export selected files',
+                                                "Export into a NIfTI file? (if No : Excel file)",
+                                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+            if choice == QtGui.QMessageBox.Yes:
+                export_nifti()
+            else:
+                export_excel()
+        else:
+            QtGui.QMessageBox.information(self, "Selection empty","There's nothing to export.")
+
+    def extract_data(self):
+        if(get_selected()):
+            choice = QtGui.QMessageBox.question(self, 'Extract data for clustering',
+                                                "You have selected (" + str(len(get_selected())) +") image collections \n Confirm to extract data",
+                                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+            if choice == QtGui.QMessageBox.Yes:
+                extract_data_from_selected()
+        else:
+            QtGui.QMessageBox.information(self, "Selection empty", "There's no data to extract and clusterize.")
+
+    def extract_and_cluster(self):
+        self.extract_data()
+        self.showClust.emit()
