@@ -14,13 +14,14 @@
 # 8 december 2017 - Initial design and coding. (@vz-chameleon, Valentina Z.)
 # 11 december 2017 - First attempts at masking  (@vz-chameleon, Valentina Z.)
 # 18 december 2017 - Added Maxime's functions for data extraction (@maximeCluchague via @vz-chameleon)
+# 5 january 2018 - Adding another data extraction function, depending on numpy (@vz-chameleon)
 
 # Lib dependency imports
+import numpy as np
+import sys
+from os import path
 
 if __package__ is None:
-    import numpy as np
-    import sys
-    from os import path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
     from usable_data import UsableDataCollection,UsableDataSet
     from niftiHandlers.imagecollection import ImageCollection
@@ -31,14 +32,11 @@ else:
     from ..niftiHandlers.imagecollection import ImageCollection
 
 
-
-
-
 def extract(a_nifti_img_obj):
     # # Check if given param is NifImage class instance
     # if not isinstance(a_nifti_img_obj, NifImage):
     #     raise ValueError(
-    #         'extract function takes a NifImage class instance but ' + a_nifti_img_obj.___class___ + ' instance was given')
+    #     'extract function takes a NifImage class instance but ' + a_nifti_img_obj.___class___ + ' instance was given')
 
     # Array stacking is memory consuming
     # We must create an array that will be the size of extracted data
@@ -77,6 +75,22 @@ def extract(a_nifti_img_obj):
                             c = c + 1
 
     del img_data  # deleting safe copy of image data saves a lot of memory !
+
+    return usable_data
+
+
+# This version is 0.01 seconds slower than the first one
+def extract2(a_nifti_img_obj):
+    # Safe copy the data so you won't modify the original image data (see NifImage class)
+    # finite=True is given as an argument to replace NaN or Inf values by zeros
+    img_data = a_nifti_img_obj.get_copy_img_data(True)
+
+    # img_data>0 returns a boolean mask the same size as the image with :
+    #     False if voxel value is not >0, True if it is
+    mask = img_data > 0
+    del img_data    # saves a LOT of memory
+
+    usable_data = np.nonzero(mask)
 
     return usable_data
 
