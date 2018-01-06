@@ -48,8 +48,29 @@ class ClusteringDataTable(QtGui.QTableWidget):
                     self.setItem(row_count, 3, QtGui.QTableWidgetItem(str(data_array[data_rows, 1]))) # Y coodinate at column 1
                     self.setItem(row_count, 4, QtGui.QTableWidgetItem(str(data_array[data_rows, 2]))) # Z coodinate at column 2
                     self.setItem(row_count, 5, QtGui.QTableWidgetItem(str(data_array[data_rows, 3]))) # Intensity at column 3
-                    self.setItem(row_count, 6,QtGui.QTableWidgetItem("None yet"))
-                    row_count=row_count+1
+                    self.setItem(row_count, 6, QtGui.QTableWidgetItem("None yet"))
+                    row_count = row_count+1
+
+    def fill_clust_labels(self, assigned_labels_array):
+
+        def generate_random_hex_dict(n):
+            import random
+            ra = lambda: random.randint(0, 255)
+            hex_dict = dict()
+            for i in range(0, n):
+                hex_string = '#%02X%02X%02X' % (ra(), ra(), ra())
+                hex_dict[str(i)] = hex_string
+            return hex_dict
+
+        colors = generate_random_hex_dict(len(assigned_labels_array))
+
+        row_count = 0
+        for lab in assigned_labels_array:
+            item = QTableWidgetItem(str(lab))
+            item.setTextAlignment(Qt.AlignCenter)
+            item.setBackground(QtGui.QColor(colors[str(lab)]))
+            self.setItem(row_count, 6, item)
+            row_count = row_count + 1
 
 
 class ClusteringView(QtGui.QWidget):
@@ -64,6 +85,7 @@ class ClusteringView(QtGui.QWidget):
 
     def __init__(self):
         super(ClusteringView, self).__init__()
+        self.selected_clustMethods_displayer = None
         self.table_displayer = None
         self.initClusteringView()
 
@@ -73,6 +95,16 @@ class ClusteringView(QtGui.QWidget):
         # ---------- Box Layout Set up ---------
         # Here, the instance IS a Widget, so we'll add the layouts to itself
 
+        # - Horizontal box for a displayer of selected method
+        selectedMBox = QtGui.QHBoxLayout()
+        label = QtGui.QLabel('Clustering method : ')
+        self.selected_clustMethods_displayer = QtGui.QLabel('KMeans(k=3)')
+        self.selected_clustMethods_displayer.setMargin(5)
+        self.selected_clustMethods_displayer.setStyleSheet("background-color:white;")
+
+        selectedMBox.addWidget(label)
+        selectedMBox.addWidget(self.selected_clustMethods_displayer)
+
         # - Horizontal box for go back home button
         buttonsBox= QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
@@ -80,6 +112,7 @@ class ClusteringView(QtGui.QWidget):
         runClusteringButton = QtGui.QPushButton('Run')
         runClusteringButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/play.png'))
         runClusteringButton.setToolTip("Run selected clustering")
+        runClusteringButton.clicked.connect(lambda: self.runSelectedClust('kmeans', [3]))
 
         goHomeButton = QtGui.QPushButton('Go back')
         goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
@@ -89,6 +122,9 @@ class ClusteringView(QtGui.QWidget):
         buttonsBox.addWidget(runClusteringButton)
         buttonsBox.addWidget(goHomeButton)
 
+        topBox=QtGui.QHBoxLayout()
+        topBox.addLayout(selectedMBox)
+        topBox.addLayout(buttonsBox)
 
         # -------------- Script Environemment Widget --------------
         scriptWidget=QtGui.QWidget()
@@ -99,7 +135,7 @@ class ClusteringView(QtGui.QWidget):
         scriptEnv_title.setStyleSheet(title_style)
 
         editor = QtGui.QVBoxLayout()
-        edit_input=QtGui.QTextEdit()
+        edit_input = QtGui.QTextEdit()
 
         editor.addWidget(scriptEnv_title)
         editor.addWidget(edit_input)
@@ -164,7 +200,6 @@ class ClusteringView(QtGui.QWidget):
         hbox.addWidget(clust_res_splitter)
         clustWidget.setLayout(hbox)
 
-
         # ----- Now that we have our two main widgets, we can add them to the main splitter of this view -----
 
         # Set the layout of clustering widget and set it as the central widget for QtMainWindow
@@ -176,10 +211,16 @@ class ClusteringView(QtGui.QWidget):
         hbox.addWidget(main_splitter)
 
         containerVbox = QtGui.QVBoxLayout()
-        containerVbox.addLayout(buttonsBox)
+        containerVbox.addLayout(topBox)
         containerVbox.addLayout(hbox)
 
         self.setLayout(containerVbox)
 
     def fill_table(self, usable_dataset_instance):
         self.table_displayer.fill_with_extracted_data(usable_dataset_instance)
+
+    def runSelectedClust(self, selectedMethod, param_list):
+        labs = run_clustering(selectedMethod, param_list)
+        # print(labs)
+        # print(str(len(labs)))
+        self.table_displayer.fill_clust_labels(labs)

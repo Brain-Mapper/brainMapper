@@ -15,6 +15,6 @@ from sklearn.cluster import KMeans
 import numpy as np
 
 
-def performKmeans(k,X):
+def perform_kmeans(k, X):
     kmeans = KMeans(n_clusters=k, random_state=0).fit(X)
     return kmeans.labels_
