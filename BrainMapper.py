@@ -2,6 +2,7 @@ from ourLib.niftiHandlers.nifimage import NifImage as ni
 from ourLib.niftiHandlers.imagecollection import ImageCollection
 
 from ourLib.dataExtraction import extractor as xt
+from ourLib import clustering as clust
 
 
 import threading as th
@@ -72,3 +73,13 @@ def extract_data_from_selected():
 
 def get_current_usableDataset():
     return currentUsableDataset
+
+
+def run_clustering(selectedClusteringMethod, params_list):
+    if selectedClusteringMethod == 'kmeans':
+        labels = clust.perform_kmeans(params_list[0], currentUsableDataset.export_as_clusterizable())
+    else:
+        print('clustering method not recognised')
+        labels = ['']
+
+    return labels
