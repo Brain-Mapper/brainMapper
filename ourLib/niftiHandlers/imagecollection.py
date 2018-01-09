@@ -15,6 +15,7 @@
 # 22 november 2017- Initial design and coding. (@vz-chameleon, Valentina Z.)
 # 24 november 2017- Replaced classic lists by a dictionary (@vz-chameleon, Valentina Z.)
 # 2 december 2017- Changed paradigms to include NifImage objects (@vz-chameleon, Valentina Z.)
+# 28 decembre 2017- Rework with no use of index to fit the Set implementation (@yoshcraft, Raphael A.)
 
 
 # Lib dependency imports
@@ -22,58 +23,42 @@ from nifimage import NifImage
 
 
 class ImageCollection(object):
-    def __init__(self):
-        # It's better to have a dictionnary, to associate an ID (here, just a number)
+    def __init__(self, name):
+        # It's better to have a dictionary, to associate an ID (here, just a name)
         # and the NIfTI Image instance
-        # WARNING ! 'ID' MUST be unique, since if we have the same key it will
-        # replace the precedent associated value
         self.nifimage_dict = dict()
-        self.index = 1
-        self.label = ''
+        self.name = name
 
     def add(self, a_nif_image):
-        if isinstance(a_nif_image, NifImage):
-            self.nifimage_dict[self.index] = a_nif_image
-            self.index = self.index + 1  # IMPORTANT !!
-        else:
-            raise ValueError('Image Collection takes NifImages, an object of class %s was '
-                             'given'% a_nif_image.__class__.__name__ )
+        """
+        Method to add a nifimage to the dictionary
+        :param a_nif_image:
+        """
+        self.nifimage_dict[a_nif_image.filename] = a_nif_image
 
-    def remove(self, number):
-        del self.nifimage_dict[number]
+    def remove(self, name):
+        """
+        Method to remove a nifimage from the dictionary
+        :param name: name (file name) of the nifimage
+        :return:
+        """
+        del self.nifimage_dict[name]
 
     def add_from_file(self, filename):
-        self.nifimage_dict[self.index] = NifImage.from_file(filename)
-        self.index = self.index + 1  # IMPORTANT !!
+        """
+        Method to add a nifimage from a file name to the dictionary
+        :param filename:
+        :return:
+        """
+        self.nifimage_dict[filename] = NifImage.from_file(filename)
 
     def batch_add_from_files(self, filenames_array):
         for filename in filenames_array:
             self.add_from_file(filename)
 
-    def add_from_array(self, img_name, data_array, affine, nif_format=1):
-        self.nifimage_dict[self.index] = NifImage.from_array(img_name, data_array, affine, nif_format)
-        self.index = self.index + 1  # IMPORTANT !!
-
-    def add_one_like(self, img_name, ref_nif_img, data_array, copy_header=False):
-        self.nifimage_dict[self.index] = NifImage.like(img_name, ref_nif_img, data_array, copy_header)
-        self.index = self.index + 1  # IMPORTANT !!
-
     def batch_save_collection(self, output_folder):
         for nifImage in self.nifimage_dict.values():
             nifImage.save_to_file(output_folder)
 
-    def batch_save_n_images(self, indexes_array, output_folder):
-        if len(indexes_array) > len(self.nifimage_dict):
-            raise ValueError('specified parameters number is bigger than collection size')
-        else:
-            for i in indexes_array :
-                self.nifimage_dict[i].save_to_file(output_folder)
-
-    def get_img_list(self):
-        return self.nifimage_dict.values()
-
-    def set_label(self, a_label):
-        self.label = a_label
-
-    def get_label(self):
-        return self.label
+    def get_name(self):
+        return self.name
