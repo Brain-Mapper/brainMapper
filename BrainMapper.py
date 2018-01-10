@@ -83,3 +83,8 @@ def run_clustering(selectedClusteringMethod, params_list):
         labels = ['']
 
     return labels
+
+def get_selected_from_name(name):
+    for x in selected:
+        if(name == x.name):
+            return x
