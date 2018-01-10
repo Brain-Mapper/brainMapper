@@ -76,6 +76,7 @@ class HomePage(QWidget):
         # -- when clustering widget emits signal showMain, change current Widget in stack to main view widget
         self.clustering.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
 
+        self.mainview.showEdit.connect(self.updateEditView)
         # -- when mainView widget emits signal showEdit, change current Widget in stack to clustering widget
         self.mainview.showEdit.connect(partial(self.stack.setCurrentWidget, self.edit_colls))
         # -- when collection edition widget emits signal showMain, change current Widget in stack to main view widget
@@ -87,6 +88,10 @@ class HomePage(QWidget):
     def updateClusteringView(self):
         self.clustering.fill_table(get_current_usableDataset())
         self.stack.setCurrentWidget(self.clustering)
+
+    def updateEditView(self):
+        self.edit_colls.fill_coll()
+        self.stack.setCurrentWidget(self.edit_colls)
 
 
 class UI(QtGui.QMainWindow):

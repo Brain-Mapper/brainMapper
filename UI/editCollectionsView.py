@@ -21,7 +21,6 @@ from BrainMapper import *
 
 import resources
 
-
 class CollectionAccessButton(QtGui.QPushButton):
 
     styler = "CollectionAccessButton {background-color: white; border-bottom: 1px solid black;} " \
@@ -71,7 +70,7 @@ class EditCollectionsView(QtGui.QWidget):
         self.initEditCollectionsView()
 
     def initEditCollectionsView(self):
-
+        global splitter1, topleft, containerVbox
         # - Horizontal box for go back home button
         buttonsBox = QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
@@ -89,14 +88,14 @@ class EditCollectionsView(QtGui.QWidget):
         buttonsBox.addWidget(goHomeButton)
 
         hbox = QtGui.QHBoxLayout()
-        topleft=CollectionsAccessBar(['Image Collection P92','Image Collection P95','Image Collection P98'])
         bottom = QtGui.QFrame()
         bottom.setFrameShape(QtGui.QFrame.StyledPanel)
 
         splitter1 = QtGui.QSplitter(Qt.Horizontal)
         textedit = QtGui.QTextEdit()
-        splitter1.addWidget(topleft)
+        topleft=CollectionsAccessBar(['1','2'])
         splitter1.addWidget(textedit)
+        splitter1.addWidget(topleft)
         splitter1.setSizes([100, 200])
 
         splitter2 = QtGui.QSplitter(Qt.Vertical)
@@ -111,5 +110,13 @@ class EditCollectionsView(QtGui.QWidget):
 
         self.setLayout(containerVbox)
 
-    def ShowSelected(self):
-        print get_selected()
+    def fill_coll(self):
+        old = splitter1.widget(1)
+        containerVbox.removeWidget(old)
+        old.setParent(None)
+        colls = get_selected()
+        labels = []
+        for x in colls:
+            labels.append(x.name)
+        topleft=CollectionsAccessBar(labels)
+        splitter1.addWidget(topleft)

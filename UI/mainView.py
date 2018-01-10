@@ -81,7 +81,7 @@ class MainView(QtGui.QWidget):
         editButton = QtGui.QPushButton("Edit")
         editButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/writing.png'))
         editButton.setStatusTip("Edit selected image collections")
-        editButton.clicked.connect(self.showEdit.emit)
+        editButton.clicked.connect(self.edit_pannel)
 
         exportButton = QtGui.QPushButton("Export data")
         exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
@@ -169,3 +169,8 @@ class MainView(QtGui.QWidget):
             QtGui.QMessageBox.information(self, "Selection empty", "There's no data to extract and clusterize.")
 
 
+    def edit_pannel(self):
+        if(get_selected()):
+            self.showEdit.emit()
+        else:
+            QtGui.QMessageBox.information(self, "Selection empty", "There's no data to edit.")
