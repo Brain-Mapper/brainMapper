@@ -62,3 +62,10 @@ class ImageCollection(object):
 
     def get_name(self):
         return self.name
+
+    def get_img_list(self):
+        return self.nifimage_dict
+
+    def set_name(self, new):
+        self.name = new
+    

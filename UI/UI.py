@@ -159,13 +159,14 @@ class UI(QtGui.QMainWindow):
 
     def fromNiFile(self):
         file = QFileDialog.getOpenFileNames()
-        if (file != ""):
-            try:
-                collec = do_image_collection(file)
-                homepage.mainview.show_coll(collec)
-            except:
-                err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
-                print (sys.exc_info()[0])
+##        if (file != ""):
+##            try:
+##                collec = do_image_collection(file)
+##            except:
+##                err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
+##                print (sys.exc_info()[0])
+        collec = do_image_collection(file)
+        homepage.mainview.show_coll(collec)
         
     def showHelp(self):
         self.w = Help()

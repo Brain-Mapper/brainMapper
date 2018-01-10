@@ -14,6 +14,11 @@ from PyQt4 import QtGui
 from PyQt4.Qt import *
 from PyQt4.QtCore import pyqtSignal,QCoreApplication
 
+import sys
+from os import path
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+from BrainMapper import * 
+
 import resources
 
 
@@ -84,7 +89,6 @@ class EditCollectionsView(QtGui.QWidget):
         buttonsBox.addWidget(goHomeButton)
 
         hbox = QtGui.QHBoxLayout()
-
         topleft=CollectionsAccessBar(['Image Collection P92','Image Collection P95','Image Collection P98'])
         bottom = QtGui.QFrame()
         bottom.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -106,3 +110,6 @@ class EditCollectionsView(QtGui.QWidget):
         containerVbox.addLayout(hbox)
 
         self.setLayout(containerVbox)
+
+    def ShowSelected(self):
+        print get_selected()

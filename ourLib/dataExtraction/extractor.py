@@ -100,12 +100,13 @@ def extract_from_collection(a_nifti_imgcoll_obj):
     # if not a.__class__ is ImageCollection:
     #     raise ValueError(
     #         'extract_from_collection function takes a ImageCollection class instance but ' + str(type(a_nifti_imgcoll_obj)) + ' instance was given')
-
-    collection_usable_data = UsableDataCollection(a_nifti_imgcoll_obj.get_label())
+    collection_usable_data = UsableDataCollection(a_nifti_imgcoll_obj.get_name())
 
     # For each NifImage istance in the collection, extract data and stack results
-    for nifimg in a_nifti_imgcoll_obj.get_img_list():
-        collection_usable_data.add_extracted_data_entry(nifimg.filename, extract(nifimg))
+    img_list = a_nifti_imgcoll_obj.get_img_list()
+    
+    for nifimg in a_nifti_imgcoll_obj.get_img_list().items():
+        collection_usable_data.add_extracted_data_entry(nifimg[1], extract(nifimg[1]))
 
     return collection_usable_data
 

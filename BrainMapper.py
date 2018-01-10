@@ -28,7 +28,7 @@ def open_nifti(path):
 
 
 def do_image_collection(files):
-    coll = ImageCollection()
+    coll = ImageCollection("default")
     for file in files:
         image = open_nifti(str(file))
         coll.add(image)

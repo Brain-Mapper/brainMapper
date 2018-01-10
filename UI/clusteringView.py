@@ -43,7 +43,7 @@ class ClusteringDataTable(QtGui.QTableWidget):
                 data_array = extracted_data_dictionary[origin_file]
                 for data_rows in range(0, data_array.shape[0]):
                     self.setItem(row_count, 0, QtGui.QTableWidgetItem(udcoll.get_imgcoll_name()))
-                    self.setItem(row_count, 1, QtGui.QTableWidgetItem(origin_file))
+                    self.setItem(row_count, 1, QtGui.QTableWidgetItem(str(origin_file.filename)))
                     self.setItem(row_count, 2, QtGui.QTableWidgetItem(str(data_array[data_rows, 0]))) # X coodinate at column 0
                     self.setItem(row_count, 3, QtGui.QTableWidgetItem(str(data_array[data_rows, 1]))) # Y coodinate at column 1
                     self.setItem(row_count, 4, QtGui.QTableWidgetItem(str(data_array[data_rows, 2]))) # Z coodinate at column 2

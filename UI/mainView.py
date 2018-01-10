@@ -117,10 +117,10 @@ class MainView(QtGui.QWidget):
         list = coll.get_img_list()
         dates = []
         for l in list :
-            dates.append(self.creation_date(str(l.filename)))
+            dates.append(self.creation_date(str(l)))
         date = max(dates)
         d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
-        label = "Patient : \nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
+        label = "Patient : "+str(coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
         cb = QtGui.QCheckBox(label, self)
         cb.toggle()
         cb.stateChanged.connect(lambda : self.selectColl(cb, coll))
