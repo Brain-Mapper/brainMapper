@@ -42,9 +42,11 @@ class InfosBar(QtGui.QWidget):
         self.hbox.removeWidget(self.group)
         self.group.setParent(None)
         self.group = QtGui.QGroupBox()
-        self.group.setStyleSheet(self.styler)
-        label_name = QtGui.QLabel("Collection's name : "+ str(coll.name) + str(random.randint(0,50)))
-        label2_name = QtGui.QLabel("Collection's name : "+ str(coll.name) + str(random.randint(0,50)))
+        label_name = QtGui.QLabel("Collection's name : "+ str(coll.name))
+        list_images = "List of images :\t"
+        for i in coll.get_img_list().keys():
+            list_images = list_images+str(i)+"\n\t\t"
+        label2_name = QtGui.QLabel(list_images)
         self.vbox = QtGui.QVBoxLayout()
         self.vbox.addWidget(label_name)
         self.vbox.addWidget(label2_name)

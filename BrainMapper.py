@@ -29,6 +29,10 @@ def open_nifti(path):
 
 def do_image_collection(files):
     coll = ImageCollection("default")
+    # We want an unique name for each collection
+    # To do so we use the object ID
+    name = str(coll).split("0x")
+    coll.set_name("<"+name[1])
     for file in files:
         image = open_nifti(str(file))
         coll.add(image)
