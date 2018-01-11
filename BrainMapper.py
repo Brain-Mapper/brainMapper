@@ -8,9 +8,9 @@ from ourLib import clustering as clust
 import threading as th
 
 # --- global variables ---
+current_collec = None
 selected = []
 toRM = []
-current_collec = None
 currentUsableDataset = None
 
 
@@ -101,9 +101,33 @@ def add_toRM(im):
 
 def rm_toRM(im):
     toRM.remove(im)
+    print toRM
 
 def reset_toRM():
     del toRM[:]
 
 def set_current_coll(coll):
+    global current_collec
     current_collec = coll
+
+def get_current_coll():
+    global current_collec
+    return current_collec
+
+def set_current_coll_name(name):
+    global current_collec
+    current_collec.set_name(name)
+    print current_collec.name
+
+def exists_selected(name):
+    for i in selected:
+        if(i.name == name):
+            return True
+    return False
+
+def add_image_coll(coll,files):
+    for file in files:
+        coll.add_from_file(str(file))
+
+def delete_coll(coll):
+    print "delete " + str(coll.name)

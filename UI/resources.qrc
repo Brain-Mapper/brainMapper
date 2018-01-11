@@ -16,5 +16,6 @@
     <file>ressources/app_icons_png/trash.png</file>
     <file>ressources/app_icons_png/eye.png</file>
     <file>ressources/app_icons_png/curve-arrow.png</file>
+    <file>ressources/app_icons_png/up-arrow.png</file>
   </qresource>
 </RCC>
