@@ -101,7 +101,6 @@ def add_toRM(im):
 
 def rm_toRM(im):
     toRM.remove(im)
-    print toRM
 
 def reset_toRM():
     del toRM[:]
@@ -117,7 +116,6 @@ def get_current_coll():
 def set_current_coll_name(name):
     global current_collec
     current_collec.set_name(name)
-    print current_collec.name
 
 def exists_selected(name):
     for i in selected:
@@ -131,3 +129,11 @@ def add_image_coll(coll,files):
 
 def delete_coll(coll):
     print "delete " + str(coll.name)
+
+def save_modifs():
+    global current_collec
+    print current_collec.get_img_list()
+    for i in toRM:
+        current_collec.remove(i.filename)
+    print current_collec.get_img_list()
+    reset_toRM()

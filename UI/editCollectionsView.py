@@ -36,7 +36,7 @@ class ImageBar(QtGui.QWidget):
         self.removeButton = QtGui.QPushButton("Remove")
         self.removeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/trash.png'))
         self.removeButton.setStatusTip("Remove image from collection")
-        self.removeButton.clicked.connect(self.remove)
+        self.removeButton.clicked.connect(self.do)
         self.removeButton.setFixedWidth(110)
 
         showButton = QtGui.QPushButton("Show")
@@ -58,7 +58,6 @@ class ImageBar(QtGui.QWidget):
         self.removeButton.setText("Re Add")
         self.removeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/curve-arrow.png'))
         self.removeButton.setStatusTip("Re add image into collection")
-        self.removeButton.clicked.connect(self.readd)
 
     def readd(self):
         rm_toRM(self.im)
@@ -66,7 +65,12 @@ class ImageBar(QtGui.QWidget):
         self.removeButton.setText("Remove")
         self.removeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/trash.png'))
         self.removeButton.setStatusTip("Remove image from collection")
-        self.removeButton.clicked.connect(self.remove)
+
+    def do(self):
+        if(self.removeButton.text() == "Remove"):
+            self.remove()
+        else:
+            self.readd()
         
         
 class InfosBar(QtGui.QWidget):
@@ -154,9 +158,10 @@ class InfosBar(QtGui.QWidget):
 
     def save(self):
         if(len(get_toRM())>0):
-            print "ok"
+            save_modifs()
+            self.redo(get_current_coll())
         else:
-            print "non k"
+            info = QtGui.QMessageBox.information(self, "Info", "There's nothing to save!")
 
     def changeName(self):
         print get_current_coll().name
@@ -280,6 +285,7 @@ class EditCollectionsView(QtGui.QWidget):
         splitter1.addWidget(topleft)
 
     def showInfos(self, name, button):
+        reset_toRM()
         col = get_selected_from_name(name)
         set_current_coll(col)
         self.infos.redo(col)
