@@ -16,7 +16,6 @@ from PyQt4.Qt import *
 from PyQt4.QtCore import pyqtSignal
 from PyQt4 import QtCore
 
-import platform
 from datetime import *
 import sys
 from os import path
@@ -25,6 +24,52 @@ from BrainMapper import *
         
 import resources
 
+class CollButton(QtGui.QCheckBox):
+
+    styler = "SetButton {background-color: white; border-bottom: 1px solid black;} " \
+             "SetButton:hover {background-color : #ccff99;}"
+
+    def __init__(self, coll, parent=None):
+        super(CollButton, self).__init__(parent=parent)
+        self.coll = coll
+        self.toggle()
+        self.stateChanged.connect(lambda : self.selectColl(cb, coll))
+
+        list = coll.get_img_list()
+        dates = []
+        for l in list :
+            dates.append(creation_date(str(l)))
+        date = max(dates)
+        d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
+        label = "Patient : "+str(coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
+        self.setText(label)
+        
+
+class CollectionsView(QtGui.QWidget):
+    def __init__(self):
+        super(CollectionsView, self).__init__()
+        group = QtGui.QGroupBox()
+        self.vbox = QtGui.QVBoxLayout()
+        access_bar_title = QtGui.QLabel("List of collections")
+        self.vbox.addWidget(access_bar_title)
+
+        self.vbox.addStretch(1)
+        group.setLayout(self.vbox)
+
+        hbox=QtGui.QHBoxLayout()
+        hbox.addWidget(group)
+
+        self.setLayout(hbox)
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()/1.4
+        mainwind_w = rec.width()/1.5
+        self.setMaximumSize(QSize(mainwind_w/0.5, mainwind_h))
+               
+
+    def add(self, my_coll):
+        self.vbox.addWidget(CollButton(my_coll))
+
+
 class SetButton(QtGui.QWidget):
 
     styler = "SetButton {background-color: white; border-bottom: 1px solid black;} " \
@@ -32,61 +77,126 @@ class SetButton(QtGui.QWidget):
 
     def __init__(self, my_set, parent=None):
         super(SetButton, self).__init__(parent=parent)
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()/1.4
+        mainwind_w = rec.width()/1.5
         self.my_set = my_set
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height()
         mainwind_w = rec.width()
-        setB = QtGui.QPushButton(my_set.name)
-        setB.setStatusTip("Select this set and show the collections inside")
-        setB.clicked.connect(self.test)
-        setB.setStyleSheet(self.styler)
+        
+        self.setB = QtGui.QPushButton(my_set.name)
+        self.setB.setStatusTip("Select this set and show the collections inside")
+        self.setB.clicked.connect(self.current_set)
+        self.setB.setStyleSheet(self.styler)
+        self.setB.setToolTip(my_set.name)
 
-        self.vbox = QtGui.QVBoxLayout()
-        self.group = QtGui.QGroupBox()
-        self.hbox=QtGui.QHBoxLayout()
-        self.hbox.addWidget(self.group)
+        hbox = QtGui.QHBoxLayout()
+        hbox.addWidget(self.setB)
 
-        self.vbox.addWidget(setB)
-
-        self.group_buttons = QtGui.QGroupBox()
-        self.buttons = QtGui.QHBoxLayout()
-        SSButton = QtGui.QPushButton('Add')
+        SSButton = QtGui.QPushButton()
         SSButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/up-arrow.png'))
+        SSButton.clicked.connect(self.addSubet)
         SSButton.setStatusTip("Add sub set")
-        self.buttons.addWidget(SSButton)
+        SSButton.setFixedSize(QSize(mainwind_w/70, mainwind_h/30))
+        hbox.addWidget(SSButton)
 
-        NameButton = QtGui.QPushButton('Rename')
+        NameButton = QtGui.QPushButton()
         NameButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/writing.png'))
+        NameButton.clicked.connect(self.changeName)
         NameButton.setStatusTip("Change Set Name")
-        self.buttons.addWidget(NameButton)
+        NameButton.setFixedSize(QSize(mainwind_w/70, mainwind_h/30))
+        hbox.addWidget(NameButton)
+
+        self.SSList = QtGui.QComboBox()
+        self.SSList.setStatusTip("Show all sub sets")
+        self.SSList.setFixedSize(QSize(mainwind_w/100, mainwind_h/30))
+        self.SSList.activated.connect(self.test)
+        hbox.addWidget(self.SSList)
         
-        self.group_buttons.setLayout(self.buttons)
-        self.vbox.addWidget(self.group_buttons)
-        self.group.setLayout(self.vbox)
-        
-        self.hbox.addWidget(self.group)        
-        self.setLayout(self.hbox)
+        self.setLayout(hbox)
+        self.setMaximumSize(QSize(self.parent().frameGeometry().width()*0.8, mainwind_h/8))
 
     def test(self):
+        print self.SSList.currentText()
+    def current_set(self):
         set_current_set(self.my_set)
 
-class SetAccessBar(QtGui.QGroupBox):
-    def __init__(self, list_sets):
-        super(SetAccessBar, self).__init__()
-        rec = QApplication.desktop().availableGeometry()
-        mainwind_h = rec.height()
-        mainwind_w = rec.width()
-        self.vbox = QtGui.QVBoxLayout()
-        
-        access_bar_title = QtGui.QLabel("List of sets")
-        
-        self.vbox.addWidget(access_bar_title)
-        for lab in list_sets :
-            self.vbox.addWidget(SetButton(lab))
+    def addSubet(self):
+        text, ok = QInputDialog.getText(self, 'Create a Sub Set', "Enter a name for your sub set of set named "+str(self.my_set.name)+":")
+        if(str(text)!=""):
+            try:
+                new_ok = True
+                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
+                for i in not_ok:
+                    if i in str(text):
+                        new_ok = False
+                if new_ok and not exists_set(str(text)):
+                    self.my_set.add_empty_subset(str(text))
+                    self.SSList.addItem(str(text))
+                else :
+                    err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
+            except :
+                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
 
-        self.setLayout(self.vbox)
+    def changeName(self):
+        text, ok = QInputDialog.getText(self, 'Rename a set', "Enter a new name for your set currently named "+str(self.my_set.name)+":")
+        if(str(text)!=""):
+            try:
+                new_ok = True
+                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
+                for i in not_ok:
+                    if i in str(text):
+                        new_ok = False
+                if new_ok and not exists_set(str(text)):
+                    self.my_set.set_name(str(text))
+                    size = self.setB.size()
+                    self.setB.setText(str(text))
+                    rec = QApplication.desktop().availableGeometry()
+                    mainwind_h = rec.height()
+                    mainwind_w = rec.width()
+                    self.setB.setMaximumSize(size)
+                else :
+                    err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
+            except :
+                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
+
+
+        
+class SetAccessBar(QtGui.QWidget):
+    def __init__(self,parent=None):
+        super(SetAccessBar, self).__init__(parent=parent)
+        
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()/1.4
+        mainwind_w = rec.width()/1.5
+        
+        group = QtGui.QGroupBox()
+        self.vbox = QtGui.QVBoxLayout()
+        access_bar_title = QtGui.QLabel("List of sets")
+        self.vbox.addWidget(access_bar_title)
+
+        my_set = newSet("default")
+        set_current_set(my_set)
+
+        group.setLayout(self.vbox)
+
+        scroll = QtGui.QScrollArea()
+        scroll.setWidget(group)
+        scroll.setWidgetResizable(True)
+        scroll.setFixedHeight(mainwind_h*0.8)
+        
+        self.vbox.addWidget(SetButton(my_set,self))
+        
+        hbox=QtGui.QHBoxLayout()
+        hbox.addWidget(scroll)
+
+        self.setLayout(hbox)
+        self.setMaximumSize(QSize(mainwind_w/4.5, mainwind_h))
+               
+
     def add(self, my_set):
-        self.vbox.addWidget(SetButton(my_set))
+        self.vbox.addWidget(SetButton(my_set,self))
 
 class MainView(QtGui.QWidget):
 
@@ -104,39 +214,7 @@ class MainView(QtGui.QWidget):
 
         self.initMainView()
 
-    def initMainView(self):
-        # This horizontal Box will contain two vertical boxes, one for the set access bar and another for image collec
-        # tions display
-        rec = QApplication.desktop().availableGeometry()
-        mainwind_h = rec.height()
-        mainwind_w = rec.width()
-        
-        middleBox = QtGui.QHBoxLayout()
-
-        # - Vertical box for sets layout
-        self.setAccessBox = SetAccessBar([newSet("default_set")])
-
-        scroll = QtGui.QScrollArea()
-        scroll.setWidget(self.setAccessBox)
-        scroll.setWidgetResizable(True)
-        scroll.setFixedHeight(mainwind_h*0.6)
-        scroll.setFixedWidth(mainwind_w*0.12)
-        #scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-
-        # - Vertical box for image collections display
-        global collectionsDisplayBox
-        collectionsDisplayBox = QtGui.QVBoxLayout()
-        edit1 = QtGui.QLineEdit()
-        collectionsDisplayBox.addWidget(edit1)
-        collectionsDisplayBox.addStretch(0)
-        collectionsDisplayBox.setSizeConstraint(QtGui.QLayout.SetMaximumSize)
-
-        # Add the previous vertical boxes to horizontal box
-        middleBox.addWidget(scroll)
-        middleBox.addLayout(collectionsDisplayBox)
-
-        # This horizontal Box will contain a button bar to access all other windows and functionalitites once the data
-        # in image collection display has been selected
+    def initMainView(self):        
         buttonsBox = QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
 
@@ -166,33 +244,26 @@ class MainView(QtGui.QWidget):
         buttonsBox.addWidget(calcButton)
         buttonsBox.addWidget(clusterButton)
 
-        # Set the layout of homepage widget and set it as the central widget for QtMainWindow
+        self.setAccessBox = SetAccessBar()
+        self.collectionsDisplayBox = CollectionsView()
+        hbox = QtGui.QHBoxLayout()
+        bottom = QtGui.QFrame()
+        bottom.setFrameShape(QtGui.QFrame.StyledPanel)
+        splitter1 = QtGui.QSplitter(Qt.Horizontal)
+        splitter1.addWidget(self.setAccessBox)
+        splitter1.addWidget(self.collectionsDisplayBox)
+        hbox.addWidget(splitter1)
         containerVbox = QtGui.QVBoxLayout()
-        containerVbox.addLayout(middleBox)
+        containerVbox.addLayout(hbox)
         containerVbox.addLayout(buttonsBox)
-        
-        
-        self.setStyleSheet("border:1px solid rgb(255,255,225);")
-
+        #self.setStyleSheet("border:1px solid rgb(255,255,225);")
         self.setLayout(containerVbox)
 
     def buttonClicked(self):
         print "Test passed. SUCCESS!"
 
     def show_coll(self, coll):
-        list = coll.get_img_list()
-        dates = []
-        for l in list :
-            dates.append(self.creation_date(str(l)))
-        date = max(dates)
-        d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
-        label = "Patient : "+str(coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
-        cb = QtGui.QCheckBox(label, self)
-        cb.toggle()
-        cb.stateChanged.connect(lambda : self.selectColl(cb, coll))
-        collectionsDisplayBox.addWidget(cb)
-        collectionsDisplayBox.addStretch(0)
-        collectionsDisplayBox.setSizeConstraint(QtGui.QLayout.SetFixedSize)
+        self.collectionsDisplayBox.add(coll)
 
     def selectColl(self, cb, coll):
         if(cb.isChecked()):
@@ -200,22 +271,12 @@ class MainView(QtGui.QWidget):
         else:
             rm_coll(coll)
 
-    def creation_date(self,path_to_file):
-        if platform.system() == 'Windows':
-            return os.path.getctime(path_to_file)
-        else:
-            stat = os.stat(path_to_file)
-            try:
-                return stat.st_birthtime
-            except AttributeError:
-                # We're probably on Linux.
-                return stat.st_mtime
-            
+    
     def export(self):
         if(get_selected()):
             choice = QtGui.QMessageBox.question(self, 'Export selected files',
-                                                "Export into a NIfTI file? (if No : Excel file)",
-                                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                                "Export into a NIfTI file? (if No : Excel file)",
+                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
             if choice == QtGui.QMessageBox.Yes:
                 export_nifti()
             else:
@@ -226,14 +287,13 @@ class MainView(QtGui.QWidget):
     def extract_and_cluster(self):
         if(get_selected()):
             choice = QtGui.QMessageBox.question(self, 'Extract data for clustering',
-                                                "You have selected (" + str(len(get_selected())) +") image collections \n Confirm to extract data",
-                                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                                "You have selected (" + str(len(get_selected())) +") image collections \n Confirm to extract data",
+                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
             if choice == QtGui.QMessageBox.Yes:
                 extract_data_from_selected()
                 self.showClust.emit()
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's no data to extract and clusterize.")
-
 
     def edit_pannel(self):
         if(get_selected()):
@@ -243,3 +303,4 @@ class MainView(QtGui.QWidget):
 
     def show_set(self, new_set):
         self.setAccessBox.add(new_set)
+

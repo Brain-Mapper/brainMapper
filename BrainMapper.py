@@ -6,6 +6,8 @@ from ourLib.dataExtraction import extractor as xt
 from ourLib import clustering as clust
 
 
+import os
+import platform
 import threading as th
 
 # --- global variables ---
@@ -156,3 +158,15 @@ def set_current_set(new_set):
     global currentSet
     currentSet = new_set
     print currentSet
+
+def creation_date(path_to_file):
+        if platform.system() == 'Windows':
+            return os.path.getctime(path_to_file)
+        else:
+            stat = os.stat(path_to_file)
+            try:
+                return stat.st_birthtime
+            except AttributeError:
+                # We're probably on Linux.
+                return stat.st_mtime
+

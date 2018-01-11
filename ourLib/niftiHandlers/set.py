@@ -191,3 +191,6 @@ class Set(object):
                         for sub_item in item_list:
                             if sub_item != '.DS_Store':
                                 set.collection_dict[item].add(NifImage.from_file(os.path.join(item_path, sub_item)))
+
+    def set_name(self,name):
+        self.name = name
