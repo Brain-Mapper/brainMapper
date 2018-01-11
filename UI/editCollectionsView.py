@@ -26,6 +26,8 @@ class ImageBar(QtGui.QWidget):
     #styler = "border:1px solid rgb(255,255,225);"
     def __init__(self, im):
         super(ImageBar, self).__init__()
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()
         self.im = im
         filname = im.filename.split("/")
         filna = filname[len(filname)-1]
@@ -76,6 +78,8 @@ class ImageBar(QtGui.QWidget):
 class InfosBar(QtGui.QWidget):
     def __init__(self, parent = None):
         super(InfosBar, self).__init__(parent = parent)
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()
         self.vbox = QtGui.QVBoxLayout()
         self.group = QtGui.QGroupBox()
         rec = QApplication.desktop().availableGeometry()
@@ -86,7 +90,7 @@ class InfosBar(QtGui.QWidget):
         self.scroll = QtGui.QScrollArea()
         self.scroll.setWidget(self.group)
         self.scroll.setWidgetResizable(True)
-        self.scroll.setFixedHeight(220)
+        self.scroll.setFixedHeight(mainwind_h*0.5)
         
         self.hbox=QtGui.QHBoxLayout()
         self.hbox.addWidget(self.scroll)
@@ -141,7 +145,7 @@ class InfosBar(QtGui.QWidget):
         
         self.scroll.setWidget(self.group)
         self.scroll.setWidgetResizable(True)
-        self.scroll.setFixedHeight(220)
+        self.scroll.setFixedHeight(self.parent().frameGeometry().height()*0.9)
         self.hbox.addWidget(self.scroll)
         self.setLayout(self.hbox)
 
@@ -158,8 +162,12 @@ class InfosBar(QtGui.QWidget):
 
     def save(self):
         if(len(get_toRM())>0):
-            save_modifs()
-            self.redo(get_current_coll())
+            choice = QtGui.QMessageBox.question(self, 'Save changes',
+                                                "Are you sure you want to save your modifications? This is irreversible.",
+                                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+            if choice == QtGui.QMessageBox.Yes:
+                save_modifs()
+                self.redo(get_current_coll())
         else:
             info = QtGui.QMessageBox.information(self, "Info", "There's nothing to save!")
 
@@ -196,7 +204,7 @@ class CollectionAccessButton(QtGui.QPushButton):
     def __init__(self, label, parent=None):
         super(CollectionAccessButton, self).__init__(label, parent=parent)
         self.setStyleSheet(self.styler)
-        self.clicked.connect(lambda : self.parent().parent().parent().parent().parent().showInfos(label,self))
+        self.clicked.connect(lambda : self.parent().parent().parent().parent().parent().parent().parent().showInfos(label,self))
 
 
 class CollectionsAccessBar(QtGui.QWidget):
@@ -256,14 +264,20 @@ class EditCollectionsView(QtGui.QWidget):
 
         splitter1 = QtGui.QSplitter(Qt.Horizontal)
         topleft=CollectionsAccessBar(['1','2'],self)
-        splitter1.setSizes([100, 200])
+
+        scroll = QtGui.QScrollArea()
+        scroll.setWidget(splitter1)
+        scroll.setWidgetResizable(True)
         
         self.infos = InfosBar()
         splitter1.addWidget(self.infos)
         splitter1.addWidget(topleft)
         splitter2 = QtGui.QSplitter(Qt.Vertical)
-        splitter2.addWidget(splitter1)
+
+
+        splitter2.addWidget(scroll)
         splitter2.addWidget(bottom)
+        splitter2.setSizes([self.frameGeometry().height()*0.65, self.frameGeometry().height()*0.35])
 
         hbox.addWidget(splitter2)
 
