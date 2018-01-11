@@ -8,9 +8,9 @@ from ourLib import clustering as clust
 import threading as th
 
 # --- global variables ---
-global selected
 selected = []
-
+toRM = []
+current_collec = None
 currentUsableDataset = None
 
 
@@ -92,3 +92,18 @@ def get_selected_from_name(name):
     for x in selected:
         if(name == x.name):
             return x
+
+def get_toRM():
+    return toRM
+
+def add_toRM(im):
+    toRM.append(im)
+
+def rm_toRM(im):
+    toRM.remove(im)
+
+def reset_toRM():
+    del toRM[:]
+
+def set_current_coll(coll):
+    current_collec = coll

@@ -25,6 +25,7 @@ class ImageBar(QtGui.QWidget):
     #styler = "border:1px solid rgb(255,255,225);"
     def __init__(self, im):
         super(ImageBar, self).__init__()
+        self.im = im
         filname = im.filename.split("/")
         filna = filname[len(filname)-1]
         self.label = QtGui.QLabel("   "+filna)
@@ -51,6 +52,7 @@ class ImageBar(QtGui.QWidget):
         #self.setStyleSheet(self.styler)
 
     def remove(self):
+        add_toRM(self.im)
         self.label.setStyleSheet('color : red')
         self.removeButton.setText("Re Add")
         self.removeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/curve-arrow.png'))
@@ -58,6 +60,7 @@ class ImageBar(QtGui.QWidget):
         self.removeButton.clicked.connect(self.readd)
 
     def readd(self):
+        rm_toRM(self.im)
         self.label.setStyleSheet('')
         self.removeButton.setText("Remove")
         self.removeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/trash.png'))
@@ -85,6 +88,7 @@ class InfosBar(QtGui.QWidget):
         
 
     def redo(self,coll):
+        set_current_coll(coll)
         self.hbox.removeWidget(self.scroll)
         self.scroll.setParent(None)
         self.scroll = QtGui.QScrollArea()
@@ -99,6 +103,14 @@ class InfosBar(QtGui.QWidget):
             im = ImageBar(i)
             self.vbox.addWidget(im)
         self.vbox.addStretch(1)
+
+
+        OKButton = QtGui.QPushButton('Save Changes')
+        OKButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
+        OKButton.setStatusTip("Save changes")
+        OKButton.clicked.connect(self.save)
+        self.vbox.addWidget(OKButton)
+        
         self.group.setLayout(self.vbox)
         
         self.scroll.setWidget(self.group)
@@ -106,6 +118,13 @@ class InfosBar(QtGui.QWidget):
         self.scroll.setFixedHeight(220)
         self.hbox.addWidget(self.scroll)
         self.setLayout(self.hbox)
+
+
+    def save(self):
+        if(len(get_toRM())>0):
+            print "ok"
+        else:
+            print "non k"
 
 
 class CollectionAccessButton(QtGui.QPushButton):
@@ -163,16 +182,11 @@ class EditCollectionsView(QtGui.QWidget):
         buttonsBox = QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
 
-        runClusteringButton = QtGui.QPushButton('OK')
-        runClusteringButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
-        runClusteringButton.setToolTip("Save changes")
-
         goHomeButton = QtGui.QPushButton('Go back')
         goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
-        goHomeButton.setToolTip("Return to main page")
+        goHomeButton.setStatusTip("Return to main page")
         goHomeButton.clicked.connect(self.go_back)  # When go back home button is clicked, change central views
 
-        buttonsBox.addWidget(runClusteringButton)
         buttonsBox.addWidget(goHomeButton)
 
         hbox = QtGui.QHBoxLayout()
@@ -224,4 +238,6 @@ class EditCollectionsView(QtGui.QWidget):
         old_left.setParent(None)
         splitter1.addWidget(self.infos)
         splitter1.addWidget(topleft)
+        reset_toRM()
         self.showMain.emit()
+
