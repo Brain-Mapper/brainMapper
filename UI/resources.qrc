@@ -13,5 +13,8 @@
     <file>ressources/app_icons_png/home-2.png</file>
     <file>ressources/app_icons_png/calculator.png</file>
     <file>ressources/app_icons_png/checking.png</file>
+    <file>ressources/app_icons_png/trash.png</file>
+    <file>ressources/app_icons_png/eye.png</file>
+    <file>ressources/app_icons_png/curve-arrow.png</file>
   </qresource>
 </RCC>

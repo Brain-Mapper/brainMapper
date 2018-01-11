@@ -20,39 +20,91 @@ sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 from BrainMapper import * 
 
 import resources
-import random
 
+class ImageBar(QtGui.QWidget):
+    #styler = "border:1px solid rgb(255,255,225);"
+    def __init__(self, im):
+        super(ImageBar, self).__init__()
+        filname = im.filename.split("/")
+        filna = filname[len(filname)-1]
+        self.label = QtGui.QLabel("   "+filna)
+        self.label.setToolTip(im.filename)
+        self.label.setFixedWidth(420)
+
+        self.removeButton = QtGui.QPushButton("Remove")
+        self.removeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/trash.png'))
+        self.removeButton.setStatusTip("Remove image from collection")
+        self.removeButton.clicked.connect(self.remove)
+        self.removeButton.setFixedWidth(110)
+
+        showButton = QtGui.QPushButton("Show")
+        showButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/eye.png'))
+        showButton.setStatusTip("Show image")
+        showButton.clicked.connect(self.show)
+        showButton.setFixedWidth(110)
+
+        hbox=QtGui.QHBoxLayout()
+        hbox.addWidget(self.label)
+        hbox.addWidget(self.removeButton)
+        hbox.addWidget(showButton)
+        self.setLayout(hbox)
+        #self.setStyleSheet(self.styler)
+
+    def remove(self):
+        self.label.setStyleSheet('color : red')
+        self.removeButton.setText("Re Add")
+        self.removeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/curve-arrow.png'))
+        self.removeButton.setStatusTip("Re add image into collection")
+        self.removeButton.clicked.connect(self.readd)
+
+    def readd(self):
+        self.label.setStyleSheet('')
+        self.removeButton.setText("Remove")
+        self.removeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/trash.png'))
+        self.removeButton.setStatusTip("Remove image from collection")
+        self.removeButton.clicked.connect(self.remove)
+        
+        
 class InfosBar(QtGui.QWidget):
-    
-    styler = "border:1px solid rgb(255,255,225);"
     def __init__(self):
         super(InfosBar, self).__init__()
         self.vbox = QtGui.QVBoxLayout()
         self.group = QtGui.QGroupBox()
-        self.group.setStyleSheet(self.styler)
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height()
         mainwind_w = rec.width()
         self.setMaximumSize(QSize(mainwind_w, mainwind_h))
         
+        self.scroll = QtGui.QScrollArea()
+        self.scroll.setWidget(self.group)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setFixedHeight(220)
+        
         self.hbox=QtGui.QHBoxLayout()
-        self.hbox.addWidget(self.group)
+        self.hbox.addWidget(self.scroll)
+        
 
     def redo(self,coll):
-        self.hbox.removeWidget(self.group)
-        self.group.setParent(None)
+        self.hbox.removeWidget(self.scroll)
+        self.scroll.setParent(None)
+        self.scroll = QtGui.QScrollArea()
         self.group = QtGui.QGroupBox()
-        label_name = QtGui.QLabel("Collection's name : "+ str(coll.name))
-        list_images = "List of images :\t"
-        for i in coll.get_img_list().keys():
-            list_images = list_images+str(i)+"\n\t\t"
-        label2_name = QtGui.QLabel(list_images)
         self.vbox = QtGui.QVBoxLayout()
+        label_name = QtGui.QLabel("Collection's name : "+ str(coll.name))
+        list_images = "List of images :"
+        label2_name = QtGui.QLabel(list_images)
         self.vbox.addWidget(label_name)
         self.vbox.addWidget(label2_name)
+        for i in coll.get_img_list().values():
+            im = ImageBar(i)
+            self.vbox.addWidget(im)
         self.vbox.addStretch(1)
         self.group.setLayout(self.vbox)
-        self.hbox.addWidget(self.group)
+        
+        self.scroll.setWidget(self.group)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setFixedHeight(220)
+        self.hbox.addWidget(self.scroll)
         self.setLayout(self.hbox)
 
 
