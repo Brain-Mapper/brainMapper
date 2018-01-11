@@ -1,5 +1,6 @@
 from ourLib.niftiHandlers.nifimage import NifImage as ni
 from ourLib.niftiHandlers.imagecollection import ImageCollection
+from ourLib.niftiHandlers.set import Set
 
 from ourLib.dataExtraction import extractor as xt
 from ourLib import clustering as clust
@@ -12,6 +13,8 @@ current_collec = None
 selected = []
 toRM = []
 currentUsableDataset = None
+sets = []
+currentSet = None
 
 
 def open_nifti(path):
@@ -132,8 +135,24 @@ def delete_coll(coll):
 
 def save_modifs():
     global current_collec
-    print current_collec.get_img_list()
     for i in toRM:
         current_collec.remove(i.filename)
-    print current_collec.get_img_list()
     reset_toRM()
+
+def exists_set(name):
+    for i in sets:
+        if(i.name == name):
+            return True
+    return False
+
+def newSet(name):
+    global currentSet
+    new_set = Set(name)
+    sets.append(new_set)
+    currentSet = new_set
+    return new_set
+
+def set_current_set(new_set):
+    global currentSet
+    currentSet = new_set
+    print currentSet

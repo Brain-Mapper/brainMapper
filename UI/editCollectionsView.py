@@ -174,7 +174,7 @@ class InfosBar(QtGui.QWidget):
     def changeName(self):
         print get_current_coll().name
         text, ok = QInputDialog.getText(self, 'Change name of the Collection', "Enter a new name for the collection named "+ get_current_coll().name +": ")
-        if ok:
+        try:
             new_ok = True
             not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
             for i in not_ok:
@@ -186,8 +186,8 @@ class InfosBar(QtGui.QWidget):
                 self.parent().parent().parent().fill_coll()
             else :
                 err = QtGui.QMessageBox.critical(self, "Error", "The new name you entered is not valid (empty, invalid caracter or already exists)")
-        else :
-            err = QtGui.QMessageBox.critical(self, "Error", "The new name you entered is not valid")
+        except :
+            err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
 
     def del_col(self,coll):
         choice = QtGui.QMessageBox.question(self, 'Delete Collection',

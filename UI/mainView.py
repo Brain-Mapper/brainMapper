@@ -14,6 +14,7 @@ import os
 from PyQt4 import QtGui
 from PyQt4.Qt import *
 from PyQt4.QtCore import pyqtSignal
+from PyQt4 import QtCore
 
 import platform
 from datetime import *
@@ -23,6 +24,69 @@ sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 from BrainMapper import * 
         
 import resources
+
+class SetButton(QtGui.QWidget):
+
+    styler = "SetButton {background-color: white; border-bottom: 1px solid black;} " \
+             "SetButton:hover {background-color : #ccff99;}"
+
+    def __init__(self, my_set, parent=None):
+        super(SetButton, self).__init__(parent=parent)
+        self.my_set = my_set
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()
+        mainwind_w = rec.width()
+        setB = QtGui.QPushButton(my_set.name)
+        setB.setStatusTip("Select this set and show the collections inside")
+        setB.clicked.connect(self.test)
+        setB.setStyleSheet(self.styler)
+
+        self.vbox = QtGui.QVBoxLayout()
+        self.group = QtGui.QGroupBox()
+        self.hbox=QtGui.QHBoxLayout()
+        self.hbox.addWidget(self.group)
+
+        self.vbox.addWidget(setB)
+
+        self.group_buttons = QtGui.QGroupBox()
+        self.buttons = QtGui.QHBoxLayout()
+        SSButton = QtGui.QPushButton('Add')
+        SSButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/up-arrow.png'))
+        SSButton.setStatusTip("Add sub set")
+        self.buttons.addWidget(SSButton)
+
+        NameButton = QtGui.QPushButton('Rename')
+        NameButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/writing.png'))
+        NameButton.setStatusTip("Change Set Name")
+        self.buttons.addWidget(NameButton)
+        
+        self.group_buttons.setLayout(self.buttons)
+        self.vbox.addWidget(self.group_buttons)
+        self.group.setLayout(self.vbox)
+        
+        self.hbox.addWidget(self.group)        
+        self.setLayout(self.hbox)
+
+    def test(self):
+        set_current_set(self.my_set)
+
+class SetAccessBar(QtGui.QGroupBox):
+    def __init__(self, list_sets):
+        super(SetAccessBar, self).__init__()
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()
+        mainwind_w = rec.width()
+        self.vbox = QtGui.QVBoxLayout()
+        
+        access_bar_title = QtGui.QLabel("List of sets")
+        
+        self.vbox.addWidget(access_bar_title)
+        for lab in list_sets :
+            self.vbox.addWidget(SetButton(lab))
+
+        self.setLayout(self.vbox)
+    def add(self, my_set):
+        self.vbox.addWidget(SetButton(my_set))
 
 class MainView(QtGui.QWidget):
 
@@ -43,33 +107,32 @@ class MainView(QtGui.QWidget):
     def initMainView(self):
         # This horizontal Box will contain two vertical boxes, one for the set access bar and another for image collec
         # tions display
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()
+        mainwind_w = rec.width()
+        
         middleBox = QtGui.QHBoxLayout()
 
         # - Vertical box for sets layout
-        setAccessBox = QtGui.QVBoxLayout()
+        self.setAccessBox = SetAccessBar([newSet("default_set")])
 
-        # BUTTONS (SET ACCESS)
-        btnNS = QtGui.QPushButton('Set 1 : Speech', self)
-        btnNS.setStatusTip('Set 1 : Speech')
-        btnNS.setFixedWidth(150)
-        btnNS.clicked.connect(self.buttonClicked)  # Action for button
-
-        setAccessBox.addWidget(btnNS, 0, Qt.AlignTop)
+        scroll = QtGui.QScrollArea()
+        scroll.setWidget(self.setAccessBox)
+        scroll.setWidgetResizable(True)
+        scroll.setFixedHeight(mainwind_h*0.6)
+        scroll.setFixedWidth(mainwind_w*0.12)
+        #scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
         # - Vertical box for image collections display
         global collectionsDisplayBox
         collectionsDisplayBox = QtGui.QVBoxLayout()
         edit1 = QtGui.QLineEdit()
-        #edit2 = QtGui.QLineEdit()
-        #coll_title = QtGui.QLabel('Set\'s Image collections')
         collectionsDisplayBox.addWidget(edit1)
-        #collectionsDisplayBox.addWidget(edit2)
-        #collectionsDisplayBox.addWidget(coll_title)
         collectionsDisplayBox.addStretch(0)
-        collectionsDisplayBox.setSizeConstraint(QtGui.QLayout.SetFixedSize)
+        collectionsDisplayBox.setSizeConstraint(QtGui.QLayout.SetMaximumSize)
 
         # Add the previous vertical boxes to horizontal box
-        middleBox.addLayout(setAccessBox)
+        middleBox.addWidget(scroll)
         middleBox.addLayout(collectionsDisplayBox)
 
         # This horizontal Box will contain a button bar to access all other windows and functionalitites once the data
@@ -107,6 +170,9 @@ class MainView(QtGui.QWidget):
         containerVbox = QtGui.QVBoxLayout()
         containerVbox.addLayout(middleBox)
         containerVbox.addLayout(buttonsBox)
+        
+        
+        self.setStyleSheet("border:1px solid rgb(255,255,225);")
 
         self.setLayout(containerVbox)
 
@@ -174,3 +240,6 @@ class MainView(QtGui.QWidget):
             self.showEdit.emit()
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's no data to edit.")
+
+    def show_set(self, new_set):
+        self.setAccessBox.add(new_set)
