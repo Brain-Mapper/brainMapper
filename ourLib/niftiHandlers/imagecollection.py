@@ -23,11 +23,12 @@ from nifimage import NifImage
 
 
 class ImageCollection(object):
-    def __init__(self, name):
+    def __init__(self, name, set_n):
         # It's better to have a dictionary, to associate an ID (here, just a name)
         # and the NIfTI Image instance
         self.nifimage_dict = dict()
         self.name = name
+        self.set_n = set_n
 
     def add(self, a_nif_image):
         """
@@ -68,4 +69,6 @@ class ImageCollection(object):
 
     def set_name(self, new):
         self.name = new
-    
+
+    def getSetName(self):
+        return self.set_n

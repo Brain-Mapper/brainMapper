@@ -78,8 +78,6 @@ class ImageBar(QtGui.QWidget):
 class InfosBar(QtGui.QWidget):
     def __init__(self, parent = None):
         super(InfosBar, self).__init__(parent = parent)
-        rec = QApplication.desktop().availableGeometry()
-        mainwind_h = rec.height()
         self.vbox = QtGui.QVBoxLayout()
         self.group = QtGui.QGroupBox()
         rec = QApplication.desktop().availableGeometry()
@@ -104,9 +102,11 @@ class InfosBar(QtGui.QWidget):
         self.group = QtGui.QGroupBox()
         self.vbox = QtGui.QVBoxLayout()
         label_name = QtGui.QLabel("Collection's name : "+ str(coll.name))
+        label_set = QtGui.QLabel("Set's name : "+ str(coll.set_n.name))
         list_images = "List of images :"
         label2_name = QtGui.QLabel(list_images)
         self.vbox.addWidget(label_name)
+        self.vbox.addWidget(label_set)
         self.vbox.addWidget(label2_name)
         for i in coll.get_img_list().values():
             im = ImageBar(i)
@@ -172,22 +172,22 @@ class InfosBar(QtGui.QWidget):
             info = QtGui.QMessageBox.information(self, "Info", "There's nothing to save!")
 
     def changeName(self):
-        print get_current_coll().name
         text, ok = QInputDialog.getText(self, 'Change name of the Collection', "Enter a new name for the collection named "+ get_current_coll().name +": ")
-        if ok:
-            new_ok = True
-            not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
-            for i in not_ok:
-                if i in str(text):
-                    new_ok = False
-            if new_ok and text != "" and not exists_selected(str(text)):
-                set_current_coll_name(str(text))
-                self.redo(get_current_coll())
-                self.parent().parent().parent().fill_coll()
-            else :
-                err = QtGui.QMessageBox.critical(self, "Error", "The new name you entered is not valid (empty, invalid caracter or already exists)")
-        else :
-            err = QtGui.QMessageBox.critical(self, "Error", "The new name you entered is not valid")
+        if str(text) != "":
+            try:
+                new_ok = True
+                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
+                for i in not_ok:
+                    if i in str(text):
+                        new_ok = False
+                if new_ok and not exists_selected(str(text)):
+                    set_current_coll_name(str(text))
+                    self.redo(get_current_coll())
+                    self.parent().parent().parent().parent().parent().fill_coll()
+                else :
+                    err = QtGui.QMessageBox.critical(self, "Error", "The new name you entered is not valid (empty, invalid caracter or already exists)")
+            except :
+                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
 
     def del_col(self,coll):
         choice = QtGui.QMessageBox.question(self, 'Delete Collection',
@@ -195,6 +195,9 @@ class InfosBar(QtGui.QWidget):
                                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if choice == QtGui.QMessageBox.Yes:
             delete_coll(coll)
+            reset_toRM()
+            self.parent().parent().parent().parent().parent().showMain.emit()
+            
 
 class CollectionAccessButton(QtGui.QPushButton):
 
