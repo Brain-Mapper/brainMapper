@@ -364,3 +364,10 @@ class MainView(QtGui.QWidget):
         delete_me = self.splitter1.widget(1)
         delete_me.setParent(None)
         self.splitter1.addWidget(newVizu)
+
+    def upCollLabel(self, label):
+        limit = 500
+        if(len(label)>limit):
+            nb=limit-len(label)+1
+            label = label[:nb] + "-"
+        self.collectionsDisplayBox.update_label(label)
