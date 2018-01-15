@@ -17,6 +17,7 @@ toRM = []
 currentUsableDataset = None
 sets = []
 currentSet = None
+currentVizu = None
 
 
 def open_nifti(path):
@@ -152,7 +153,6 @@ def newSet(name):
     global currentSet
     new_set = Set(name)
     sets.append(new_set)
-    currentSet = new_set
     return new_set
 
 def set_current_set(new_set):
@@ -171,3 +171,17 @@ def creation_date(path_to_file):
                 # We're probably on Linux.
                 return stat.st_mtime
 
+def add_set(my_set):
+    sets.append(my_set)
+
+def get_current_vizu():
+    global currentVizu
+    return currentVizu
+
+def set_current_vizu(collView):
+    global currentVizu
+    currentVizu = collView
+
+def get_current_set():
+    global currentSet
+    return currentSet

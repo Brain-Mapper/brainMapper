@@ -55,20 +55,28 @@ class CollButton(QtGui.QCheckBox):
             dates.append(creation_date(str(l)))
         date = max(dates)
         d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
-        self.setText("Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d))
-        
+        self.setText("Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d))        
 
 class CollectionsView(QtGui.QWidget):
-    def __init__(self):
+    def __init__(self, label):
         self.i = 1
         self.j = 1
         super(CollectionsView, self).__init__()
+        self.name = label
+        set_current_vizu(self)
         self.vbox = QtGui.QGridLayout()
         self.vbox.setAlignment(QtCore.Qt.AlignTop)
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height()/1.4
         mainwind_w = rec.width()/1.5
-        self.setMaximumSize(QSize(mainwind_w/0.5, mainwind_h))
+        self.setMinimumSize(QSize(mainwind_w/1.35, mainwind_h*0.9))
+
+        title_style = "QLabel { background-color : #ffcc33 ; color : black;  font-style : bold; font-size : 14px;}"
+        self.title2 = QtGui.QLabel("List of image collections for set "+str(self.name))
+        self.title2.setMinimumWidth(self.width())
+        self.title2.setFixedHeight(20)
+        self.title2.setAlignment(QtCore.Qt.AlignCenter)
+        self.title2.setStyleSheet(title_style)
 
         group = QtGui.QGroupBox()
         group.setLayout(self.vbox)
@@ -78,7 +86,8 @@ class CollectionsView(QtGui.QWidget):
         scroll.setWidgetResizable(True)
         scroll.setFixedHeight(mainwind_h*0.8)
         
-        hbox=QtGui.QHBoxLayout()
+        hbox=QtGui.QVBoxLayout()
+        hbox.addWidget(self.title2)
         hbox.addWidget(scroll)
         
         self.setLayout(hbox)
@@ -95,7 +104,10 @@ class CollectionsView(QtGui.QWidget):
         for i in items:
             if isinstance(i, QCheckBox):
                 i.update()
-
+                
+    def update_label(self, label):
+        self.name = label
+        self.title2.setText("List of image collections for set "+str(label))
 
 class SetButton(QtGui.QWidget):
 
@@ -104,6 +116,7 @@ class SetButton(QtGui.QWidget):
 
     def __init__(self, my_set, parent=None):
         super(SetButton, self).__init__(parent=parent)
+        self.vizu = CollectionsView(my_set.name)
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height()/1.4
         mainwind_w = rec.width()/1.5
@@ -146,8 +159,12 @@ class SetButton(QtGui.QWidget):
 
     def test(self):
         print self.SSList.currentText()
+        
     def current_set(self):
         set_current_set(self.my_set)
+        self.parent().parent().parent().parent().parent().parent().upCollLabel(str(get_current_set().name))
+        set_current_vizu(self.vizu)
+        self.parent().parent().parent().parent().parent().parent().updateVizu(self.vizu)
 
     def addSubet(self):
         text, ok = QInputDialog.getText(self, 'Create a Sub Set', "Enter a name for your sub set of set named "+str(self.my_set.name)+":")
@@ -161,6 +178,9 @@ class SetButton(QtGui.QWidget):
                 if new_ok and not exists_set(str(text)):
                     self.my_set.add_empty_subset(str(text))
                     self.SSList.addItem(str(text))
+                    ssSet = self.my_set.get_sub_set(str(text))
+                    add_set(ssSet)
+                    self.parent().parent().parent().parent().add(ssSet)
                 else :
                     err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
             except :
@@ -197,10 +217,11 @@ class SetAccessBar(QtGui.QWidget):
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height()/1.4
         mainwind_w = rec.width()/1.5
+        self.setMaximumSize(QSize(mainwind_w/3.76, mainwind_h))
         
         group = QtGui.QGroupBox()
         self.vbox = QtGui.QVBoxLayout()
-
+        
         my_set = newSet("default")
         set_current_set(my_set)
 
@@ -213,11 +234,17 @@ class SetAccessBar(QtGui.QWidget):
         
         self.vbox.addWidget(SetButton(my_set,self))
         
-        hbox=QtGui.QHBoxLayout()
+        hbox=QtGui.QVBoxLayout()
+        title_style = "QLabel { background-color : #ffcc33 ; color : black;  font-style : bold; font-size : 14px;}"
+        title1 = QtGui.QLabel('List of sets and sub sets')
+        title1.setFixedWidth(self.width()-10)
+        title1.setFixedHeight(20)
+        title1.setAlignment(QtCore.Qt.AlignCenter)
+        title1.setStyleSheet(title_style)
+        hbox.addWidget(title1)
         hbox.addWidget(scroll)
 
         self.setLayout(hbox)
-        self.setMaximumSize(QSize(mainwind_w/3.76, mainwind_h))
                
 
     def add(self, my_set):
@@ -239,7 +266,10 @@ class MainView(QtGui.QWidget):
 
         self.initMainView()
 
-    def initMainView(self):        
+    def initMainView(self):
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()/1.4
+        mainwind_w = rec.width()/1.5
         buttonsBox = QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
 
@@ -270,26 +300,15 @@ class MainView(QtGui.QWidget):
         buttonsBox.addWidget(clusterButton)
 
         self.setAccessBox = SetAccessBar()
-        self.collectionsDisplayBox = CollectionsView()
+        self.collectionsDisplayBox = get_current_vizu()
         hbox = QtGui.QHBoxLayout()
-
-        top = QtGui.QHBoxLayout()
-        top.addStretch(1)
-        title_style = "QLabel { background-color : #ffcc33 ; color : black;  font-style : bold; font-size : 14px;}"
-        title1 = QtGui.QLabel('\t\tList of sets\t\t')
-        title1.setStyleSheet(title_style)
-        title2 = QtGui.QLabel('\t\t\t\t\tList of image collections\t\t\t\t\t\t')
-        title2.setStyleSheet(title_style)
-        top.addWidget(title1)
-        top.addWidget(title2)
         
         
-        splitter1 = QtGui.QSplitter(Qt.Horizontal)
-        splitter1.addWidget(self.setAccessBox)
-        splitter1.addWidget(self.collectionsDisplayBox)
-        hbox.addWidget(splitter1)
+        self.splitter1 = QtGui.QSplitter(Qt.Horizontal)
+        self.splitter1.addWidget(self.setAccessBox)
+        self.splitter1.addWidget(self.collectionsDisplayBox)
+        hbox.addWidget(self.splitter1)
         containerVbox = QtGui.QVBoxLayout()
-        containerVbox.addLayout(top)
         containerVbox.addLayout(hbox)
         containerVbox.addLayout(buttonsBox)
         #self.setStyleSheet("border:1px solid rgb(255,255,225);")
@@ -299,7 +318,7 @@ class MainView(QtGui.QWidget):
         print "Test passed. SUCCESS!"
 
     def show_coll(self, coll):
-        self.collectionsDisplayBox.add(coll)
+        get_current_vizu().add(coll)
     
     def export(self):
         if(get_selected()):
@@ -332,6 +351,22 @@ class MainView(QtGui.QWidget):
 
     def show_set(self, new_set):
         self.setAccessBox.add(new_set)
+        self.updateVizu(get_current_vizu())
 
     def update(self):
         self.collectionsDisplayBox.update()
+
+    def upCollLabel(self, label):
+        limit = 500
+        if(len(label)> limit):
+            nb = limit-len(label) + 1
+            label = label[:nb] + "-"
+        self.collectionsDisplayBox.update_label(label)
+
+    def updateVizu(self, newVizu):
+        newVizu.update()
+        self.collectionsDisplayBox = newVizu
+        delete_me = self.splitter1.widget(1)
+        delete_me.setParent(None)
+        self.splitter1.addWidget(newVizu)
+        print newVizu

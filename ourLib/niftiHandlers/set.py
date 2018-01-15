@@ -194,3 +194,9 @@ class Set(object):
 
     def set_name(self,name):
         self.name = name
+
+    def get_sub_set(self,name):
+        for i in self.subset_dict.values():
+            if(i.name == name):
+                return i
+        return None
