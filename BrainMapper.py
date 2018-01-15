@@ -12,6 +12,7 @@ current_collec = None
 selected = []
 toRM = []
 currentUsableDataset = None
+currentCalculationResult = None
 
 
 def open_nifti(path):
