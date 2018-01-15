@@ -87,7 +87,7 @@ class ClusteringParameters(QtGui.QWidget):
 
         self.parameters_dict = None
         self.clustering_name = "None selected yet"
-        self.clustering_info = "Please select a classifier from the top menu 'Clustering Method' "
+        self.clustering_info = "Please select a classifier from the top menu "
 
         self.container_box = None
         self.param_box = None
@@ -214,6 +214,11 @@ class ParameterScriptEnvStack(QtGui.QWidget):
 
         # Set current widget to main view by default
         self.stack.setCurrentWidget(self.clust_params_widget)
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height() / 1.4
+        mainwind_w = rec.width() / 1.5
+        del rec  # Saves memory
+        self.setMaximumSize(QSize(mainwind_w / 3, mainwind_h))
 
 
 class ClusteringChooser(QtGui.QToolButton):
@@ -229,26 +234,26 @@ class ClusteringChooser(QtGui.QToolButton):
     def __init__(self):
         super(ClusteringChooser, self).__init__()
         self.setText("Choose a clustering algorithm")
-        self.setStyleSheet("background-color:white;")
+        self.setStyleSheet("width: 250px; background-color: #fefee1;")
         self.setPopupMode(QtGui.QToolButton.MenuButtonPopup)
 
         self.clustering_algo_menu = QtGui.QMenu()
 
         Kmeans_choice = QtGui.QAction('&KMeans', self)
         Kmeans_choice.setStatusTip('Perform KMeans algorithm on dataset')
-        Kmeans_choice.triggered.connect(lambda: self.updateLabel("KMeans"))
+        Kmeans_choice.triggered.connect(lambda: self.updateLabel("KMeans", self.showClustParamsWidget))
 
-        user_script_choice = QtGui.QAction('&Custom script', self)
+        user_script_choice = QtGui.QAction('&Custom user script', self)
         user_script_choice.setStatusTip('Make a custom clustering script')
-        user_script_choice.triggered.connect(self.showScriptEnvWidget.emit)
+        user_script_choice.triggered.connect(lambda: self.updateLabel("Custom user script", self.showScriptEnvWidget))
 
         self.clustering_algo_menu.addAction(Kmeans_choice)
         self.clustering_algo_menu.addAction(user_script_choice)
         self.setMenu(self.clustering_algo_menu)
 
-    def updateLabel(self, selected_clustering):
+    def updateLabel(self, selected_clustering, signal_to_emit):
         self.setText(selected_clustering)
-        self.showClustParamsWidget.emit()
+        signal_to_emit.emit()
 
 
 
@@ -287,6 +292,7 @@ class ClusteringView(QtGui.QWidget):
         buttonsBox.addStretch(1)
 
         runClusteringButton = QtGui.QPushButton('Run')
+        runClusteringButton.setStyleSheet("background-color: #b4ecb4;")
         runClusteringButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/play.png'))
         runClusteringButton.setToolTip("Run selected clustering")
         runClusteringButton.clicked.connect(lambda: self.runSelectedClust('kmeans', [3]))
@@ -303,11 +309,9 @@ class ClusteringView(QtGui.QWidget):
         topBox.addLayout(selectedMBox)
         topBox.addLayout(buttonsBox)
 
-
         # --- Param/Script Env Stack ------
 
         param_script_stack = ParameterScriptEnvStack(title_style, self.clust_chooser)
-
 
         # -------------- Clustering Widget -----------------------
         clustWidget = QtGui.QWidget()
