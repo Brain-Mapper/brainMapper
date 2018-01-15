@@ -81,6 +81,7 @@ class HomePage(QWidget):
         self.mainview.showEdit.connect(partial(self.stack.setCurrentWidget, self.edit_colls))
         # -- when collection edition widget emits signal showMain, change current Widget in stack to main view widget
         self.edit_colls.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
+        self.edit_colls.showMain.connect(self.updateMain)
 
         # Set current widget to main view by default
         self.stack.setCurrentWidget(self.mainview)
@@ -92,6 +93,9 @@ class HomePage(QWidget):
     def updateEditView(self):
         self.edit_colls.fill_coll()
         self.stack.setCurrentWidget(self.edit_colls)
+    
+    def updateMain(self):
+        self.mainview.update()
 
 
 class UI(QtGui.QMainWindow):

@@ -26,48 +26,77 @@ import resources
 
 class CollButton(QtGui.QCheckBox):
 
-    styler = "SetButton {background-color: white; border-bottom: 1px solid black;} " \
-             "SetButton:hover {background-color : #ccff99;}"
-
     def __init__(self, coll, parent=None):
         super(CollButton, self).__init__(parent=parent)
         self.coll = coll
         self.toggle()
-        self.stateChanged.connect(lambda : self.selectColl(cb, coll))
+        self.stateChanged.connect(self.selectColl)
 
-        list = coll.get_img_list()
+        list = self.coll.get_img_list()
         dates = []
         for l in list :
             dates.append(creation_date(str(l)))
         date = max(dates)
         d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
-        label = "Patient : "+str(coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
+        label = "Patient : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
         self.setText(label)
+        self.setStyleSheet("CollButton {border: 1px solid black;} ")
+
+    def selectColl(self):
+        if(self.isChecked()):
+            add_coll(self.coll)
+        else:
+            rm_coll(self.coll)
+
+    def update(self):
+        list = self.coll.get_img_list()
+        dates = []
+        for l in list :
+            dates.append(creation_date(str(l)))
+        date = max(dates)
+        d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
+        self.setText("Patient : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d))
         
 
 class CollectionsView(QtGui.QWidget):
     def __init__(self):
+        self.i = 1
+        self.j = 1
         super(CollectionsView, self).__init__()
-        group = QtGui.QGroupBox()
-        self.vbox = QtGui.QVBoxLayout()
-        access_bar_title = QtGui.QLabel("List of collections")
-        self.vbox.addWidget(access_bar_title)
-
-        self.vbox.addStretch(1)
-        group.setLayout(self.vbox)
-
-        hbox=QtGui.QHBoxLayout()
-        hbox.addWidget(group)
-
-        self.setLayout(hbox)
+        self.vbox = QtGui.QGridLayout()
+        self.vbox.setAlignment(QtCore.Qt.AlignTop)
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height()/1.4
         mainwind_w = rec.width()/1.5
         self.setMaximumSize(QSize(mainwind_w/0.5, mainwind_h))
-               
 
+        group = QtGui.QGroupBox()
+        group.setLayout(self.vbox)
+
+        scroll = QtGui.QScrollArea()
+        scroll.setWidget(group)
+        scroll.setWidgetResizable(True)
+        scroll.setFixedHeight(mainwind_h*0.8)
+        
+        hbox=QtGui.QHBoxLayout()
+        hbox.addWidget(scroll)
+        
+        self.setLayout(hbox)
+               
     def add(self, my_coll):
-        self.vbox.addWidget(CollButton(my_coll))
+        self.vbox.addWidget(CollButton(my_coll), self.j, self.i)
+        self.i +=1
+        if self.i > 3:
+            self.i = 1
+            self.j +=1
+
+    def update(self):
+        items = (self.vbox.itemAt(j).widget() for j in range(self.vbox.count()))
+        for i in items:
+            print i
+            if isinstance(i, QCheckBox):
+                print "ok"
+                i.update()
 
 
 class SetButton(QtGui.QWidget):
@@ -173,8 +202,6 @@ class SetAccessBar(QtGui.QWidget):
         
         group = QtGui.QGroupBox()
         self.vbox = QtGui.QVBoxLayout()
-        access_bar_title = QtGui.QLabel("List of sets")
-        self.vbox.addWidget(access_bar_title)
 
         my_set = newSet("default")
         set_current_set(my_set)
@@ -264,13 +291,6 @@ class MainView(QtGui.QWidget):
 
     def show_coll(self, coll):
         self.collectionsDisplayBox.add(coll)
-
-    def selectColl(self, cb, coll):
-        if(cb.isChecked()):
-            add_coll(coll)
-        else:
-            rm_coll(coll)
-
     
     def export(self):
         if(get_selected()):
@@ -304,3 +324,5 @@ class MainView(QtGui.QWidget):
     def show_set(self, new_set):
         self.setAccessBox.add(new_set)
 
+    def update(self):
+        self.collectionsDisplayBox.update()

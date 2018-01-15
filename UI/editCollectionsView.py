@@ -173,20 +173,24 @@ class InfosBar(QtGui.QWidget):
         print get_current_coll().name
         text, ok = QInputDialog.getText(self, 'Change name of the Collection', "Enter a new name for the collection named "+ get_current_coll().name +": ")
         if str(text) != "":
-            try:
-                new_ok = True
-                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
-                for i in not_ok:
-                    if i in str(text):
-                        new_ok = False
-                if new_ok and not exists_selected(str(text)):
-                    set_current_coll_name(str(text))
-                    self.redo(get_current_coll())
-                    self.parent().parent().parent().fill_coll()
-                else :
-                    err = QtGui.QMessageBox.critical(self, "Error", "The new name you entered is not valid (empty, invalid caracter or already exists)")
-            except :
-                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
+##            try:
+##                new_ok = True
+##                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
+##                for i in not_ok:
+##                    if i in str(text):
+##                        new_ok = False
+##                if new_ok and not exists_selected(str(text)):
+##                    set_current_coll_name(str(text))
+##                    self.redo(get_current_coll())
+##                    self.parent().parent().parent().fill_coll()
+##                else :
+##                    err = QtGui.QMessageBox.critical(self, "Error", "The new name you entered is not valid (empty, invalid caracter or already exists)")
+##            except :
+##                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
+            if not exists_selected(str(text)):
+                set_current_coll_name(str(text))
+                self.redo(get_current_coll())
+                self.parent().parent().parent().parent().parent().fill_coll()
 
     def del_col(self,coll):
         choice = QtGui.QMessageBox.question(self, 'Delete Collection',
