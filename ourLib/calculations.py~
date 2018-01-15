@@ -71,7 +71,7 @@ def Extract_voxels_from_Nifti_file(file_name):
     
 
 #####################################################################
-#                         NIFTI OPPERATION                          #
+#                         NIFTI CLUSTERING                          #
 #####################################################################
 def max_shape(Nifti_collection):
         max_X = 0
@@ -89,7 +89,7 @@ def max_shape(Nifti_collection):
         return (max_X,max_Y,max_Z)
         
 #Clustering between differents nifti file    
-def mean_opperation(Nifti_file_collection,file_name):    
+def clustering_mean(Nifti_file_collection,file_name):    
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
     for file in Nifti_file_collection:
@@ -108,7 +108,7 @@ def mean_opperation(Nifti_file_collection,file_name):
     return file_Nifti_clusterised
 
 
-def or_opperation(Nifti_file_collection,file_name): 
+def clustering_or_opperation(Nifti_file_collection,file_name): 
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
     for file in Nifti_file_collection:
@@ -131,7 +131,7 @@ def max_value(list):
             max = e
     return max
 
-def and_opperation(Nifti_file_collection,file_name): 
+def clustering_and_opperation(Nifti_file_collection,file_name): 
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
     list_pix = []
@@ -155,7 +155,7 @@ def and_opperation(Nifti_file_collection,file_name):
     print('\nAnd opperation process was successfull ! File result : \''+file_name+'\'')
     return file_Nifti_clusterised
 
-def linear_combination_opperation(Nifti_file_collection,coef,file_name):
+def clustering_linear_combination(Nifti_file_collection,coef,file_name):
     max_coef = max_value(coef)
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
@@ -176,7 +176,7 @@ def linear_combination_opperation(Nifti_file_collection,coef,file_name):
     print('\nLinear combination process was successfull ! File result : \''+file_name+'\'')
     return file_Nifti_clusterised
 
-def normalization_opperation(Nifti_file_collection):
+def Nifti_normalized(Nifti_file_collection):
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
     for file in Nifti_file_collection:
@@ -203,7 +203,7 @@ def normalization_opperation(Nifti_file_collection):
 
 
 #Extract volume of voxel's center of gravity from a nifti file 
-def baricentre_calculation_opperation(list_voxels):
+def calcul_baricentre(list_voxels):
     mean_x = 0
     mean_y = 0
     mean_z = 0
