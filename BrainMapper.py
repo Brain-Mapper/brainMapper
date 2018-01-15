@@ -9,6 +9,8 @@ from ourLib import clustering as clust
 import os
 import platform
 import threading as th
+import json
+
 
 # --- global variables ---
 current_collec = None
@@ -20,16 +22,18 @@ currentSet = None
 currentVizu = None
 
 
+# Dictionary of available clustering methods
+app_clustering_available = {}
+with open('ressources/clustering_data/clustering_algorithms_available.json', 'r') as fc:
+    app_clustering_available = json.load(fc)
+
+# Global variable for currently selected clustering method
+currentClusteringMethod = None
+
+
 def open_nifti(path):
     image = ni.from_file(path)
     print(image.get_affine_matrix())
-    # DO SOMETHING WITH THE IMAGE
-
-    #draw_img_thread = th.Thread(target=image.plot_img())
-    #draw_img_thread.start()
-
-    #draw_glass_thread = th.Thread(target=image.plot_glass())
-    #draw_glass_thread.start()
     return image
 
 
@@ -188,3 +192,9 @@ def set_current_vizu(collView):
 def get_current_set():
     global currentSet
     return currentSet
+
+# --- currently selected clustering method ---
+def set_selected_clustering_method(method_name):
+    global currentClusteringMethod
+    currentClusteringMethod = method_name
+

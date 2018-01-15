@@ -252,6 +252,7 @@ class SetAccessBar(QtGui.QWidget):
     def add(self, my_set):
         self.vbox.addWidget(SetButton(my_set,self))
 
+
 class MainView(QtGui.QWidget):
 
     # -- ! ATTRIBUTES SHARED by EVERY class instance ! --
@@ -295,7 +296,6 @@ class MainView(QtGui.QWidget):
         clusterButton.setStatusTip("Apply clustering on selected data")
         clusterButton.clicked.connect(self.extract_and_cluster) # When clusterButton is clicked, change central views
 
-
         buttonsBox.addWidget(editButton)
         buttonsBox.addWidget(exportButton)
         buttonsBox.addWidget(calcButton)
@@ -335,7 +335,7 @@ class MainView(QtGui.QWidget):
             QtGui.QMessageBox.information(self, "Selection empty","There's nothing to export.")
 
     def extract_and_cluster(self):
-        if(get_selected()):
+        if get_selected():
             choice = QtGui.QMessageBox.question(self, 'Extract data for clustering',
                                 "You have selected (" + str(len(get_selected())) +") image collections \n Confirm to extract data",
                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)

@@ -5,3 +5,4 @@ ImagesTest/
 *.csv
 
 UI/nilearn_cache
+*.*~
