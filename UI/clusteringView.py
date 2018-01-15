@@ -12,7 +12,8 @@
 # 5 january 2018 - Added functions to fill table with extracted data
 
 from PyQt4 import QtGui
-from PyQt4.Qt import *
+from PyQt4.Qt import pyqtSignal
+from PyQt4.QtCore import Qt, QSize
 
 import sys
 from os import path
@@ -29,7 +30,7 @@ class ClusteringDataTable(QtGui.QTableWidget):
         self.clustering_usable_dataset = None
         self.setRowCount(20)
         self.setColumnCount(7)
-        self.setHorizontalHeaderLabels(["Image Coll ID","Origin filename", "X", "Y", "Z", "Intensity", "Assigned cluster"])
+        self.setHorizontalHeaderLabels(["Image Coll ID", "Origin filename", "X", "Y", "Z", "Intensity", "Assigned cluster"])
 
     def fill_with_extracted_data(self, a_usable_dataset_instance):
         self.clustering_usable_dataset = a_usable_dataset_instance
@@ -68,7 +69,7 @@ class ClusteringDataTable(QtGui.QTableWidget):
 
         row_count = 0
         for lab in assigned_labels_array:
-            item = QTableWidgetItem(str(lab))
+            item = QtGui.QTableWidgetItem(str(lab))
             item.setTextAlignment(Qt.AlignCenter)
             item.setBackground(QtGui.QColor(colors[str(lab)]))
             self.setItem(row_count, 6, item)
@@ -133,6 +134,9 @@ class ClusteringParameters(QtGui.QWidget):
     def get_parameters_list(self):
         return self.parameters_list
 
+    def update_paramBox(self, selected_clustering):
+        print(">>>clusteringView...")
+
     # An inner class for the params box
     class ParametersBox(QtGui.QGroupBox):
         def __init__(self, box_name, parameters_dict=None):
@@ -158,7 +162,7 @@ class ClusteringParameters(QtGui.QWidget):
             vbox.addStretch(5)
             self.setLayout(vbox)
 
-        # def set_Params
+        # def update_param(self, params_dict):
 
 
 # A custom widget to implement the script environment
@@ -192,8 +196,8 @@ class ParameterScriptEnvStack(QtGui.QWidget):
         super(ParameterScriptEnvStack, self).__init__()
 
         # Initialize a stack (pile) widget
-        self.stack = QStackedWidget()
-        layout = QVBoxLayout(self) # vertical layout
+        self.stack = QtGui.QStackedWidget()
+        layout = QtGui.QVBoxLayout(self) # vertical layout
         layout.addWidget(self.stack) # stack in the vertical layout
 
         # Here are the custom widgets we will put on the stack
@@ -209,18 +213,23 @@ class ParameterScriptEnvStack(QtGui.QWidget):
         #  on signals and events)
 
         # -- when clusteringChooser widget emits signal showClustParamsWidget, change current Widget in stack to clust params widget
-        self.clusteringChooser.showClustParamsWidget.connect(partial(self.stack.setCurrentWidget, self.clust_params_widget))
+        self.clusteringChooser.showClustParamsWidget.connect(self.update_clustering_parameters)
         # -- when clusteringChooser widget emits signal showClustParamsWidget, change current Widget in stack to scrip env widget
         self.clusteringChooser.showScriptEnvWidget.connect(partial(self.stack.setCurrentWidget, self.script_env_widget))
 
 
         # Set current widget to main view by default
         self.stack.setCurrentWidget(self.clust_params_widget)
-        rec = QApplication.desktop().availableGeometry()
+        rec = QtGui.QApplication.desktop().availableGeometry()
         mainwind_h = rec.height() / 1.4
         mainwind_w = rec.width() / 1.5
         del rec  # Saves memory
         self.setMaximumSize(QSize(mainwind_w / 3, mainwind_h))
+
+    def update_clustering_parameters(self):
+        self.clust_params_widget.update_paramBox(currentClusteringMethod)
+        self.stack.setCurrentWidget(self.clust_params_widget)
+
 
 
 class ClusteringChooser(QtGui.QToolButton):
@@ -255,7 +264,7 @@ class ClusteringChooser(QtGui.QToolButton):
 
     def updateLabel(self, selected_clustering, signal_to_emit):
         self.setText(selected_clustering)
-        print(app_clustering_available)
+        set_selected_clustering_method(selected_clustering)
         signal_to_emit.emit()
 
 

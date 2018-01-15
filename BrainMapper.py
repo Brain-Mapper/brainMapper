@@ -13,10 +13,13 @@ toRM = []
 currentUsableDataset = None
 
 
-# Dictionnary of available clustering methods
+# Dictionary of available clustering methods
 app_clustering_available = {}
-with open('UI/ressources/clustering_data/clustering_algorithms_available.json', 'r') as fc:
+with open('ressources/clustering_data/clustering_algorithms_available.json', 'r') as fc:
     app_clustering_available = json.load(fc)
+
+# Global variable for currently selected clustering method
+currentClusteringMethod = None
 
 
 def open_nifti(path):
@@ -135,3 +138,9 @@ def save_modifs():
         current_collec.remove(i.filename)
     print current_collec.get_img_list()
     reset_toRM()
+
+
+# --- currently selected clustering method ---
+def set_selected_clustering_method(method_name):
+    global currentClusteringMethod
+    currentClusteringMethod = method_name
