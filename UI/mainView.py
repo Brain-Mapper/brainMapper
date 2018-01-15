@@ -38,7 +38,7 @@ class CollButton(QtGui.QCheckBox):
             dates.append(creation_date(str(l)))
         date = max(dates)
         d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
-        label = "Patient : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
+        label = "Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
         self.setText(label)
         self.setStyleSheet("CollButton {border: 1px solid black;} ")
 
@@ -55,7 +55,7 @@ class CollButton(QtGui.QCheckBox):
             dates.append(creation_date(str(l)))
         date = max(dates)
         d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
-        self.setText("Patient : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d))
+        self.setText("Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d))
         
 
 class CollectionsView(QtGui.QWidget):
@@ -93,9 +93,7 @@ class CollectionsView(QtGui.QWidget):
     def update(self):
         items = (self.vbox.itemAt(j).widget() for j in range(self.vbox.count()))
         for i in items:
-            print i
             if isinstance(i, QCheckBox):
-                print "ok"
                 i.update()
 
 
@@ -219,7 +217,7 @@ class SetAccessBar(QtGui.QWidget):
         hbox.addWidget(scroll)
 
         self.setLayout(hbox)
-        self.setMaximumSize(QSize(mainwind_w/4.5, mainwind_h))
+        self.setMaximumSize(QSize(mainwind_w/3.76, mainwind_h))
                
 
     def add(self, my_set):
@@ -274,13 +272,24 @@ class MainView(QtGui.QWidget):
         self.setAccessBox = SetAccessBar()
         self.collectionsDisplayBox = CollectionsView()
         hbox = QtGui.QHBoxLayout()
-        bottom = QtGui.QFrame()
-        bottom.setFrameShape(QtGui.QFrame.StyledPanel)
+
+        top = QtGui.QHBoxLayout()
+        top.addStretch(1)
+        title_style = "QLabel { background-color : #ffcc33 ; color : black;  font-style : bold; font-size : 14px;}"
+        title1 = QtGui.QLabel('\t\tList of sets\t\t')
+        title1.setStyleSheet(title_style)
+        title2 = QtGui.QLabel('\t\t\t\t\tList of image collections\t\t\t\t\t\t')
+        title2.setStyleSheet(title_style)
+        top.addWidget(title1)
+        top.addWidget(title2)
+        
+        
         splitter1 = QtGui.QSplitter(Qt.Horizontal)
         splitter1.addWidget(self.setAccessBox)
         splitter1.addWidget(self.collectionsDisplayBox)
         hbox.addWidget(splitter1)
         containerVbox = QtGui.QVBoxLayout()
+        containerVbox.addLayout(top)
         containerVbox.addLayout(hbox)
         containerVbox.addLayout(buttonsBox)
         #self.setStyleSheet("border:1px solid rgb(255,255,225);")
