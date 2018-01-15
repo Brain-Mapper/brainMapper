@@ -1,14 +1,14 @@
 # NAME
 #
-#        clusteringView
+#        calculationView
 #
 # DESCRIPTION
 #
-#       'clusteringView' contains the Qwidget for the clustering view
+#       'calculationView' contains the Qwidget for the calculation view
 #
 # HISTORY
 #
-# 2 january 2018 - Initial design and coding. (@vz-chameleon, Valentina Z.)
+# 15 january 2018 - Initial design and coding. (@maximeCluchague, Maxime C.)
 
 from PyQt4 import QtGui
 from PyQt4.Qt import *
