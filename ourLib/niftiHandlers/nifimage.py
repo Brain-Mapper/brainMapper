@@ -19,7 +19,7 @@ import os
 # Lib dependency imports
 import numpy as np
 import nibabel as nib
-import nilearn.plotting as nilplot
+#import nilearn.plotting as nilplot
 
 
 class NifImage(object):

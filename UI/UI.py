@@ -45,6 +45,7 @@ class Help(QMainWindow):
 # In PyQt we cannot open two windows at a time easily, so we will have to change the central widget of our app
 # according to what the user clicks on... To do so, we will use an instance of the following class
 
+
 # The class Home Page implements a custom QWidget that can stack several QWidgets
 # We will use an instance of it as the central widget of our application, thus facilitating the switch
 # between the different views of our application
