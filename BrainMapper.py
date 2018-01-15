@@ -34,7 +34,7 @@ def open_nifti(path):
 
 
 def do_image_collection(files):
-    coll = ImageCollection("default")
+    coll = ImageCollection("default", currentSet)
     # We want an unique name for each collection
     # To do so we use the object ID
     name = str(coll).split("0x")
@@ -46,6 +46,7 @@ def do_image_collection(files):
     #extracted_data = xt.extract_from_collection(coll)
     #print(extracted_data)
     add_coll(coll)
+    currentSet.add_collection(coll)
     return coll
     
 
@@ -135,7 +136,9 @@ def add_image_coll(coll,files):
         coll.add_from_file(str(file))
 
 def delete_coll(coll):
-    print "delete " + str(coll.name)
+    this_set = coll.getSetName()
+    #this_set.remove_collection(coll.name)
+    #print this_set.number_of_collection()
 
 def save_modifs():
     global current_collec
@@ -153,12 +156,12 @@ def newSet(name):
     global currentSet
     new_set = Set(name)
     sets.append(new_set)
+    currentSet = new_set
     return new_set
 
 def set_current_set(new_set):
     global currentSet
     currentSet = new_set
-    print currentSet
 
 def creation_date(path_to_file):
         if platform.system() == 'Windows':

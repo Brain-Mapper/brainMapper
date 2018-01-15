@@ -102,9 +102,11 @@ class InfosBar(QtGui.QWidget):
         self.group = QtGui.QGroupBox()
         self.vbox = QtGui.QVBoxLayout()
         label_name = QtGui.QLabel("Collection's name : "+ str(coll.name))
+        label_set = QtGui.QLabel("Set's name : "+ str(coll.set_n.name))
         list_images = "List of images :"
         label2_name = QtGui.QLabel(list_images)
         self.vbox.addWidget(label_name)
+        self.vbox.addWidget(label_set)
         self.vbox.addWidget(label2_name)
         for i in coll.get_img_list().values():
             im = ImageBar(i)
@@ -193,6 +195,9 @@ class InfosBar(QtGui.QWidget):
                                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if choice == QtGui.QMessageBox.Yes:
             delete_coll(coll)
+            reset_toRM()
+            self.parent().parent().parent().parent().parent().showMain.emit()
+            
 
 class CollectionAccessButton(QtGui.QPushButton):
 

@@ -62,7 +62,7 @@ class Set(object):
         control if the subset name doesn't exist in subset_dict.
         """
         if subset.get_name not in self.subset_dict.keys():
-            self.subset_dict[subset.get_name] = subset
+            self.subset_dict[subset.get_name()] = subset
         else:
             print('The Subset name : %s already exist' % subset.get_name)
 
@@ -73,7 +73,7 @@ class Set(object):
         control if the collection name doesn't exist in collection_dict.
         """
         if collection.get_name() not in self.collection_dict.keys():
-            self.collection_dict[collection.get_name] = collection
+            self.collection_dict[collection.get_name()] = collection
         else:
             print('The Image Collection name : %s already exist' % collection.get_name)
 
@@ -200,3 +200,6 @@ class Set(object):
             if(i.name == name):
                 return i
         return None
+
+    def get_coll(self):
+        return self.collection_dict

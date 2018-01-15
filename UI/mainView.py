@@ -103,6 +103,7 @@ class CollectionsView(QtGui.QWidget):
         items = (self.vbox.itemAt(j).widget() for j in range(self.vbox.count()))
         for i in items:
             if isinstance(i, QCheckBox):
+                print i.coll
                 i.update()
                 
     def update_label(self, label):
@@ -180,6 +181,7 @@ class SetButton(QtGui.QWidget):
                     self.SSList.addItem(str(text))
                     ssSet = self.my_set.get_sub_set(str(text))
                     add_set(ssSet)
+                    set_current_set(ssSet)
                     self.parent().parent().parent().parent().add(ssSet)
                 else :
                     err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
@@ -356,17 +358,9 @@ class MainView(QtGui.QWidget):
     def update(self):
         self.collectionsDisplayBox.update()
 
-    def upCollLabel(self, label):
-        limit = 500
-        if(len(label)> limit):
-            nb = limit-len(label) + 1
-            label = label[:nb] + "-"
-        self.collectionsDisplayBox.update_label(label)
-
     def updateVizu(self, newVizu):
         newVizu.update()
         self.collectionsDisplayBox = newVizu
         delete_me = self.splitter1.widget(1)
         delete_me.setParent(None)
         self.splitter1.addWidget(newVizu)
-        print newVizu
