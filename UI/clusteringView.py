@@ -137,7 +137,6 @@ class ClusteringParameters(QtGui.QWidget):
     class ParametersBox(QtGui.QGroupBox):
         def __init__(self, box_name, parameters_dict=None):
             super(ClusteringParameters.ParametersBox, self).__init__(box_name)
-
             vbox = QtGui.QVBoxLayout()
             if parameters_dict is not None:
                 self.grid = QtGui.QGridLayout()
@@ -229,10 +228,27 @@ class ClusteringChooser(QtGui.QToolButton):
 
     def __init__(self):
         super(ClusteringChooser, self).__init__()
-
+        self.setText("Choose a clustering algorithm")
+        self.setStyleSheet("background-color:white;")
         self.setPopupMode(QtGui.QToolButton.MenuButtonPopup)
-        self.setMenu(QtGui.QMenu(self))
-        self.clicked.connect(self.showScriptEnvWidget.emit)
+
+        self.clustering_algo_menu = QtGui.QMenu()
+
+        Kmeans_choice = QtGui.QAction('&KMeans', self)
+        Kmeans_choice.setStatusTip('Perform KMeans algorithm on dataset')
+        Kmeans_choice.triggered.connect(lambda: self.updateLabel("KMeans"))
+
+        user_script_choice = QtGui.QAction('&Custom script', self)
+        user_script_choice.setStatusTip('Make a custom clustering script')
+        user_script_choice.triggered.connect(self.showScriptEnvWidget.emit)
+
+        self.clustering_algo_menu.addAction(Kmeans_choice)
+        self.clustering_algo_menu.addAction(user_script_choice)
+        self.setMenu(self.clustering_algo_menu)
+
+    def updateLabel(self, selected_clustering):
+        self.setText(selected_clustering)
+        self.showClustParamsWidget.emit()
 
 
 
@@ -248,7 +264,7 @@ class ClusteringView(QtGui.QWidget):
 
     def __init__(self):
         super(ClusteringView, self).__init__()
-        self.selected_clustMethods_displayer = None
+        self.clust_chooser = None
         self.table_displayer = None
         self.initClusteringView()
 
@@ -261,15 +277,10 @@ class ClusteringView(QtGui.QWidget):
         # - Horizontal box for a displayer of selected method
         selectedMBox = QtGui.QHBoxLayout()
         label = QtGui.QLabel('Clustering method : ')
-        self.selected_clustMethods_displayer = QtGui.QLabel('KMeans(k=3)')
-        self.selected_clustMethods_displayer.setMargin(5)
-        self.selected_clustMethods_displayer.setStyleSheet("background-color:white;")
+        self.clust_chooser = ClusteringChooser() # Our custom widget for clustering algorithm selection
 
         selectedMBox.addWidget(label)
-        selectedMBox.addWidget(self.selected_clustMethods_displayer)
-
-        clust_chooser = ClusteringChooser()
-        selectedMBox.addWidget(clust_chooser)
+        selectedMBox.addWidget(self.clust_chooser)
 
         # - Horizontal box for go back home button
         buttonsBox= QtGui.QHBoxLayout()
@@ -295,8 +306,7 @@ class ClusteringView(QtGui.QWidget):
 
         # --- Param/Script Env Stack ------
 
-        param_script_stack = ParameterScriptEnvStack(title_style, clust_chooser)
-
+        param_script_stack = ParameterScriptEnvStack(title_style, self.clust_chooser)
 
 
         # -------------- Clustering Widget -----------------------
