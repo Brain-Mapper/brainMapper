@@ -4,8 +4,7 @@ from ourLib.niftiHandlers.imagecollection import ImageCollection
 from ourLib.dataExtraction import extractor as xt
 from ourLib import clustering as clust
 
-
-import threading as th
+import json
 
 # --- global variables ---
 current_collec = None
@@ -14,16 +13,15 @@ toRM = []
 currentUsableDataset = None
 
 
+# Dictionnary of available clustering methods
+app_clustering_available = {}
+with open('UI/ressources/clustering_data/clustering_algorithms_available.json', 'r') as fc:
+    app_clustering_available = json.load(fc)
+
+
 def open_nifti(path):
     image = ni.from_file(path)
     print(image.get_affine_matrix())
-    # DO SOMETHING WITH THE IMAGE
-
-    #draw_img_thread = th.Thread(target=image.plot_img())
-    #draw_img_thread.start()
-
-    #draw_glass_thread = th.Thread(target=image.plot_glass())
-    #draw_glass_thread.start()
     return image
 
 

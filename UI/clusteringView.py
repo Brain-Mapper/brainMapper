@@ -87,7 +87,7 @@ class ClusteringParameters(QtGui.QWidget):
 
         self.parameters_dict = None
         self.clustering_name = "None selected yet"
-        self.clustering_info = "Please select a classifier from the top menu "
+        self.clustering_info = "Please select a classifier from the top menu"
 
         self.container_box = None
         self.param_box = None
@@ -157,6 +157,8 @@ class ClusteringParameters(QtGui.QWidget):
             vbox.addLayout(self.grid)
             vbox.addStretch(5)
             self.setLayout(vbox)
+
+        # def set_Params
 
 
 # A custom widget to implement the script environment
@@ -253,6 +255,7 @@ class ClusteringChooser(QtGui.QToolButton):
 
     def updateLabel(self, selected_clustering, signal_to_emit):
         self.setText(selected_clustering)
+        print(app_clustering_available)
         signal_to_emit.emit()
 
 
