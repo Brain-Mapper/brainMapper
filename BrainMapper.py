@@ -135,6 +135,15 @@ def exists_selected(name):
             return True
     return False
 
+def exists_coll_in_sets(name):
+    sets = get_all_sets()
+    for s in sets:
+        collecs = s.get_coll()
+        for i in collecs.values():
+            if(i.name == name):
+                return True
+    return False
+
 def add_image_coll(coll,files):
     for file in files:
         coll.add_from_file(str(file))
@@ -198,3 +207,5 @@ def set_selected_clustering_method(method_name):
     global currentClusteringMethod
     currentClusteringMethod = method_name
 
+def get_all_sets():
+    return sets 

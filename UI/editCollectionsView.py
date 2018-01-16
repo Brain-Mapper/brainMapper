@@ -102,7 +102,7 @@ class InfosBar(QtGui.QWidget):
         self.group = QtGui.QGroupBox()
         self.vbox = QtGui.QVBoxLayout()
         label_name = QtGui.QLabel("Collection's name : "+ str(coll.name))
-        label_set = QtGui.QLabel("Set's name : "+ str(coll.set_n.name))
+        label_set = QtGui.QLabel("Set's name \t : "+ str(coll.set_n.name))
         list_images = "List of images :"
         label2_name = QtGui.QLabel(list_images)
         self.vbox.addWidget(label_name)
@@ -180,7 +180,7 @@ class InfosBar(QtGui.QWidget):
                 for i in not_ok:
                     if i in str(text):
                         new_ok = False
-                if new_ok and not exists_selected(str(text)):
+                if new_ok and not exists_coll_in_sets(str(text)):
                     set_current_coll_name(str(text))
                     self.redo(get_current_coll())
                     self.parent().parent().parent().parent().parent().fill_coll()
