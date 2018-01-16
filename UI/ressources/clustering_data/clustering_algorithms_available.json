@@ -25,7 +25,7 @@
         "random_state" : {
           "param_info" : "random_state is an optional parameter to specify the seed used by the random number generator",
           "type" : "int",
-          "default" : "None"
+          "default" : "0"
         }
       }
     },
