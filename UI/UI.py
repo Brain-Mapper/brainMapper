@@ -9,6 +9,7 @@ import resources
 from mainView import MainView
 from clusteringView import ClusteringView
 from editCollectionsView import EditCollectionsView
+from exportView import ExportView
 
 if __name__ == '__main__':
     if __package__ is None:
@@ -63,10 +64,12 @@ class HomePage(QWidget):
         self.mainview = MainView()
         self.clustering = ClusteringView()
         self.edit_colls = EditCollectionsView()
+        self.export = ExportView()
         # -- Add them to stack widget
         self.stack.addWidget(self.mainview)
         self.stack.addWidget(self.clustering)
         self.stack.addWidget(self.edit_colls)
+        self.stack.addWidget(self.export)
 
         # Define behaviour when widget emit certain signals (see class MainView and Clustering View for more details
         #  on signals and events)
@@ -82,6 +85,9 @@ class HomePage(QWidget):
         # -- when collection edition widget emits signal showMain, change current Widget in stack to main view widget
         self.edit_colls.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
 
+        self.mainview.showExport.connect(self.updateExportView)
+        self.export.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
+
         # Set current widget to main view by default
         self.stack.setCurrentWidget(self.mainview)
 
@@ -92,6 +98,10 @@ class HomePage(QWidget):
     def updateEditView(self):
         self.edit_colls.fill_coll()
         self.stack.setCurrentWidget(self.edit_colls)
+
+    def updateExportView(self):
+        self.export.set_usable_data_set(get_current_usableDataset())
+        self.stack.setCurrentWidget(self.export)
 
 
 class UI(QtGui.QMainWindow):
