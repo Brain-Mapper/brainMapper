@@ -135,10 +135,10 @@ class NifImage(object):
     def save_to_file(self, folder_path):
         self.nib_image.to_filename(os.path.join(folder_path, self.filename))
 
-    def plot_img(self):
-        nilplot.plot_img(self.nib_image, title=self.filename)
-        nilplot.show()
-
-    def plot_glass(self):
-        nilplot.plot_glass_brain(self.nib_image, title="Glass brain plot")
-        nilplot.show()
+#    def plot_img(self):
+#        nilplot.plot_img(self.nib_image, title=self.filename)
+#        nilplot.show()
+#
+#    def plot_glass(self):
+#        nilplot.plot_glass_brain(self.nib_image, title="Glass brain plot")
+#        nilplot.show()

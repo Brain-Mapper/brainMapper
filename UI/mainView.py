@@ -274,6 +274,7 @@ class MainView(QtGui.QWidget):
     # by the HomePage widgets' instances (see UI.py, class HomePage)
     showClust = pyqtSignal()
     showEdit = pyqtSignal()
+    showExport = pyqtSignal()
 
     def __init__(self):
         super(MainView, self).__init__()
@@ -341,7 +342,9 @@ class MainView(QtGui.QWidget):
             if choice == QtGui.QMessageBox.Yes:
                 export_nifti()
             else:
+                extract_data_from_selected()
                 export_excel()
+                self.showExport.emit()
         else:
             QtGui.QMessageBox.information(self, "Selection empty","There's nothing to export.")
 
