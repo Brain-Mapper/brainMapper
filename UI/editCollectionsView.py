@@ -18,15 +18,17 @@ from PyQt4 import QtCore
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-from BrainMapper import * 
+from BrainMapper import *
+
+import pyqtgraph as pg
 
 import resources
 import re
 
 class ImageBar(QtGui.QWidget):
     #styler = "border:1px solid rgb(255,255,225);"
-    def __init__(self, im):
-        super(ImageBar, self).__init__()
+    def __init__(self, im, parent = None):
+        super(ImageBar, self).__init__(parent = parent)
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height()
         self.im = im
@@ -75,7 +77,10 @@ class ImageBar(QtGui.QWidget):
             self.remove()
         else:
             self.readd()
-        
+
+    def show(self):
+        self.parent().parent().parent().parent().parent().parent().parent().parent().parent().updateVizuView()
+                
         
 class InfosBar(QtGui.QWidget):
     def __init__(self, parent = None):
@@ -278,8 +283,7 @@ class EditCollectionsView(QtGui.QWidget):
         buttonsBox.addWidget(goHomeButton)
 
         hbox = QtGui.QHBoxLayout()
-        bottom = QtGui.QFrame()
-        bottom.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.bottom = pg.GraphicsLayoutWidget()
 
         splitter1 = QtGui.QSplitter(Qt.Horizontal)
         topleft=CollectionsAccessBar(['1','2'],self)
@@ -295,7 +299,7 @@ class EditCollectionsView(QtGui.QWidget):
 
 
         splitter2.addWidget(scroll)
-        splitter2.addWidget(bottom)
+        splitter2.addWidget(self.bottom)
         splitter2.setSizes([self.frameGeometry().height()*0.65, self.frameGeometry().height()*0.35])
 
         hbox.addWidget(splitter2)
@@ -337,3 +341,20 @@ class EditCollectionsView(QtGui.QWidget):
         reset_toRM()
         self.showMain.emit()
 
+    def updateVizuView(self):
+        p = self.bottom.addPlot(row=0, col=0)
+        p2 = self.bottom.addPlot(row=1, col=0)
+
+        ## variety of arrow shapes
+        a1 = pg.ArrowItem(angle=-160, tipAngle=60, headLen=40, tailLen=40, tailWidth=20, pen={'color': 'w', 'width': 3})
+        a2 = pg.ArrowItem(angle=-120, tipAngle=30, baseAngle=20, headLen=40, tailLen=40, tailWidth=8, pen=None, brush='y')
+        a3 = pg.ArrowItem(angle=-60, tipAngle=30, baseAngle=20, headLen=40, tailLen=None, brush=None)
+        a4 = pg.ArrowItem(angle=-20, tipAngle=30, baseAngle=-30, headLen=40, tailLen=None)
+        a2.setPos(10,0)
+        a3.setPos(20,0)
+        a4.setPos(30,0)
+        p.addItem(a1)
+        p.addItem(a2)
+        p.addItem(a3)
+        p.addItem(a4)
+        p.setRange(QtCore.QRectF(-20, -10, 60, 20))
