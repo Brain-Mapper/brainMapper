@@ -203,3 +203,12 @@ class Set(object):
 
     def get_coll(self):
         return self.collection_dict
+
+    def renameCollinSet(self, coll, name):
+        collecs = self.collection_dict
+        for i in collecs.values():
+            if(i == coll):
+                self.remove_collection(i.name)
+                new_col = coll.set_name(name)
+                self.add_collection(coll)
+                

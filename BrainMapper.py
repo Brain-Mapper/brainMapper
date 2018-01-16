@@ -156,7 +156,7 @@ def delete_current_coll():
     add_toRM(coll)
     set_current_coll(None)
     this_set.remove_collection(coll.name)
-    #print this_set.number_of_collection()
+    print this_set.number_of_collection()
 
 def save_modifs():
     global current_collec
@@ -217,14 +217,9 @@ def get_all_sets():
 
 def setColNameInSet(name):
     old = get_current_coll()
-    print old.name
-    print selected
     rm_coll(old)
     this_set = old.getSetName()
-    collecs = this_set.get_coll()
-    for i in collecs.values():
-        if(i == old):
-            i.set_name(name)
+    this_set.renameCollinSet(old,name)
     set_current_coll_name(name)
     cur_col = get_current_coll()
     add_coll(cur_col)
