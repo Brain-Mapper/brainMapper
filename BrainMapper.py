@@ -126,8 +126,8 @@ def get_current_coll():
     return current_collec
 
 def set_current_coll_name(name):
-    global current_collec
-    current_collec.set_name(name)
+    cur = get_current_coll()
+    cur.set_name(name)
 
 def exists_selected(name):
     for i in selected:
@@ -148,11 +148,13 @@ def add_image_coll(coll,files):
     for file in files:
         coll.add_from_file(str(file))
 
-def delete_coll(coll):
+def delete_current_coll():
+    coll = get_current_coll()
     this_set = coll.getSetName()
     rm_coll(coll)
     reset_toRM()
     add_toRM(coll)
+    set_current_coll(None)
     this_set.remove_collection(coll.name)
     #print this_set.number_of_collection()
 
@@ -212,3 +214,17 @@ def set_selected_clustering_method(method_name):
 
 def get_all_sets():
     return sets 
+
+def setColNameInSet(name):
+    old = get_current_coll()
+    print old.name
+    print selected
+    rm_coll(old)
+    this_set = old.getSetName()
+    collecs = this_set.get_coll()
+    for i in collecs.values():
+        if(i == old):
+            i.set_name(name)
+    set_current_coll_name(name)
+    cur_col = get_current_coll()
+    add_coll(cur_col)

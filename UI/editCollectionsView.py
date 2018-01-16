@@ -95,59 +95,70 @@ class InfosBar(QtGui.QWidget):
         
 
     def redo(self,coll):
-        set_current_coll(coll)
-        self.hbox.removeWidget(self.scroll)
-        self.scroll.setParent(None)
-        self.scroll = QtGui.QScrollArea()
-        self.group = QtGui.QGroupBox()
-        self.vbox = QtGui.QVBoxLayout()
-        label_name = QtGui.QLabel("Collection's name : "+ str(coll.name))
-        label_set = QtGui.QLabel("Set's name \t : "+ str(coll.set_n.name))
-        list_images = "List of images :"
-        label2_name = QtGui.QLabel(list_images)
-        self.vbox.addWidget(label_name)
-        self.vbox.addWidget(label_set)
-        self.vbox.addWidget(label2_name)
-        for i in coll.get_img_list().values():
-            im = ImageBar(i)
-            self.vbox.addWidget(im)
-        self.vbox.addStretch(1)
+        if coll != None :
+            set_current_coll(coll)
+            self.hbox.removeWidget(self.scroll)
+            self.scroll.setParent(None)
+            self.scroll = QtGui.QScrollArea()
+            self.group = QtGui.QGroupBox()
+            self.vbox = QtGui.QVBoxLayout()
+            label_name = QtGui.QLabel("Collection's name : "+ str(coll.name))
+            label_set = QtGui.QLabel("Set's name \t : "+ str(coll.set_n.name))
+            list_images = "List of images :"
+            label2_name = QtGui.QLabel(list_images)
+            self.vbox.addWidget(label_name)
+            self.vbox.addWidget(label_set)
+            self.vbox.addWidget(label2_name)
+            for i in coll.get_img_list().values():
+                im = ImageBar(i)
+                self.vbox.addWidget(im)
+            self.vbox.addStretch(1)
 
-        self.group_buttons = QtGui.QGroupBox()
-        self.buttons = QtGui.QHBoxLayout()
-        OKButton = QtGui.QPushButton('Save Changes')
-        OKButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
-        OKButton.setStatusTip("Save changes")
-        OKButton.clicked.connect(self.save)
-        self.buttons.addWidget(OKButton)
+            self.group_buttons = QtGui.QGroupBox()
+            self.buttons = QtGui.QHBoxLayout()
+            OKButton = QtGui.QPushButton('Save Changes')
+            OKButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
+            OKButton.setStatusTip("Save changes")
+            OKButton.clicked.connect(self.save)
+            self.buttons.addWidget(OKButton)
 
-        NameButton = QtGui.QPushButton('Change Collection Name')
-        NameButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/writing.png'))
-        NameButton.setStatusTip("Change Collection Name")
-        NameButton.clicked.connect(self.changeName)
-        self.buttons.addWidget(NameButton)
+            NameButton = QtGui.QPushButton('Change Collection Name')
+            NameButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/writing.png'))
+            NameButton.setStatusTip("Change Collection Name")
+            NameButton.clicked.connect(self.changeName)
+            self.buttons.addWidget(NameButton)
 
-        AddButton = QtGui.QPushButton('Add new Image(s)')
-        AddButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/up-arrow.png'))
-        AddButton.setStatusTip("Add some new images in the current collection")
-        AddButton.clicked.connect(lambda : self.addImage(coll))
-        self.buttons.addWidget(AddButton)
+            AddButton = QtGui.QPushButton('Add new Image(s)')
+            AddButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/up-arrow.png'))
+            AddButton.setStatusTip("Add some new images in the current collection")
+            AddButton.clicked.connect(lambda : self.addImage(coll))
+            self.buttons.addWidget(AddButton)
 
-        RmButton = QtGui.QPushButton('Delete Collection')
-        RmButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/trash.png'))
-        RmButton.setStatusTip("Delete the current collection")
-        RmButton.clicked.connect(lambda : self.del_col(coll))
-        self.buttons.addWidget(RmButton)
+            RmButton = QtGui.QPushButton('Delete Collection')
+            RmButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/trash.png'))
+            RmButton.setStatusTip("Delete the current collection")
+            RmButton.clicked.connect(lambda : self.del_col(coll))
+            self.buttons.addWidget(RmButton)
 
-        self.group_buttons.setLayout(self.buttons)
-        self.vbox.addWidget(self.group_buttons)
-        self.group.setLayout(self.vbox)
-        
-        self.scroll.setWidget(self.group)
-        self.scroll.setWidgetResizable(True)
-        self.scroll.setFixedHeight(self.parent().frameGeometry().height()*0.9)
-        self.hbox.addWidget(self.scroll)
-        self.setLayout(self.hbox)
+            self.group_buttons.setLayout(self.buttons)
+            self.vbox.addWidget(self.group_buttons)
+            self.group.setLayout(self.vbox)
+            
+            self.scroll.setWidget(self.group)
+            self.scroll.setWidgetResizable(True)
+            self.scroll.setFixedHeight(self.parent().frameGeometry().height()*0.9)
+            self.hbox.addWidget(self.scroll)
+            self.setLayout(self.hbox)
+        else:
+            self.hbox.removeWidget(self.scroll)
+            self.scroll.setParent(None)
+            self.scroll = QtGui.QScrollArea()
+            self.group = QtGui.QGroupBox()
+            self.vbox = QtGui.QVBoxLayout()
+            self.scroll.setWidgetResizable(True)
+            self.scroll.setFixedHeight(self.parent().frameGeometry().height()*0.9)
+            self.hbox.addWidget(self.scroll)
+            self.setLayout(self.hbox)
 
     def addImage(self, coll):
         path = QFileDialog.getOpenFileNames()
@@ -174,27 +185,39 @@ class InfosBar(QtGui.QWidget):
     def changeName(self):
         text, ok = QInputDialog.getText(self, 'Change name of the Collection', "Enter a new name for the collection named "+ get_current_coll().name +": ")
         if str(text) != "":
-            try:
-                new_ok = True
-                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
-                for i in not_ok:
-                    if i in str(text):
-                        new_ok = False
-                if new_ok and not exists_coll_in_sets(str(text)):
-                    set_current_coll_name(str(text))
-                    self.redo(get_current_coll())
-                    self.parent().parent().parent().parent().parent().fill_coll()
-                else :
-                    err = QtGui.QMessageBox.critical(self, "Error", "The new name you entered is not valid (empty, invalid caracter or already exists)")
-            except :
-                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
-
+##            try:
+##                new_ok = True
+##                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
+##                for i in not_ok:
+##                    if i in str(text):
+##                        new_ok = False
+##                if new_ok and not exists_coll_in_sets(str(text)):
+##                    old = get_current_coll()
+##                    set_current_coll_name(str(text))
+##                    cur_col = get_current_coll()
+##                    rm_coll(old)
+##                    add_coll(cur_col)
+##                    self.redo(cur_col)
+##                    self.parent().parent().parent().parent().parent().fill_coll()
+##                else :
+##                    err = QtGui.QMessageBox.critical(self, "Error", "The new name you entered is not valid (empty, invalid caracter or already exists)")
+##            except :
+##                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
+            if not exists_coll_in_sets(str(text)):
+                setColNameInSet(str(text))
+                cur_col = get_current_coll()
+                self.redo(cur_col)
+                self.parent().parent().parent().parent().parent().fill_coll()
+            else :
+                err = QtGui.QMessageBox.critical(self, "Error", "The new name you entered is not valid (empty, invalid caracter or already exists)")
+            
     def del_col(self,coll):
         choice = QtGui.QMessageBox.question(self, 'Delete Collection',
                                                 "Are you sure you want to delete this collection?",
                                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if choice == QtGui.QMessageBox.Yes:
-            delete_coll(coll)
+            delete_current_coll()
+            self.redo(None)
             self.parent().parent().parent().parent().parent().showMain.emit()
             
 
