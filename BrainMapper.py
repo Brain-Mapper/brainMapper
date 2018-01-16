@@ -3,6 +3,7 @@ from ourLib.niftiHandlers.imagecollection import ImageCollection
 
 from ourLib.dataExtraction import extractor as xt
 from ourLib import clustering as clust
+from ourLib import calculations as calcul
 
 
 import threading as th
@@ -12,7 +13,7 @@ current_collec = None
 selected = []
 toRM = []
 currentUsableDataset = None
-currentCalculationResult = None
+#currentCalculationResult = None
 
 
 def open_nifti(path):
@@ -86,8 +87,21 @@ def run_clustering(selectedClusteringMethod, params_list):
     else:
         print('clustering method not recognised')
         labels = ['']
-
     return labels
+
+def run_calculation(algorithm,nifti_collection,arguments):
+	if algorithm == "Mean":
+		file_result,output = calcul.mean_opperation(nifti_collection)
+	if algorithm == "Boolean Interserction":
+		file_result,output = calcul.and_opperation(nifti_collection)
+	if algorithm == "Boolean Union":
+		file_result,output = calcul.or_opperation(nifti_collection)
+	if algorithm == "Normalization":
+		file_result,output = calcul.normalization_opperation(nifti_collection)
+	if algorithm == "Linear combination":
+		file_result,output = calcul.linear_combination_opperation(nifti_collection,arguments)
+	return file_result,output
+
 
 def get_selected_from_name(name):
     for x in selected:

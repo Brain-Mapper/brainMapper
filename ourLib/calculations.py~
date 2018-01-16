@@ -28,7 +28,7 @@ def load_nifti(nifti_file):
 
 def get_data(img):
     #data = copy.deepcopy(img.get_data())
-    data=np.array(img.get_data())
+    data=np.array(img.get_data(), copy=True)
     return data
 
 # Viewer of nifti image axe X
@@ -71,7 +71,7 @@ def Extract_voxels_from_Nifti_file(file_name):
     
 
 #####################################################################
-#                         NIFTI CLUSTERING                          #
+#                         NIFTI OPPERATION                          #
 #####################################################################
 def max_shape(Nifti_collection):
         max_X = 0
@@ -89,7 +89,7 @@ def max_shape(Nifti_collection):
         return (max_X,max_Y,max_Z)
         
 #Clustering between differents nifti file    
-def clustering_mean(Nifti_file_collection,file_name):    
+def mean_opperation(Nifti_file_collection):    
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
     for file in Nifti_file_collection:
@@ -102,13 +102,14 @@ def clustering_mean(Nifti_file_collection,file_name):
             z = voxels[2]
             file_Nifti_clusterised[x][y][z] = file_Nifti_clusterised[x][y][z]+ data[x][y][z]/float(len(Nifti_file_collection))
     #On enregistre le cluster dans un nouveau fichier Nifti 
-    img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
-    nib.save(img,file_name)
-    print('\nMean process was successfull ! File result : \''+file_name+'\'')
-    return file_Nifti_clusterised
+    #img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
+    #nib.save(img,file_name)
+    print('Mean process is successfull !')
+    output =""
+    return file_Nifti_clusterised,output
 
 
-def clustering_or_opperation(Nifti_file_collection,file_name): 
+def or_opperation(Nifti_file_collection): 
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
     for file in Nifti_file_collection:
@@ -119,10 +120,11 @@ def clustering_or_opperation(Nifti_file_collection,file_name):
             z = voxels[2]
             file_Nifti_clusterised[x][y][z] = 1
     #On enregistre le cluster dans un nouveau fichier Nifti 
-    img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
-    nib.save(img,file_name)
-    print('\nOr opperation process was successfull ! File result : \''+file_name+'\'')
-    return file_Nifti_clusterised
+    #img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
+    #nib.save(img,file_name)
+    print('Or opperation process is successfull !')
+    output =""
+    return file_Nifti_clusterised,output
 
 def max_value(list):    
     max = list[0]
@@ -131,7 +133,15 @@ def max_value(list):
             max = e
     return max
 
-def clustering_and_opperation(Nifti_file_collection,file_name): 
+def min_value(list):    
+    min = list[0]
+    for e in list:
+        if e < min:
+            min = e
+    return min
+
+
+def and_opperation(Nifti_file_collection): 
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
     list_pix = []
@@ -145,17 +155,18 @@ def clustering_and_opperation(Nifti_file_collection,file_name):
                 list_pix.append([x,y,z])
             file_Nifti_clusterised[x][y][z] = file_Nifti_clusterised[x][y][z] + 1
     #On enregistre le cluster dans un nouveau fichier Nifti 
-    img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
-    nib.save(img,file_name)
+    #img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
+    #nib.save(img,file_name)
     for e in list_pix:
         if file_Nifti_clusterised[e[0]][e[1]][e[2]] < len(Nifti_file_collection):
             file_Nifti_clusterised[e[0]][e[1]][e[2]] = 0
         else:
             file_Nifti_clusterised[e[0]][e[1]][e[2]] = 1
-    print('\nAnd opperation process was successfull ! File result : \''+file_name+'\'')
-    return file_Nifti_clusterised
+    print('And opperation process is successfull ! File result : \''+file_name+'\'')
+    output =""
+    return file_Nifti_clusterised,output
 
-def clustering_linear_combination(Nifti_file_collection,coef,file_name):
+def linear_combination_opperation(Nifti_file_collection,coef):
     max_coef = max_value(coef)
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
@@ -171,39 +182,35 @@ def clustering_linear_combination(Nifti_file_collection,coef,file_name):
             file_Nifti_clusterised[x][y][z] = file_Nifti_clusterised[x][y][z]+ data[x][y][z]*float(coef[i])
         i = i+1
     #On enregistre le cluster dans un nouveau fichier Nifti 
-    img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
-    nib.save(img,file_name)
-    print('\nLinear combination process was successfull ! File result : \''+file_name+'\'')
-    return file_Nifti_clusterised
+    #img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
+    #nib.save(img,file_name)
+    #print('\nLinear combination process was successfull ! File result : \''+file_name+'\'')
+    output =""
+    return file_Nifti_clusterised,output
 
-def Nifti_normalized(Nifti_file_collection):
+def normalization_opperation(Nifti_file_collection):
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
     for file in Nifti_file_collection:
         img = load_nifti(file)
         data = get_data(img)
         list_voxels = Extract_voxels_from_Nifti_file(file)
-        max = data[0][0][0]
+	somme_value = sum(list_voxels)
         for voxels in list_voxels:
             x = voxels[0]
             y = voxels[1]
             z = voxels[2]
-            if data[x][y][z]>max:
-                max = data[x][y][z]
-        for voxels in list_voxels:
-            x = voxels[0]
-            y = voxels[1]
-            z = voxels[2]
-            file_Nifti_clusterised[x][y][z] = data[x][y][z]/float(max)
+            file_Nifti_clusterised[x][y][z] = data[x][y][z]/float(somme_value)
         #On enregistre le cluster dans un nouveau fichier Nifti 
         img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
         nib.save(img,file)
-    print('\nNormalized process with file(s) was successfull !')
-    return file_Nifti_clusterised
+    print('Normalized process is successfull !')
+    output =""
+    return file_Nifti_clusterised,output
 
 
 #Extract volume of voxel's center of gravity from a nifti file 
-def calcul_baricentre(list_voxels):
+def baricentre_calculation_opperation(list_voxels):
     mean_x = 0
     mean_y = 0
     mean_z = 0

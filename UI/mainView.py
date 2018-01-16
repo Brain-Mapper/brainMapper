@@ -177,7 +177,7 @@ class MainView(QtGui.QWidget):
                                                 "You have selected (" + str(len(get_selected())) +") image collection(s) \n Confirm to extract data",
                                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
             if choice == QtGui.QMessageBox.Yes:
-                extract_data_from_selected()
+                #extract_data_from_selected()
                 self.showCalcul.emit()
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's no data to calculation.")
