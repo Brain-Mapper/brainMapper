@@ -294,7 +294,7 @@ class CalculationView(QtGui.QWidget):
 
 		options = QLabel("Options")
 		options.setStyleSheet("background-color: #FFCC33;")
-		layout.addRow(options)
+		layout.addRow(options)		
 
 		descrip = QLabel("Description")
 		descrip.setStyleSheet("background-color: #FFCC33;")
@@ -402,6 +402,7 @@ class CalculationView(QtGui.QWidget):
 # --------------------- Action for CALCULATE button -------------------
 	def runCalculation(self):
 		print("calculation in progress...")
+		print currentUsableDataset
 		algorithm = self.leftlist.selectedItems()[0].text()
 		#extraction of arguments here
 		#
@@ -410,7 +411,6 @@ class CalculationView(QtGui.QWidget):
 		arguments = []
 	
 		nifti_selected = []
-		i = 0
 		for collection in selected :
 			for nifti in collection.nifimage_dict.values():
 				nifti_selected.append(nifti.filename)

@@ -4,6 +4,8 @@ from ourLib.niftiHandlers.imagecollection import ImageCollection
 from ourLib.dataExtraction import extractor as xt
 from ourLib import clustering as clust
 from ourLib import calculations as calcul
+import numpy as np
+import nibabel as nib
 
 
 import threading as th
@@ -14,6 +16,7 @@ selected = []
 toRM = []
 currentUsableDataset = None
 #currentCalculationResult = None
+
 
 
 def open_nifti(path):
