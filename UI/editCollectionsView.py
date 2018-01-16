@@ -195,7 +195,6 @@ class InfosBar(QtGui.QWidget):
                                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if choice == QtGui.QMessageBox.Yes:
             delete_coll(coll)
-            reset_toRM()
             self.parent().parent().parent().parent().parent().showMain.emit()
             
 

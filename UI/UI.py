@@ -68,7 +68,7 @@ class HomePage(QWidget):
         self.stack.addWidget(self.mainview)
         self.stack.addWidget(self.clustering)
         self.stack.addWidget(self.edit_colls)
-
+        
         # Define behaviour when widget emit certain signals (see class MainView and Clustering View for more details
         #  on signals and events)
 

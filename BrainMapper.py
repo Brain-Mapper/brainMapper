@@ -150,7 +150,10 @@ def add_image_coll(coll,files):
 
 def delete_coll(coll):
     this_set = coll.getSetName()
-    #this_set.remove_collection(coll.name)
+    rm_coll(coll)
+    reset_toRM()
+    add_toRM(coll)
+    this_set.remove_collection(coll.name)
     #print this_set.number_of_collection()
 
 def save_modifs():

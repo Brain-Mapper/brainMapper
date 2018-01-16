@@ -103,8 +103,17 @@ class CollectionsView(QtGui.QWidget):
         items = (self.vbox.itemAt(j).widget() for j in range(self.vbox.count()))
         for i in items:
             if isinstance(i, QCheckBox):
-                print i.coll
-                i.update()
+                tRM = get_toRM()
+                if tRM: #List not empty
+                    coll_to_RM = tRM[0]
+                    if(i.coll == coll_to_RM):
+                        print i.coll
+                        i.setParent(None)
+                        del i
+                    else:
+                        i.update()
+                else:
+                    i.update()
                 
     def update_label(self, label):
         self.name = label
