@@ -103,7 +103,8 @@ class ClusteringParameters(QtGui.QWidget):
     def update_clustering_info_and_params(self, selected_clustering_name):
         method_dict = get_selected_clustering_info()
         if method_dict is None :
-            raise ValueError('No known algorithm currently selected')
+            err = QtGui.QMessageBox.critical(self, "Error",
+                                             "No clustering method has been selected yet")
         else:
             self.clustering_name = selected_clustering_name
             self.clustering_info = method_dict['algo_info'] + "\nUsecase :" + method_dict["algo_usecase"]
