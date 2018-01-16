@@ -390,12 +390,30 @@ class CalculationView(QtGui.QWidget):
         vbox.addLayout(descbox)
         self.stack11.setLayout(vbox)
 
+    # def stack2UI(self):
+    #	layout = QFormLayout()
+    #	sex = QHBoxLayout()
+    #	sex.addWidget(QRadioButton("option1"))
+    #	sex.addWidget(QRadioButton("option2"))
+    #	layout.addRow(QLabel("blabla"),sex)
+    #	layout.addRow("blabla",QLineEdit())
+    #
+    #	self.stack2.setLayout(layout)
+
+    # def stack3UI(self):
+    #	layout = QFormLayout()#QHBoxLayout()
+    #	layout.addWidget(QLabel("option1"))
+    #	layout.addWidget(QCheckBox("option2"))
+    #	layout.addWidget(QCheckBox("option2"))
+    #	self.stack3.setLayout(layout)
+
     def display(self, i):
         self.Stack.setCurrentIndex(i)
 
     # --------------------- Action for CALCULATE button -------------------
     def runCalculation(self):
         print("calculation in progress...")
+        print currentUsableDataset
         algorithm = self.leftlist.selectedItems()[0].text()
         # extraction of arguments here
         #
@@ -404,7 +422,6 @@ class CalculationView(QtGui.QWidget):
         arguments = []
 
         nifti_selected = []
-        i = 0
         for collection in selected:
             for nifti in collection.nifimage_dict.values():
                 nifti_selected.append(nifti.filename)
@@ -421,7 +438,7 @@ class CalculationView(QtGui.QWidget):
 
     def main():
         app = QApplication(sys.argv)
-        # ex = stackedExample()  ## Unresolved reference here
+        ex = stackedExample()  # UNRESOLVED REFERENCE !
         sys.exit(app.exec_())
 
     if __name__ == '__main__':

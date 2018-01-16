@@ -31,7 +31,6 @@ else:
     from ..niftiHandlers.nifimage import NifImage
     from ..niftiHandlers.imagecollection import ImageCollection
 
-
 def extract(a_nifti_img_obj):
     # # Check if given param is NifImage class instance
     # if not isinstance(a_nifti_img_obj, NifImage):

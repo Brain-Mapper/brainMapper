@@ -11,9 +11,9 @@
 # 16 january 2018 - Initial design and coding. (@maximeCluchague, Maxime C.)
 
 
-
 import numpy as np
 import nibabel as nib
+import matplotlib.pyplot as plt
 
 # Take as argument the nifti's path file and load this one
 def load_nifti(nifti_file):
@@ -38,6 +38,10 @@ def Extract_voxels_from_Nifti_file(file_name):
                             list_voxels.append([x,y,z])
     return list_voxels
     
+
+#####################################################################
+#                         NIFTI OPPERATION                          #
+#####################################################################
 def max_shape(Nifti_collection):
         max_X = 0
         max_Y = 0
@@ -157,6 +161,9 @@ def normalization_opperation(Nifti_file_collection):
             y = voxels[1]
             z = voxels[2]
             file_Nifti_clusterised[x][y][z] = data[x][y][z]/float(somme_value)
+        #On enregistre le cluster dans un nouveau fichier Nifti 
+        img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
+        nib.save(img,file)
     print('Normalized process is successfull !')
     output =""
     return (file_Nifti_clusterised,output)

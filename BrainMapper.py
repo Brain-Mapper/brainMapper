@@ -5,6 +5,8 @@ from ourLib.niftiHandlers.set import Set
 from ourLib.dataExtraction import extractor as xt
 from ourLib import clustering as clust
 from ourLib import calculations as calcul
+import numpy as np
+import nibabel as nib
 
 
 import os
