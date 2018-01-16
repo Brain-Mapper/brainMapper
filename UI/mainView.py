@@ -73,6 +73,7 @@ class CollectionsView(QtGui.QWidget):
 
         title_style = "QLabel { background-color : #ffcc33 ; color : black;  font-style : bold; font-size : 14px;}"
         self.title2 = QtGui.QLabel("List of image collections for set "+str(self.name))
+        self.title2.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse | QtCore.Qt.TextSelectableByMouse)
         self.title2.setMinimumWidth(self.width())
         self.title2.setFixedHeight(20)
         self.title2.setAlignment(QtCore.Qt.AlignCenter)
@@ -214,6 +215,7 @@ class SetButton(QtGui.QWidget):
                     mainwind_h = rec.height()
                     mainwind_w = rec.width()
                     self.setB.setMaximumSize(size)
+                    self.parent().parent().parent().parent().parent().parent().upCollLabel(str(text))
                 else :
                     err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
             except :

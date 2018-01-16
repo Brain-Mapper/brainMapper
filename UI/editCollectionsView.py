@@ -13,6 +13,7 @@
 from PyQt4 import QtGui
 from PyQt4.Qt import *
 from PyQt4.QtCore import pyqtSignal,QCoreApplication
+from PyQt4 import QtCore
 
 import sys
 from os import path
@@ -32,6 +33,7 @@ class ImageBar(QtGui.QWidget):
         filname = im.filename.split("/")
         filna = filname[len(filname)-1]
         self.label = QtGui.QLabel("   "+filna)
+        self.label.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse | QtCore.Qt.TextSelectableByMouse)
         self.label.setToolTip(im.filename)
         self.label.setFixedWidth(420)
 
@@ -103,7 +105,9 @@ class InfosBar(QtGui.QWidget):
             self.group = QtGui.QGroupBox()
             self.vbox = QtGui.QVBoxLayout()
             label_name = QtGui.QLabel("Collection's name : "+ str(coll.name))
+            label_name.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse | QtCore.Qt.TextSelectableByMouse)
             label_set = QtGui.QLabel("Set's name \t : "+ str(coll.set_n.name))
+            label_set.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse | QtCore.Qt.TextSelectableByMouse)
             list_images = "List of images :"
             label2_name = QtGui.QLabel(list_images)
             self.vbox.addWidget(label_name)
