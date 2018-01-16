@@ -91,9 +91,9 @@ def get_current_usableDataset():
     return currentUsableDataset
 
 
-def run_clustering(selectedClusteringMethod, params_list):
+def run_clustering(selectedClusteringMethod, params_dict):
     if selectedClusteringMethod == 'kmeans':
-        labels = clust.perform_kmeans(params_list[0], currentUsableDataset.export_as_clusterizable())
+        labels = clust.perform_kmeans(params_dict, currentUsableDataset.export_as_clusterizable())
     else:
         print('clustering method not recognised')
         labels = ['']
@@ -193,8 +193,15 @@ def get_current_set():
     global currentSet
     return currentSet
 
+
 # --- currently selected clustering method ---
 def set_selected_clustering_method(method_name):
     global currentClusteringMethod
     currentClusteringMethod = method_name
 
+
+def get_selected_clustering_info():
+    if currentClusteringMethod is not None:
+        return app_clustering_available[currentClusteringMethod]
+    else :
+        return None
