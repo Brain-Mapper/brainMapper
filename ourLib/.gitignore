@@ -16,3 +16,6 @@ target/
 
 # Python class files #
 *.pyc
+
+# Temporary files #
+*.*~
