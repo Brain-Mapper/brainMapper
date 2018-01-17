@@ -9,7 +9,7 @@ from ourLib import calculations as calcul
 
 import os
 import platform
-import threading as th
+import gc
 import json
 
 
@@ -104,25 +104,34 @@ def get_current_usableDataset():
 
 
 def run_clustering(selectedClusteringMethod, params_dict):
-    if selectedClusteringMethod == 'kmeans':
-        labels = clust.perform_kmeans(params_dict, currentUsableDataset.export_as_clusterizable())
+
+    clusterizable_dataset = currentUsableDataset.export_as_clusterizable()
+    if selectedClusteringMethod == 'KMeans':
+        labels = clust.perform_kmeans(params_dict, clusterizable_dataset)
+    if selectedClusteringMethod == 'AgglomerativeClustering' :
+        labels = clust.perform_agglomerative_clustering(params_dict, clusterizable_dataset)
     else:
         print('clustering method not recognised')
         labels = ['']
+
+    del clusterizable_dataset   # Deleting exported data : saves memory !!
+    # gc.collect()  # Call the garbage collector
+
     return labels
 
+
 def run_calculation(algorithm,nifti_collection,arguments):
-	if algorithm == "Mean":
-		file_result,output = calcul.mean_opperation(nifti_collection)
-	if algorithm == "Boolean Interserction":
-		file_result,output = calcul.and_opperation(nifti_collection)
-	if algorithm == "Boolean Union":
-		file_result,output = calcul.or_opperation(nifti_collection)
-	if algorithm == "Normalization":
-		file_result,output = calcul.normalization_opperation(nifti_collection)
-	if algorithm == "Linear combination":
-		file_result,output = calcul.linear_combination_opperation(nifti_collection,arguments)
-	return file_result,output
+    if algorithm == "Mean":
+        file_result,output = calcul.mean_opperation(nifti_collection)
+    if algorithm == "Boolean Interserction":
+        file_result,output = calcul.and_opperation(nifti_collection)
+    if algorithm == "Boolean Union":
+        file_result,output = calcul.or_opperation(nifti_collection)
+    if algorithm == "Normalization":
+        file_result,output = calcul.normalization_opperation(nifti_collection)
+    if algorithm == "Linear combination":
+        file_result,output = calcul.linear_combination_opperation(nifti_collection,arguments)
+    return file_result,output
 
 
 def get_selected_from_name(name):
@@ -132,25 +141,30 @@ def get_selected_from_name(name):
         if(name == x.name):
             return x
 
+
 def get_toRM():
 # --- Return list of images to remove (usefull for edit view -> save changes"
 
     return toRM
+
 
 def add_toRM(im):
 # --- Add an image to remove in the list toRM (usefull for all views that use data)
 
     toRM.append(im)
 
+
 def rm_toRM(im):
 # --- Remove an image to remove from the list toRM (usefull for all views that use data)
 
     toRM.remove(im)
 
+
 def reset_toRM():
 # --- Reset the list toRM (usefull for all views that use data and allow the list to be used somewhere else)
 
     del toRM[:]
+
 
 def set_current_coll(coll):
 # --- Set the current collection (usefull to show the collection selected in edit view)
