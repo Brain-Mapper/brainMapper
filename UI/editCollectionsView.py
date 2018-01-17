@@ -27,7 +27,6 @@ import resources
 import re
 
 class ImageBar(QtGui.QWidget):
-    #styler = "border:1px solid rgb(255,255,225);"
     def __init__(self, im, parent = None):
         super(ImageBar, self).__init__(parent = parent)
         rec = QApplication.desktop().availableGeometry()
@@ -57,7 +56,6 @@ class ImageBar(QtGui.QWidget):
         hbox.addWidget(self.removeButton)
         hbox.addWidget(showButton)
         self.setLayout(hbox)
-        #self.setStyleSheet(self.styler)
 
     def remove(self):
         add_toRM(self.im)
@@ -80,12 +78,15 @@ class ImageBar(QtGui.QWidget):
             self.readd()
 
     def show(self):
+        self.parent().parent().parent().parent().img_show=self.im.filename
         self.parent().parent().parent().parent().parent().parent().parent().parent().parent().updateVizuView(self.im)
+        self.parent().parent().parent().parent().redo(get_current_coll())
                 
         
 class InfosBar(QtGui.QWidget):
     def __init__(self, parent = None):
         super(InfosBar, self).__init__(parent = parent)
+        self.img_show="None"
         self.vbox = QtGui.QVBoxLayout()
         self.group = QtGui.QGroupBox()
         rec = QApplication.desktop().availableGeometry()
@@ -116,8 +117,10 @@ class InfosBar(QtGui.QWidget):
             label_set.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse | QtCore.Qt.TextSelectableByMouse)
             list_images = "List of images :"
             label2_name = QtGui.QLabel(list_images)
+            img_shown = QtGui.QLabel("Image shown below : "+str(self.img_show))
             self.vbox.addWidget(label_name)
             self.vbox.addWidget(label_set)
+            self.vbox.addWidget(img_shown)
             self.vbox.addWidget(label2_name)
             for i in coll.get_img_list().values():
                 im = ImageBar(i)
@@ -166,7 +169,7 @@ class InfosBar(QtGui.QWidget):
             self.group = QtGui.QGroupBox()
             self.vbox = QtGui.QVBoxLayout()
             self.scroll.setWidgetResizable(True)
-            self.scroll.setFixedHeight(self.parent().frameGeometry().height()*0.9)
+            self.scroll.setMinimumHeight(self.parent().frameGeometry().height()*0.9)
             self.hbox.addWidget(self.scroll)
             self.setLayout(self.hbox)
 
