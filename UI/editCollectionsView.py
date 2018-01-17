@@ -355,6 +355,12 @@ class EditCollectionsView(QtGui.QWidget):
         col = get_selected_from_name(name)
         set_current_coll(col)
         self.infos.redo(col)
+        old = splitter2.widget(1)
+        containerVbox.removeWidget(old)
+        old.setParent(None)
+        bottom = gl.GLViewWidget()
+        splitter2.addWidget(bottom)
+        splitter2.setSizes([self.frameGeometry().height()*0.65, self.frameGeometry().height()*0.35])
 
     def go_back(self):
     # -- When the user wants to return to the main view, we reinit the edit view
@@ -383,6 +389,7 @@ class EditCollectionsView(QtGui.QWidget):
         old.setParent(None)
         bottom = gl.GLViewWidget()
         splitter2.addWidget(bottom)
+        splitter2.setSizes([self.frameGeometry().height()*0.35, self.frameGeometry().height()*0.65])
         bottom.orbit(256, 256)
         bottom.setCameraPosition(0, 0, 0)
         bottom.opts['distance'] = 200
