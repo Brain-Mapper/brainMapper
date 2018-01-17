@@ -21,6 +21,7 @@ sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 from BrainMapper import *
 
 import pyqtgraph as pg
+import pyqtgraph.opengl as gl
 
 import resources
 import re
@@ -79,7 +80,7 @@ class ImageBar(QtGui.QWidget):
             self.readd()
 
     def show(self):
-        self.parent().parent().parent().parent().parent().parent().parent().parent().parent().updateVizuView()
+        self.parent().parent().parent().parent().parent().parent().parent().parent().parent().updateVizuView(self.im)
                 
         
 class InfosBar(QtGui.QWidget):
@@ -270,7 +271,7 @@ class EditCollectionsView(QtGui.QWidget):
         self.initEditCollectionsView()
 
     def initEditCollectionsView(self):
-        global splitter1, containerVbox
+        global splitter1, containerVbox, splitter2
         # - Horizontal box for go back home button
         buttonsBox = QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
@@ -283,7 +284,7 @@ class EditCollectionsView(QtGui.QWidget):
         buttonsBox.addWidget(goHomeButton)
 
         hbox = QtGui.QHBoxLayout()
-        self.bottom = pg.GraphicsLayoutWidget()
+        bottom = gl.GLViewWidget()
 
         splitter1 = QtGui.QSplitter(Qt.Horizontal)
         topleft=CollectionsAccessBar(['1','2'],self)
@@ -299,7 +300,7 @@ class EditCollectionsView(QtGui.QWidget):
 
 
         splitter2.addWidget(scroll)
-        splitter2.addWidget(self.bottom)
+        splitter2.addWidget(bottom)
         splitter2.setSizes([self.frameGeometry().height()*0.65, self.frameGeometry().height()*0.35])
 
         hbox.addWidget(splitter2)
@@ -338,23 +339,30 @@ class EditCollectionsView(QtGui.QWidget):
         old_left.setParent(None)
         splitter1.addWidget(self.infos)
         splitter1.addWidget(topleft)
+        old = splitter2.widget(1)
+        containerVbox.removeWidget(old)
+        old.setParent(None)
+        bottom = gl.GLViewWidget()
+        splitter2.addWidget(bottom)
         reset_toRM()
         self.showMain.emit()
 
-    def updateVizuView(self):
-        p = self.bottom.addPlot(row=0, col=0)
-        p2 = self.bottom.addPlot(row=1, col=0)
+    def updateVizuView(self, img):
+        old = splitter2.widget(1)
+        containerVbox.removeWidget(old)
+        old.setParent(None)
+        bottom = gl.GLViewWidget()
+        splitter2.addWidget(bottom)
+        bottom.orbit(256, 256)
+        bottom.setCameraPosition(0, 0, 0)
+        bottom.opts['distance'] = 200
+        bottom.show()
 
-        ## variety of arrow shapes
-        a1 = pg.ArrowItem(angle=-160, tipAngle=60, headLen=40, tailLen=40, tailWidth=20, pen={'color': 'w', 'width': 3})
-        a2 = pg.ArrowItem(angle=-120, tipAngle=30, baseAngle=20, headLen=40, tailLen=40, tailWidth=8, pen=None, brush='y')
-        a3 = pg.ArrowItem(angle=-60, tipAngle=30, baseAngle=20, headLen=40, tailLen=None, brush=None)
-        a4 = pg.ArrowItem(angle=-20, tipAngle=30, baseAngle=-30, headLen=40, tailLen=None)
-        a2.setPos(10,0)
-        a3.setPos(20,0)
-        a4.setPos(30,0)
-        p.addItem(a1)
-        p.addItem(a2)
-        p.addItem(a3)
-        p.addItem(a4)
-        p.setRange(QtCore.QRectF(-20, -10, 60, 20))
+        g = gl.GLGridItem()
+        g.scale(20, 20, 1)
+        bottom.addItem(g)
+        d2 = img.get_img_data()
+        v = gl.GLVolumeItem(d2, sliceDensity=1, smooth=False, glOptions='translucent')
+        v.translate(-d2.shape[0]/2, -d2.shape[1]/2, -150)
+        bottom.addItem(v)
+
