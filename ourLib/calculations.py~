@@ -11,6 +11,7 @@
 # 16 january 2018 - Initial design and coding. (@maximeCluchague, Maxime C.)
 
 
+
 import numpy as np
 import nibabel as nib
 
@@ -69,7 +70,7 @@ def mean_opperation(Nifti_file_collection):
             z = voxels[2]
             file_Nifti_clusterised[x][y][z] = file_Nifti_clusterised[x][y][z]+ data[x][y][z]/float(len(Nifti_file_collection))
     print('Mean process is successfull !')
-    output =""
+    output ="<Algorithm> Mean process\n<Input> Nifti(s) file(s)"+str(Nifti_file_collection)+"\n<Parameter> None\n<Output> Nifti file, Shape {"+str(lx)+","+str(ly)+","+str(lz)+"}"
     return (file_Nifti_clusterised,output)
 
 
@@ -174,6 +175,6 @@ def baricentre_calculation_opperation(list_voxels):
     mean_y = mean_y/len(list_voxels)
     mean_z = mean_z/len(list_voxels)
     output = "Centroide coordinate calculated: [X:"+str(mean_x)+", Y:"+str(mean_y)+" ,Z:"+ str(mean_z)+"]"
-    return(mean_x,mean_y,mean_z)
+    return(None,output)
 
 # Lib dependency imports
