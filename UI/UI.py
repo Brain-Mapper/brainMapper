@@ -9,7 +9,9 @@ import resources
 from mainView import MainView
 from clusteringView import ClusteringView
 from editCollectionsView import EditCollectionsView
+from exportView import ExportView
 from calculationView import CalculationView
+
 
 if __name__ == '__main__':
     if __package__ is None:
@@ -46,6 +48,7 @@ class Help(QMainWindow):
 # In PyQt we cannot open two windows at a time easily, so we will have to change the central widget of our app
 # according to what the user clicks on... To do so, we will use an instance of the following class
 
+
 # The class Home Page implements a custom QWidget that can stack several QWidgets
 # We will use an instance of it as the central widget of our application, thus facilitating the switch
 # between the different views of our application
@@ -65,11 +68,13 @@ class HomePage(QWidget):
         self.clustering = ClusteringView()
 	self.calculation = CalculationView()
         self.edit_colls = EditCollectionsView()
+        self.export = ExportView()
         # -- Add them to stack widget
         self.stack.addWidget(self.mainview)
         self.stack.addWidget(self.clustering)
 	self.stack.addWidget(self.calculation)
         self.stack.addWidget(self.edit_colls)
+        self.stack.addWidget(self.export)
 
         # Define behaviour when widget emit certain signals (see class MainView and Clustering View for more details
         #  on signals and events)
@@ -84,6 +89,10 @@ class HomePage(QWidget):
         self.mainview.showEdit.connect(partial(self.stack.setCurrentWidget, self.edit_colls))
         # -- when collection edition widget emits signal showMain, change current Widget in stack to main view widget
         self.edit_colls.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
+        self.edit_colls.showMain.connect(self.updateMain)
+
+        self.mainview.showExport.connect(self.updateExportView)
+        self.export.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
 
 	# -- when mainView widget emits signal showCalcul, change current Widget in stack to calculation widget
         self.mainview.showCalcul.connect(partial(self.stack.setCurrentWidget, self.calculation))
@@ -100,6 +109,13 @@ class HomePage(QWidget):
     def updateEditView(self):
         self.edit_colls.fill_coll()
         self.stack.setCurrentWidget(self.edit_colls)
+    
+    def updateMain(self):
+        self.mainview.update()
+
+    def updateExportView(self):
+        self.export.set_usable_data_set(get_current_usableDataset())
+        self.stack.setCurrentWidget(self.export)
 
 
 class UI(QtGui.QMainWindow):
@@ -143,14 +159,15 @@ class UI(QtGui.QMainWindow):
 
         setAction = QtGui.QAction('&Create new set', self)
         setAction.setStatusTip('Create new set')
-        setAction.triggered.connect(self.buttonClicked)
+        setAction.setShortcut('Ctrl+S')
+        setAction.triggered.connect(self.createSet)
 
         excelAction = QtGui.QAction('&Import from Excel file', self)
         excelAction.setStatusTip('Import from Excel file')
         excelAction.triggered.connect(self.buttonClicked)
 
         niftiAction = QtGui.QAction('&Import from NIfTI file(s)', self)
-        niftiAction.setStatusTip('Create a collection of one or several NIfTI images')
+        niftiAction.setStatusTip('Create a collection with one or several NIfTI images (added in the current set)')
         niftiAction.setShortcut('Ctrl+N')
         niftiAction.triggered.connect(self.fromNiFile)
 
@@ -173,17 +190,35 @@ class UI(QtGui.QMainWindow):
     def fromNiFile(self):
         file = QFileDialog.getOpenFileNames()
         if (file != ""):
-            try:
-                collec = do_image_collection(file)
-                homepage.mainview.show_coll(collec)
-            except:
-                err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
-                #print (sys.exc_info()[0])
+##            try:
+##                collec = do_image_collection(file)
+##            except:
+##                err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
+##                #print (sys.exc_info()[0])
+            collec = do_image_collection(file)
+            homepage.mainview.show_coll(collec)
+            homepage.edit_colls.fill_coll()
         
     def showHelp(self):
         self.w = Help()
 
-
+    def createSet(self):
+        text, ok = QInputDialog.getText(self, 'Create a Set', "Enter a name for your set :")
+        if str(text)!= "":
+            try:
+                new_ok = True
+                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
+                for i in not_ok:
+                    if i in str(text):
+                        new_ok = False
+                if new_ok and not exists_set(str(text)):
+                    new_set = newSet(str(text))
+                    homepage.mainview.show_set(new_set)
+                else :
+                    err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
+            except :
+                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
+            
 def main():
     
     app = QtGui.QApplication(sys.argv)

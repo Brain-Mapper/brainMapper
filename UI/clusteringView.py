@@ -12,12 +12,15 @@
 # 5 january 2018 - Added functions to fill table with extracted data
 
 from PyQt4 import QtGui
-from PyQt4.Qt import *
+from PyQt4.Qt import pyqtSignal
+from PyQt4.QtCore import Qt, QSize, QObjectCleanupHandler
 
 import sys
 from os import path
+import gc
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 from BrainMapper import *
+from functools import partial
 
 import resources
 
@@ -28,7 +31,7 @@ class ClusteringDataTable(QtGui.QTableWidget):
         self.clustering_usable_dataset = None
         self.setRowCount(20)
         self.setColumnCount(7)
-        self.setHorizontalHeaderLabels(["Image Coll ID","Origin filename", "X", "Y", "Z", "Intensity", "Assigned cluster"])
+        self.setHorizontalHeaderLabels(["Image Coll ID", "Origin filename", "X", "Y", "Z", "Intensity", "Assigned cluster"])
 
     def fill_with_extracted_data(self, a_usable_dataset_instance):
         self.clustering_usable_dataset = a_usable_dataset_instance
@@ -44,9 +47,9 @@ class ClusteringDataTable(QtGui.QTableWidget):
                 for data_rows in range(0, data_array.shape[0]):
                     self.setItem(row_count, 0, QtGui.QTableWidgetItem(udcoll.get_imgcoll_name()))
                     self.setItem(row_count, 1, QtGui.QTableWidgetItem(str(origin_file.filename)))
-                    self.setItem(row_count, 2, QtGui.QTableWidgetItem(str(data_array[data_rows, 0]))) # X coodinate at column 0
-                    self.setItem(row_count, 3, QtGui.QTableWidgetItem(str(data_array[data_rows, 1]))) # Y coodinate at column 1
-                    self.setItem(row_count, 4, QtGui.QTableWidgetItem(str(data_array[data_rows, 2]))) # Z coodinate at column 2
+                    self.setItem(row_count, 2, QtGui.QTableWidgetItem(str(data_array[data_rows, 0]))) # X coordinate at column 0
+                    self.setItem(row_count, 3, QtGui.QTableWidgetItem(str(data_array[data_rows, 1]))) # Y coordinate at column 1
+                    self.setItem(row_count, 4, QtGui.QTableWidgetItem(str(data_array[data_rows, 2]))) # Z coordinate at column 2
                     self.setItem(row_count, 5, QtGui.QTableWidgetItem(str(data_array[data_rows, 3]))) # Intensity at column 3
                     self.setItem(row_count, 6, QtGui.QTableWidgetItem("None yet"))
                     row_count = row_count+1
@@ -58,7 +61,8 @@ class ClusteringDataTable(QtGui.QTableWidget):
             ra = lambda: random.randint(0, 255)
             hex_dict = dict()
             for i in range(0, n):
-                hex_string = '#%02X%02X%02X' % (ra(), ra(), ra())
+                # Mixing with white to have pastel colors
+                hex_string = '#%02X%02X%02X' % ((ra()+255)/2, (ra()+255)/2, (ra()+255)/2)
                 hex_dict[str(i)] = hex_string
             return hex_dict
 
@@ -66,11 +70,245 @@ class ClusteringDataTable(QtGui.QTableWidget):
 
         row_count = 0
         for lab in assigned_labels_array:
-            item = QTableWidgetItem(str(lab))
+            item = QtGui.QTableWidgetItem(str(lab))
             item.setTextAlignment(Qt.AlignCenter)
             item.setBackground(QtGui.QColor(colors[str(lab)]))
             self.setItem(row_count, 6, item)
             row_count = row_count + 1
+
+
+class ClusteringParameters(QtGui.QWidget):
+
+    def __init__(self):
+        super(ClusteringParameters, self).__init__()
+
+        # I chose to use a dictionary : the implemented base clustering algorithms will give an
+        # 'expected parameter dictionnary'...
+        # For example : {"distance":None, "k":None}, could be the dictionary given by the Kmeans method,
+        # and it will expect this dictionary to be completed by the user
+
+        self.parameters_dict = None
+        self.clustering_name = "None selected yet"
+        self.clustering_info = "Please select a classifier from the top menu"
+
+        self.container_box = None
+        self.clust_title = None
+        self.param_box = None
+
+        self.container_box = QtGui.QVBoxLayout()
+        self.container_box.setAlignment(Qt.AlignTop)
+
+        self.setLayout(self.container_box)
+
+    def update_clustering_info_and_params(self, selected_clustering_name):
+        method_dict = get_selected_clustering_info()
+        if method_dict is None :
+            err = QtGui.QMessageBox.critical(self, "Error",
+                                             "No clustering method has been selected yet")
+        else:
+            self.clustering_name = selected_clustering_name
+            self.clustering_info = method_dict['algo_info'] + "\nUsecase :" + method_dict["algo_usecase"]
+            self.parameters_dict = method_dict["param_list"]
+
+            # Clean up the previous param box and the cluster labels
+            for i in reversed(range(self.container_box.count())):
+                self.container_box.itemAt(i).widget().setParent(None)
+
+            gc.collect()  # DANGER : calling garbage collector
+
+            # ---- Add clustering info and title box ----
+            self.clust_title = QtGui.QGroupBox("Clustering method parameters");
+            vbox1 = QtGui.QVBoxLayout()
+            grid = QtGui.QGridLayout()
+
+            # Labels for the title group box
+            clustering_method_label = QtGui.QLabel("Clustering : ")
+            clustering_selected_label = QtGui.QLabel(self.clustering_name)
+            clustering_selected_label.setWordWrap(True)
+
+            clustering_info = QtGui.QLabel("Clustering method information : ")
+            clustering_selected_info = QtGui.QLabel(self.clustering_info)
+            clustering_selected_info.setWordWrap(True)
+
+            grid.addWidget(clustering_method_label, 0, 0)
+            grid.addWidget(clustering_selected_label, 1, 0)
+
+            grid.addWidget(clustering_info, 2, 0)
+            grid.addWidget(clustering_selected_info, 3, 0)
+
+            vbox1.addLayout(grid)
+            self.clust_title.setLayout(vbox1)
+            self.container_box.addWidget(self.clust_title)
+
+            # Add parameter box
+            self.param_box = self.ParametersBox(self.parameters_dict) #self.param_dict has been set to method_dict["param_list"]
+            self.container_box.addWidget(self.param_box)
+
+    def export_user_params(self):
+        return self.param_box.get_user_params()
+
+    # An inner class for the params box
+    class ParametersBox(QtGui.QGroupBox):
+        def __init__(self, parameters_dict=None):
+            super(ClusteringParameters.ParametersBox, self).__init__("Parameters")
+            self.user_params = {}
+            self.vbox = QtGui.QVBoxLayout()
+
+            if parameters_dict is not None:
+
+                for param_name in parameters_dict.keys():
+
+                    particular_param_dict = parameters_dict[param_name]
+                    param = ClusteringParameters.ParameterNameAndValue(param_name,
+                                                                       particular_param_dict["default"],
+                                                                       particular_param_dict["param_info"])
+
+                    self.vbox.addWidget(param)
+            else:
+                placeholder_label = QtGui.QLabel("No parameters to show")
+                self.vbox.addWidget(placeholder_label)
+
+            self.vbox.addStretch(5)
+            self.setLayout(self.vbox)
+
+        def save_user_params(self):
+            for i in reversed(range(self.vbox.count())):
+                if self.vbox.itemAt(i).widget() is not None :
+                    (param_name, param_value) = self.vbox.itemAt(i).widget().get_name_value_pair()
+                    self.user_params[param_name] = param_value
+
+        def get_user_params(self):
+            self.save_user_params()
+            return self.user_params
+
+    # An inner class for parameter labels (simplifies the dictionnary building process)
+    class ParameterNameAndValue(QtGui.QGroupBox):
+        def __init__(self, param_name, param_default_value, param_info):
+            super(ClusteringParameters.ParameterNameAndValue, self).__init__()
+            self.grid = QtGui.QGridLayout()
+            self.param_name_label = QtGui.QLabel(param_name)
+            self.param_value_input = QtGui.QLineEdit(param_default_value)
+            self.param_value_input.setToolTip(param_info)
+            self.param_value_input.setStatusTip(param_info)
+            self.param_value_input.setMaximumSize(QSize(150, 50))
+
+            self.grid.addWidget(self.param_name_label, 0, 0)
+            self.grid.addWidget(self.param_value_input, 0, 1)
+            self.setLayout(self.grid)
+
+        def get_name_value_pair(self):
+            return str(self.param_name_label.text()), str(self.param_value_input.text())
+
+
+# A custom widget to implement the script environment
+class ScriptEnvironment(QtGui.QWidget):
+    
+    def __init__(self, title_style):
+        super(ScriptEnvironment, self).__init__()
+
+        container_box = QtGui.QVBoxLayout()
+
+        scriptEnv_title = QtGui.QLabel('Script Environment')
+        scriptEnv_title.setStyleSheet(title_style)
+
+        editor = QtGui.QVBoxLayout()
+        self.edit_input = QtGui.QTextEdit()
+
+        editor.addWidget(scriptEnv_title)
+        editor.addWidget(self.edit_input)
+
+        container_box.addLayout(editor)
+
+        # Add the layout to script widget
+        self.setLayout(container_box)
+
+
+# A custom widget to stack the ClusteringParameters Widget and the ScripEnvironnement Widget
+class ParameterScriptEnvStack(QtGui.QWidget):
+
+    def __init__(self, title_style, clustering_chooser=None):
+
+        super(ParameterScriptEnvStack, self).__init__()
+
+        # Initialize a stack (pile) widget
+        self.stack = QtGui.QStackedWidget()
+        layout = QtGui.QVBoxLayout(self) # vertical layout
+        layout.addWidget(self.stack) # stack in the vertical layout
+
+        # Here are the custom widgets we will put on the stack
+        self.clust_params_widget = ClusteringParameters()
+        self.script_env_widget = ScriptEnvironment(title_style)
+        # -- Add them to stack widget
+        self.stack.addWidget(self.clust_params_widget)
+        self.stack.addWidget(self.script_env_widget)
+
+        self.clusteringChooser = clustering_chooser
+
+        # Define behaviour when widget emit certain signals (see class MainView and Clustering View for more details
+        #  on signals and events)
+
+        # -- when clusteringChooser widget emits signal showClustParamsWidget, change current Widget in stack to clust params widget
+        self.clusteringChooser.showClustParamsWidget.connect(self.update_clustering_parameters)
+        # -- when clusteringChooser widget emits signal showClustParamsWidget, change current Widget in stack to scrip env widget
+        self.clusteringChooser.showScriptEnvWidget.connect(partial(self.stack.setCurrentWidget, self.script_env_widget))
+
+
+        # Set current widget to main view by default
+        self.stack.setCurrentWidget(self.clust_params_widget)
+        rec = QtGui.QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height() / 1.4
+        mainwind_w = rec.width() / 1.5
+        del rec  # Saves memory
+        self.setMaximumSize(QSize(mainwind_w / 3, mainwind_h))
+
+    def update_clustering_parameters(self):
+        self.clust_params_widget.update_clustering_info_and_params(self.clusteringChooser.get_selected_method_name())
+        self.stack.setCurrentWidget(self.clust_params_widget)
+
+    def get_user_params(self) :
+        if self.stack.currentWidget() is not self.script_env_widget:
+            return self.stack.currentWidget().export_user_params()
+
+
+class ClusteringChooser(QtGui.QToolButton):
+    # -- ! ATTRIBUTES SHARED by EVERY class instance ! --
+
+    # ------ pyqt Signals ------
+    # We will use signals to communicate between the widgets ClusteringParameters and ScriptEnv, that will be stacked in
+    # an instance of ParameterScriptEnvStack
+
+    showClustParamsWidget = pyqtSignal()
+    showScriptEnvWidget = pyqtSignal()
+
+    def __init__(self):
+        super(ClusteringChooser, self).__init__()
+        self.currently_selected = None
+        self.setText("Choose a clustering algorithm")
+        self.setStyleSheet("width: 250px; background-color: #fefee1;")
+        self.setPopupMode(QtGui.QToolButton.MenuButtonPopup)
+
+        self.clustering_algo_menu = QtGui.QMenu()
+
+        Kmeans_choice = QtGui.QAction('&KMeans', self)
+        Kmeans_choice.setStatusTip('Perform KMeans algorithm on dataset')
+        Kmeans_choice.triggered.connect(lambda: self.updateLabel("KMeans", self.showClustParamsWidget))
+
+        user_script_choice = QtGui.QAction('&Custom user script', self)
+        user_script_choice.setStatusTip('Make a custom clustering script')
+        user_script_choice.triggered.connect(lambda: self.updateLabel("Custom user script", self.showScriptEnvWidget))
+
+        self.clustering_algo_menu.addAction(Kmeans_choice)
+        self.clustering_algo_menu.addAction(user_script_choice)
+        self.setMenu(self.clustering_algo_menu)
+
+    def updateLabel(self, selected_clustering, signal_to_emit):
+        self.currently_selected = selected_clustering
+        self.setText(selected_clustering)
+        set_selected_clustering_method(selected_clustering)
+        signal_to_emit.emit()
+
+    def get_selected_method_name(self) :
+        return self.currently_selected
 
 
 class ClusteringView(QtGui.QWidget):
@@ -85,8 +323,9 @@ class ClusteringView(QtGui.QWidget):
 
     def __init__(self):
         super(ClusteringView, self).__init__()
-        self.selected_clustMethods_displayer = None
+        self.clust_chooser = None
         self.table_displayer = None
+        self.param_script_stack = None
         self.initClusteringView()
 
     def initClusteringView(self):
@@ -98,21 +337,20 @@ class ClusteringView(QtGui.QWidget):
         # - Horizontal box for a displayer of selected method
         selectedMBox = QtGui.QHBoxLayout()
         label = QtGui.QLabel('Clustering method : ')
-        self.selected_clustMethods_displayer = QtGui.QLabel('KMeans(k=3)')
-        self.selected_clustMethods_displayer.setMargin(5)
-        self.selected_clustMethods_displayer.setStyleSheet("background-color:white;")
+        self.clust_chooser = ClusteringChooser() # Our custom widget for clustering algorithm selection
 
         selectedMBox.addWidget(label)
-        selectedMBox.addWidget(self.selected_clustMethods_displayer)
+        selectedMBox.addWidget(self.clust_chooser)
 
         # - Horizontal box for go back home button
         buttonsBox= QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
 
         runClusteringButton = QtGui.QPushButton('Run')
+        runClusteringButton.setStyleSheet("background-color: #b4ecb4;")
         runClusteringButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/play.png'))
         runClusteringButton.setToolTip("Run selected clustering")
-        runClusteringButton.clicked.connect(lambda: self.runSelectedClust('kmeans', [3]))
+        runClusteringButton.clicked.connect(lambda: self.runSelectedClust('kmeans', self.param_script_stack.get_user_params()))
 
         goHomeButton = QtGui.QPushButton('Go back')
         goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
@@ -126,25 +364,9 @@ class ClusteringView(QtGui.QWidget):
         topBox.addLayout(selectedMBox)
         topBox.addLayout(buttonsBox)
 
-        # -------------- Script Environemment Widget --------------
-        scriptWidget=QtGui.QWidget()
-        # - Vertical box for future script Environnement
-        scriptEnvBox = QtGui.QVBoxLayout()
+        # --- Param/Script Env Stack ------
 
-        scriptEnv_title = QtGui.QLabel('Script Environment')
-        scriptEnv_title.setStyleSheet(title_style)
-
-        editor = QtGui.QVBoxLayout()
-        edit_input = QtGui.QTextEdit()
-
-        editor.addWidget(scriptEnv_title)
-        editor.addWidget(edit_input)
-
-        scriptEnvBox.addLayout(editor)
-
-        # Add the layout to script widget
-        scriptWidget.setLayout(scriptEnvBox)
-
+        self.param_script_stack = ParameterScriptEnvStack(title_style, self.clust_chooser)
 
         # -------------- Clustering Widget -----------------------
         clustWidget = QtGui.QWidget()
@@ -204,7 +426,7 @@ class ClusteringView(QtGui.QWidget):
 
         # Set the layout of clustering widget and set it as the central widget for QtMainWindow
         main_splitter = QtGui.QSplitter(Qt.Horizontal)
-        main_splitter.addWidget(scriptWidget)
+        main_splitter.addWidget(self.param_script_stack)
         main_splitter.addWidget(clustWidget)
 
         hbox = QtGui.QHBoxLayout()
@@ -219,8 +441,7 @@ class ClusteringView(QtGui.QWidget):
     def fill_table(self, usable_dataset_instance):
         self.table_displayer.fill_with_extracted_data(usable_dataset_instance)
 
-    def runSelectedClust(self, selectedMethod, param_list):
-        labs = run_clustering(selectedMethod, param_list)
-        # print(labs)
-        # print(str(len(labs)))
+    def runSelectedClust(self, selectedMethod, param_dict):
+        print(param_dict)
+        labs = run_clustering(selectedMethod, param_dict)
         self.table_displayer.fill_clust_labels(labs)

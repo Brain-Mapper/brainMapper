@@ -1,0 +1,43 @@
+{
+  "KMeans" : { "algo_info": "KMeans clustering calculates clusters. They are represented by a central point that is the mean of all the points in a given cluster",
+      "algo_usecase" : "General-purpose, even cluster size, flat geometry, not too many clusters. Metric used is Euclidean Distance",
+      "param_list" : {
+        "init": {
+          "param_info" : "A way to initialise the centers : randomly or kmeans++ (see scikit-learn documentation on kmeans)",
+          "type" : ["random","kmeans++"],
+          "default" : "random"
+        },
+        "n_clusters" : {
+          "param_info" : "The number of clusters the user wishes to obtain",
+          "type" : "int",
+          "default" : "3"
+        },
+        "n_init" : {
+          "param_info" : "Number of time the k-means algorithm will be run with different centroid seeds. The final results will be the best output of n_init consecutive runs in terms of inertia",
+          "type" : "int",
+          "default" : "10"
+        },
+        "max_iter" : {
+          "param_info": "Maximum number of iterations of the k-means algorithm for a single run",
+          "type" : "int",
+          "default": "300"
+        },
+        "random_state" : {
+          "param_info" : "random_state is an optional parameter to specify the seed used by the random number generator",
+          "type" : "int",
+          "default" : "0"
+        }
+      }
+    },
+
+  "KMedoids" : { "algo_info": "KMedoids clustering uses the median value of all the points in a given cluster instead of the mean",
+      "algo_usecase" : "General-purpose, even cluster size, flat geometry, not too many clusters. Metric used is Euclidean Distance",
+      "param_list" : {
+          "n_clusters" : {
+          "param_info" : "The number of clusters the user wishes to obtain",
+          "type" : "int",
+          "default" : "3"
+        }
+      }
+    }
+}

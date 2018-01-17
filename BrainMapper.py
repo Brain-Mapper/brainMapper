@@ -1,5 +1,6 @@
 from ourLib.niftiHandlers.nifimage import NifImage as ni
 from ourLib.niftiHandlers.imagecollection import ImageCollection
+from ourLib.niftiHandlers.set import Set
 
 from ourLib.dataExtraction import extractor as xt
 from ourLib import clustering as clust
@@ -8,13 +9,31 @@ import numpy as np
 import nibabel as nib
 
 
+import os
+import platform
 import threading as th
+import json
+
 
 # --- global variables ---
 current_collec = None
 selected = []
 toRM = []
 currentUsableDataset = None
+
+sets = []
+currentSet = None
+currentVizu = None
+
+# Dictionary of available clustering methods
+app_clustering_available = {}
+with open('ressources/clustering_data/clustering_algorithms_available.json', 'r') as fc:
+    app_clustering_available = json.load(fc)
+
+# Global variable for currently selected clustering method
+currentClusteringMethod = None
+
+# Global variables for calculation results
 #currentCalculationResult = None
 
 
@@ -22,28 +41,23 @@ currentUsableDataset = None
 def open_nifti(path):
     image = ni.from_file(path)
     print(image.get_affine_matrix())
-    # DO SOMETHING WITH THE IMAGE
-
-    #draw_img_thread = th.Thread(target=image.plot_img())
-    #draw_img_thread.start()
-
-    #draw_glass_thread = th.Thread(target=image.plot_glass())
-    #draw_glass_thread.start()
     return image
 
 
 def do_image_collection(files):
-    coll = ImageCollection("default")
+    coll = ImageCollection("default", currentSet)
     # We want an unique name for each collection
     # To do so we use the object ID
     name = str(coll).split("0x")
-    coll.set_name("<"+name[1])
+    name = name[1]
+    coll.set_name(name[:-1])
     for file in files:
         image = open_nifti(str(file))
         coll.add(image)
     #extracted_data = xt.extract_from_collection(coll)
     #print(extracted_data)
     add_coll(coll)
+    currentSet.add_collection(coll)
     return coll
     
 
@@ -83,9 +97,9 @@ def get_current_usableDataset():
     return currentUsableDataset
 
 
-def run_clustering(selectedClusteringMethod, params_list):
+def run_clustering(selectedClusteringMethod, params_dict):
     if selectedClusteringMethod == 'kmeans':
-        labels = clust.perform_kmeans(params_list[0], currentUsableDataset.export_as_clusterizable())
+        labels = clust.perform_kmeans(params_dict, currentUsableDataset.export_as_clusterizable())
     else:
         print('clustering method not recognised')
         labels = ['']
@@ -132,8 +146,8 @@ def get_current_coll():
     return current_collec
 
 def set_current_coll_name(name):
-    global current_collec
-    current_collec.set_name(name)
+    cur = get_current_coll()
+    cur.set_name(name)
 
 def exists_selected(name):
     for i in selected:
@@ -141,17 +155,103 @@ def exists_selected(name):
             return True
     return False
 
+def exists_coll_in_sets(name):
+    sets = get_all_sets()
+    for s in sets:
+        collecs = s.get_coll()
+        for i in collecs.values():
+            if(i.name == name):
+                return True
+    return False
+
 def add_image_coll(coll,files):
     for file in files:
         coll.add_from_file(str(file))
 
-def delete_coll(coll):
-    print "delete " + str(coll.name)
+def delete_current_coll():
+    coll = get_current_coll()
+    this_set = coll.getSetName()
+    rm_coll(coll)
+    reset_toRM()
+    add_toRM(coll)
+    set_current_coll(None)
+    this_set.remove_collection(coll.name)
+    print this_set.number_of_collection()
 
 def save_modifs():
     global current_collec
-    print current_collec.get_img_list()
     for i in toRM:
         current_collec.remove(i.filename)
-    print current_collec.get_img_list()
     reset_toRM()
+
+def exists_set(name):
+    for i in sets:
+        if(i.name == name):
+            return True
+    return False
+
+def newSet(name):
+    global currentSet
+    new_set = Set(name)
+    sets.append(new_set)
+    currentSet = new_set
+    return new_set
+
+def set_current_set(new_set):
+    global currentSet
+    currentSet = new_set
+
+def creation_date(path_to_file):
+        if platform.system() == 'Windows':
+            return os.path.getctime(path_to_file)
+        else:
+            stat = os.stat(path_to_file)
+            try:
+                return stat.st_birthtime
+            except AttributeError:
+                # We're probably on Linux.
+                return stat.st_mtime
+
+def add_set(my_set):
+    sets.append(my_set)
+
+def get_current_vizu():
+    global currentVizu
+    return currentVizu
+
+def set_current_vizu(collView):
+    global currentVizu
+    currentVizu = collView
+
+
+def get_current_set():
+    global currentSet
+    return currentSet
+
+
+def get_all_sets():
+    return sets 
+
+
+def setColNameInSet(name):
+    old = get_current_coll()
+    rm_coll(old)
+    this_set = old.getSetName()
+    this_set.renameCollinSet(old,name)
+    set_current_coll_name(name)
+    cur_col = get_current_coll()
+    add_coll(cur_col)
+
+
+# --- currently selected clustering method ---
+def set_selected_clustering_method(method_name):
+    global currentClusteringMethod
+    currentClusteringMethod = method_name
+
+
+def get_selected_clustering_info():
+    if currentClusteringMethod is not None:
+        return app_clustering_available[currentClusteringMethod]
+    else:
+        return None
+

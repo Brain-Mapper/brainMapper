@@ -11,6 +11,7 @@
 # 16 january 2018 - Initial design and coding. (@maximeCluchague, Maxime C.)
 
 
+
 import numpy as np
 import nibabel as nib
 

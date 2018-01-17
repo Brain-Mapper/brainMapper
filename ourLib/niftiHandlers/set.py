@@ -62,7 +62,7 @@ class Set(object):
         control if the subset name doesn't exist in subset_dict.
         """
         if subset.get_name not in self.subset_dict.keys():
-            self.subset_dict[subset.get_name] = subset
+            self.subset_dict[subset.get_name()] = subset
         else:
             print('The Subset name : %s already exist' % subset.get_name)
 
@@ -73,7 +73,7 @@ class Set(object):
         control if the collection name doesn't exist in collection_dict.
         """
         if collection.get_name() not in self.collection_dict.keys():
-            self.collection_dict[collection.get_name] = collection
+            self.collection_dict[collection.get_name()] = collection
         else:
             print('The Image Collection name : %s already exist' % collection.get_name)
 
@@ -191,3 +191,24 @@ class Set(object):
                         for sub_item in item_list:
                             if sub_item != '.DS_Store':
                                 set.collection_dict[item].add(NifImage.from_file(os.path.join(item_path, sub_item)))
+
+    def set_name(self,name):
+        self.name = name
+
+    def get_sub_set(self,name):
+        for i in self.subset_dict.values():
+            if(i.name == name):
+                return i
+        return None
+
+    def get_coll(self):
+        return self.collection_dict
+
+    def renameCollinSet(self, coll, name):
+        collecs = self.collection_dict
+        for i in collecs.values():
+            if(i == coll):
+                self.remove_collection(i.name)
+                new_col = coll.set_name(name)
+                self.add_collection(coll)
+                
