@@ -66,13 +66,13 @@ class HomePage(QWidget):
         # Here are the custom widgets we will put on the stack
         self.mainview = MainView()
         self.clustering = ClusteringView()
-	self.calculation = CalculationView()
+        self.calculation = CalculationView()
         self.edit_colls = EditCollectionsView()
         self.export = ExportView()
         # -- Add them to stack widget
         self.stack.addWidget(self.mainview)
         self.stack.addWidget(self.clustering)
-	self.stack.addWidget(self.calculation)
+        self.stack.addWidget(self.calculation)
         self.stack.addWidget(self.edit_colls)
         self.stack.addWidget(self.export)
 
@@ -94,7 +94,7 @@ class HomePage(QWidget):
         self.mainview.showExport.connect(self.updateExportView)
         self.export.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
 
-	# -- when mainView widget emits signal showCalcul, change current Widget in stack to calculation widget
+    # -- when mainView widget emits signal showCalcul, change current Widget in stack to calculation widget
         self.mainview.showCalcul.connect(partial(self.stack.setCurrentWidget, self.calculation))
         # -- when calculation widget emits signal showMain, change current Widget in stack to main view widget
         self.calculation.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
@@ -188,6 +188,7 @@ class UI(QtGui.QMainWindow):
         print "Test passed. SUCCESS!"
 
     def fromNiFile(self):
+# -- We create a collection with the list of images the user selected and give it to the main view and the edit view
         file = QFileDialog.getOpenFileNames()
         if (file != ""):
             try:
@@ -202,22 +203,28 @@ class UI(QtGui.QMainWindow):
         self.w = Help()
 
     def createSet(self):
+# -- We create a set with the name given by the user (if its free) and give it to the mainpage
         text, ok = QInputDialog.getText(self, 'Create a Set', "Enter a name for your set :")
         if str(text)!= "":
-            try:
-                new_ok = True
-                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
-                for i in not_ok:
-                    if i in str(text):
-                        new_ok = False
-                if new_ok and not exists_set(str(text)):
-                    new_set = newSet(str(text))
-                    homepage.mainview.show_set(new_set)
-                else :
-                    err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
-            except :
-                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
-            
+##            try:
+##                new_ok = True
+##                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
+##                for i in not_ok:
+##                    if i in str(text):
+##                        new_ok = False
+##                if new_ok and not exists_set(str(text)):
+##                    new_set = newSet(str(text))
+##                    homepage.mainview.show_set(new_set)
+##                else :
+##                    err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
+##            except :
+##                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
+            if not exists_set(str(text)):
+                new_set = newSet(str(text))
+                homepage.mainview.show_set(new_set)
+            else :
+                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
+        
 def main():
     
     app = QtGui.QApplication(sys.argv)
