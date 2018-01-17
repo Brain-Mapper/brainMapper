@@ -9,6 +9,8 @@
 # HISTORY
 #
 # 2 january 201- Initial design and coding. (@vz-chameleon, Valentina Z.)
+# 14 january 2018 - Began the interface (@Graziella-Husson)
+# 15-16 january 2018 - Redo all the interface (@Graziella-Husson)
 
 import os
 from PyQt4 import QtGui
@@ -20,11 +22,11 @@ from datetime import *
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-from BrainMapper import * 
-        
+from BrainMapper import *     
 import resources
 
 class CollButton(QtGui.QCheckBox):
+        # -- The CollButton class is a QCheckBox that show all collection info
 
     def __init__(self, coll, parent=None):
         super(CollButton, self).__init__(parent=parent)
@@ -43,21 +45,27 @@ class CollButton(QtGui.QCheckBox):
         self.setStyleSheet("CollButton {border: 1px solid black;} ")
 
     def selectColl(self):
+        # -- This selectColl will add or delete the collection from the selected ones
         if(self.isChecked()):
             add_coll(self.coll)
         else:
             rm_coll(self.coll)
 
     def update(self):
+        # -- This update will update the information of the collection if they have changed in the edit collection view
         list = self.coll.get_img_list()
-        dates = []
-        for l in list :
-            dates.append(creation_date(str(l)))
-        date = max(dates)
-        d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
+        if list :
+            dates = []
+            for l in list :
+                dates.append(creation_date(str(l)))
+            date = max(dates)
+            d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
+        else :
+            d = "None"
         self.setText("Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d))        
 
 class CollectionsView(QtGui.QWidget):
+        # -- The CollectionsView class will display all the collections in the current set
     def __init__(self, label):
         self.i = 1
         self.j = 1
@@ -94,6 +102,7 @@ class CollectionsView(QtGui.QWidget):
         self.setLayout(hbox)
                
     def add(self, my_coll):
+        # -- This add will add a collection to vizualize according to the grid 3 x X where X is unlimited thanks to the scroll bar
         self.vbox.addWidget(CollButton(my_coll), self.j, self.i)
         self.i +=1
         if self.i > 3:
@@ -101,6 +110,7 @@ class CollectionsView(QtGui.QWidget):
             self.j +=1
 
     def update(self):
+        # -- This update will update the collection view and deleted the ones that have to be deleted
         items = (self.vbox.itemAt(j).widget() for j in range(self.vbox.count()))
         for i in items:
             if isinstance(i, QCheckBox):
@@ -117,15 +127,18 @@ class CollectionsView(QtGui.QWidget):
                     i.update()
                 
     def update_label(self, label):
+        # -- This update_label will update only the label at the top of the screen with the current set name
         self.name = label
         self.title2.setText("List of image collections for set "+str(label))
 
 class SetButton(QtGui.QWidget):
+        # -- The SetButton class will display all info for a set
 
     styler = "SetButton {background-color: white; border-bottom: 1px solid black;} " \
              "SetButton:hover {background-color : #ccff99;}"
 
     def __init__(self, my_set, parent=None):
+        # -- Will create all objects we need
         super(SetButton, self).__init__(parent=parent)
         self.vizu = CollectionsView(my_set.name)
         rec = QApplication.desktop().availableGeometry()
@@ -169,15 +182,18 @@ class SetButton(QtGui.QWidget):
         self.setMaximumSize(QSize(self.parent().frameGeometry().width()*0.8, mainwind_h/8))
 
     def test(self):
+        # -- Test to print smthg when we click on an ite in the list of subset
         print self.SSList.currentText()
         
     def current_set(self):
+        # -- This current_set will vizualize the set and the collections inside when pressed
         set_current_set(self.my_set)
-        self.parent().parent().parent().parent().parent().parent().upCollLabel(str(get_current_set().name))
         set_current_vizu(self.vizu)
         self.parent().parent().parent().parent().parent().parent().updateVizu(self.vizu)
+        self.parent().parent().parent().parent().parent().parent().upCollLabel()
 
     def addSubet(self):
+        # -- This addSubet will add a subset to the set selected. 
         text, ok = QInputDialog.getText(self, 'Create a Sub Set', "Enter a name for your sub set of set named "+str(self.my_set.name)+":")
         if(str(text)!=""):
             try:
@@ -199,6 +215,7 @@ class SetButton(QtGui.QWidget):
                 err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
 
     def changeName(self):
+        # -- This changeName will change the name of the set selected. 
         text, ok = QInputDialog.getText(self, 'Rename a set', "Enter a new name for your set currently named "+str(self.my_set.name)+":")
         if(str(text)!=""):
             try:
@@ -215,7 +232,6 @@ class SetButton(QtGui.QWidget):
                     mainwind_h = rec.height()
                     mainwind_w = rec.width()
                     self.setB.setMaximumSize(size)
-                    self.parent().parent().parent().parent().parent().parent().upCollLabel(str(text))
                 else :
                     err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
             except :
@@ -224,7 +240,9 @@ class SetButton(QtGui.QWidget):
 
         
 class SetAccessBar(QtGui.QWidget):
+        # -- The SetAccessBar class will display all sets created 
     def __init__(self,parent=None):
+        # -- Creates all abjects we need
         super(SetAccessBar, self).__init__(parent=parent)
         
         rec = QApplication.desktop().availableGeometry()
@@ -261,6 +279,7 @@ class SetAccessBar(QtGui.QWidget):
                
 
     def add(self, my_set):
+        # -- This add will add a SetButton
         self.vbox.addWidget(SetButton(my_set,self))
 
 
@@ -283,6 +302,7 @@ class MainView(QtGui.QWidget):
         self.initMainView()
 
     def initMainView(self):
+        # -- We create all objects we need
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height()/1.4
         mainwind_w = rec.width()/1.5
@@ -293,7 +313,7 @@ class MainView(QtGui.QWidget):
         editButton = QtGui.QPushButton("Edit")
         editButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/writing.png'))
         editButton.setStatusTip("Edit selected image collections")
-        editButton.clicked.connect(self.edit_pannel)
+        editButton.clicked.connect(self.edit_pannel) # When editButton is clicked, change central views
 
         exportButton = QtGui.QPushButton("Export data")
         exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
@@ -319,7 +339,6 @@ class MainView(QtGui.QWidget):
         self.collectionsDisplayBox = get_current_vizu()
         hbox = QtGui.QHBoxLayout()
         
-        
         self.splitter1 = QtGui.QSplitter(Qt.Horizontal)
         self.splitter1.addWidget(self.setAccessBox)
         self.splitter1.addWidget(self.collectionsDisplayBox)
@@ -327,13 +346,13 @@ class MainView(QtGui.QWidget):
         containerVbox = QtGui.QVBoxLayout()
         containerVbox.addLayout(hbox)
         containerVbox.addLayout(buttonsBox)
-        #self.setStyleSheet("border:1px solid rgb(255,255,225);")
         self.setLayout(containerVbox)
 
     def buttonClicked(self):
         print "Test passed. SUCCESS!"
 
     def show_coll(self, coll):
+        # -- This show_coll will adda collection to the current vizu
         get_current_vizu().add(coll)
     
     def export(self):
@@ -357,6 +376,7 @@ class MainView(QtGui.QWidget):
                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
             if choice == QtGui.QMessageBox.Yes:
                 extract_data_from_selected()
+		
                 self.showClust.emit()
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's no data to extract and clusterize.")
@@ -364,32 +384,43 @@ class MainView(QtGui.QWidget):
     def calcul(self):
         if(get_selected()):
             self.showCalcul.emit()
+
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's no data to calculation.")
 
     def edit_pannel(self):
+        # -- This edit_pannel will show the edit view if selected is not empty
         if(get_selected()):
             self.showEdit.emit()
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's no data to edit.")
 
     def show_set(self, new_set):
+        # -- This show_set will add the new_set to the setAccessBox and display the current vizu that changed in the process
+        set_current_set(new_set)
         self.setAccessBox.add(new_set)
         self.updateVizu(get_current_vizu())
 
     def update(self):
+        # -- This update will call the update function of collectionsDisplayBox
         self.collectionsDisplayBox.update()
 
     def updateVizu(self, newVizu):
+        # -- This updateVizu will display the newVizu but not delete the old one to be able to chow it again later
         newVizu.update()
         self.collectionsDisplayBox = newVizu
         delete_me = self.splitter1.widget(1)
         delete_me.setParent(None)
+        #DO NOT DO delete_me.deleteLater() -> we need it alive!
         self.splitter1.addWidget(newVizu)
 
-    def upCollLabel(self, label):
+    def upCollLabel(self):
+        # -- This upCollLabel will display the name of the current set at top of the screen
+        label = get_current_set().name
         limit = 500
         if(len(label)>limit):
             nb=limit-len(label)+1
             label = label[:nb] + "-"
         self.collectionsDisplayBox.update_label(label)
+
+

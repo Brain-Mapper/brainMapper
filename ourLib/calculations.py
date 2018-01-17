@@ -8,52 +8,21 @@
 #
 # HISTORY
 #
-# 14 january 2018 - Operation on NifTI files (Maxime Cluchague, @maximeCluchague)
+# 16 january 2018 - Initial design and coding. (@maximeCluchague, Maxime C.)
 
 
-# System imports
+
 import numpy as np
 import nibabel as nib
-import matplotlib.pyplot as plt
-#import random
-
-#####################################################################
-#                        LOAD NIFTI & VIEWER                        #
-#####################################################################
-
+from os import path
 # Take as argument the nifti's path file and load this one
 def load_nifti(nifti_file):
     img = nib.load(nifti_file)
     return img
 
 def get_data(img):
-    #data = copy.deepcopy(img.get_data())
     data=np.array(img.get_data(), copy=True)
     return data
-
-# Viewer of nifti image axe X
-def nifti_viewer_X(img,x):
-    img_data = img.get_data()
-    plt.matshow(img_data[x,:,:])
-    plt.show()
-    
-# Viewer of nifti image axe Y
-def nifti_viewer_Y(img,y):
-    img_data = img.get_data()
-    plt.matshow(img_data[:,y,:])
-    plt.show()
-    
-# Viewer of nifti image axe Z
-def nifti_viewer_Z(img,z):
-    img_data = img.get_data()
-    plt.matshow(img_data[:,:,z])
-    plt.show()
-
-
-#####################################################################
-#                      DATA NIFTI EXTRACTION                        #
-#####################################################################
-
 
 def Extract_voxels_from_Nifti_file(file_name):
     img = load_nifti(file_name)
@@ -69,10 +38,6 @@ def Extract_voxels_from_Nifti_file(file_name):
                             list_voxels.append([x,y,z])
     return list_voxels
     
-
-#####################################################################
-#                         NIFTI OPPERATION                          #
-#####################################################################
 def max_shape(Nifti_collection):
         max_X = 0
         max_Y = 0
@@ -87,8 +52,18 @@ def max_shape(Nifti_collection):
             if z > max_Z:
                 max_Z = z
         return (max_X,max_Y,max_Z)
-        
-#Clustering between differents nifti file    
+
+def save_nifti(data_nifti,filename):
+	img = nib.Nifti1Image(data_nifti, np.eye(4))
+  	nib.save(img,filename)        
+  
+def extract_name_without_path(list_path):
+    list_name=[]
+    for filename in list_path:
+        (x,name)=path.split(filename)
+        list_name.append(name)
+    return list_name
+  
 def mean_opperation(Nifti_file_collection):    
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
@@ -101,11 +76,8 @@ def mean_opperation(Nifti_file_collection):
             y = voxels[1]
             z = voxels[2]
             file_Nifti_clusterised[x][y][z] = file_Nifti_clusterised[x][y][z]+ data[x][y][z]/float(len(Nifti_file_collection))
-    #On enregistre le cluster dans un nouveau fichier Nifti 
-    #img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
-    #nib.save(img,file_name)
     print('Mean process is successfull !')
-    output =""
+    output ="[Algorithm] > Mean process\n[Input] > Nifti(s) file(s) : "+str(extract_name_without_path(Nifti_file_collection))+"\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {"+str(lx)+", "+str(ly)+", "+str(lz)+"}"
     return (file_Nifti_clusterised,output)
 
 
@@ -119,9 +91,6 @@ def or_opperation(Nifti_file_collection):
             y = voxels[1]
             z = voxels[2]
             file_Nifti_clusterised[x][y][z] = 1
-    #On enregistre le cluster dans un nouveau fichier Nifti 
-    #img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
-    #nib.save(img,file_name)
     print('Or opperation process is successfull !')
     output =""
     return (file_Nifti_clusterised,output)
@@ -154,9 +123,6 @@ def and_opperation(Nifti_file_collection):
             if not list_pix.__contains__([x,y,z]):
                 list_pix.append([x,y,z])
             file_Nifti_clusterised[x][y][z] = file_Nifti_clusterised[x][y][z] + 1
-    #On enregistre le cluster dans un nouveau fichier Nifti 
-    #img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
-    #nib.save(img,file_name)
     for e in list_pix:
         if file_Nifti_clusterised[e[0]][e[1]][e[2]] < len(Nifti_file_collection):
             file_Nifti_clusterised[e[0]][e[1]][e[2]] = 0
@@ -181,10 +147,7 @@ def linear_combination_opperation(Nifti_file_collection,coef):
             z = voxels[2]
             file_Nifti_clusterised[x][y][z] = file_Nifti_clusterised[x][y][z]+ data[x][y][z]*float(coef[i])
         i = i+1
-    #On enregistre le cluster dans un nouveau fichier Nifti 
-    #img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
-    #nib.save(img,file_name)
-    #print('\nLinear combination process was successfull ! File result : \''+file_name+'\'')
+    print('Linear combination process is successfull !')
     output =""
     return (file_Nifti_clusterised,output)
 
@@ -201,9 +164,6 @@ def normalization_opperation(Nifti_file_collection):
             y = voxels[1]
             z = voxels[2]
             file_Nifti_clusterised[x][y][z] = data[x][y][z]/float(somme_value)
-        #On enregistre le cluster dans un nouveau fichier Nifti 
-        img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
-        nib.save(img,file)
     print('Normalized process is successfull !')
     output =""
     return (file_Nifti_clusterised,output)
@@ -221,6 +181,7 @@ def baricentre_calculation_opperation(list_voxels):
     mean_x = mean_x/len(list_voxels)
     mean_y = mean_y/len(list_voxels)
     mean_z = mean_z/len(list_voxels)
-    return(mean_x,mean_y,mean_z)
+    output = "Centroide coordinate calculated: [X:"+str(mean_x)+", Y:"+str(mean_y)+" ,Z:"+ str(mean_z)+"]"
+    return(None,output)
 
 # Lib dependency imports

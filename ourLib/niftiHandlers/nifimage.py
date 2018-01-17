@@ -135,10 +135,26 @@ class NifImage(object):
     def save_to_file(self, folder_path):
         self.nib_image.to_filename(os.path.join(folder_path, self.filename))
 
-#    def plot_img(self):
-#        nilplot.plot_img(self.nib_image, title=self.filename)
-#        nilplot.show()
-#
-#    def plot_glass(self):
-#        nilplot.plot_glass_brain(self.nib_image, title="Glass brain plot")
-#        nilplot.show()
+##    def plot_img(self):
+##        nilplot.plot_img(self.nib_image, title=self.filename)
+##        nilplot.show()
+##
+##    def plot_glass(self):
+##        nilplot.plot_glass_brain(self.nib_image, title="Glass brain plot")
+##        nilplot.show()
+
+    def get_img_data(self):
+        data = self.nib_image.get_data()
+        data = np.transpose(data, [2,0,1])
+        d2 = np.empty(data.shape + (4,), dtype=np.ubyte)
+        d2[..., 0] = data * (255./(data.max()/1))
+        d2[..., 1] = d2[..., 0]
+        d2[..., 2] = d2[..., 0]
+        d2[..., 3] = d2[..., 0]
+        d2[..., 3] = (d2[..., 3].astype(float) / 255.)**2 * 255
+
+        # RGB orientation lines (optional)
+        d2[:, 0, 0] = [255, 0, 0, 255]
+        d2[0, :, 0] = [0, 255, 0, 255]
+        d2[0, 0, :] = [0, 0, 255, 255]
+        return d2
