@@ -8,7 +8,7 @@ from ourLib import clustering as clust
 
 import os
 import platform
-import threading as th
+import gc
 import json
 
 
@@ -92,30 +92,43 @@ def get_current_usableDataset():
 
 
 def run_clustering(selectedClusteringMethod, params_dict):
-    if selectedClusteringMethod == 'kmeans':
-        labels = clust.perform_kmeans(params_dict, currentUsableDataset.export_as_clusterizable())
+
+    clusterizable_dataset = currentUsableDataset.export_as_clusterizable()
+    if selectedClusteringMethod == 'KMeans':
+        labels = clust.perform_kmeans(params_dict, clusterizable_dataset)
+    if selectedClusteringMethod == 'AgglomerativeClustering' :
+        labels = clust.perform_agglomerative_clustering(params_dict, clusterizable_dataset)
     else:
         print('clustering method not recognised')
         labels = ['']
 
+    del clusterizable_dataset
+    gc.collect()
+
     return labels
+
 
 def get_selected_from_name(name):
     for x in selected:
         if(name == x.name):
             return x
 
+
 def get_toRM():
     return toRM
+
 
 def add_toRM(im):
     toRM.append(im)
 
+
 def rm_toRM(im):
     toRM.remove(im)
 
+
 def reset_toRM():
     del toRM[:]
+
 
 def set_current_coll(coll):
     global current_collec

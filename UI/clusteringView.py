@@ -102,9 +102,11 @@ class ClusteringParameters(QtGui.QWidget):
 
     def update_clustering_info_and_params(self, selected_clustering_name):
         method_dict = get_selected_clustering_info()
-        if method_dict is None :
-            err = QtGui.QMessageBox.critical(self, "Error",
+        if method_dict is None:
+            err=QtGui.QMessageBox.critical(self, "Error",
                                              "No clustering method has been selected yet")
+            err.setParent(None)
+            err.deleteLater()   # Saves memory !
         else:
             self.clustering_name = selected_clustering_name
             self.clustering_info = method_dict['algo_info'] + "\nUsecase :" + method_dict["algo_usecase"]
@@ -122,7 +124,6 @@ class ClusteringParameters(QtGui.QWidget):
             grid = QtGui.QGridLayout()
 
             # Labels for the title group box
-            clustering_method_label = QtGui.QLabel("Clustering : ")
             clustering_selected_label = QtGui.QLabel(self.clustering_name)
             clustering_selected_label.setWordWrap(True)
 
@@ -130,11 +131,10 @@ class ClusteringParameters(QtGui.QWidget):
             clustering_selected_info = QtGui.QLabel(self.clustering_info)
             clustering_selected_info.setWordWrap(True)
 
-            grid.addWidget(clustering_method_label, 0, 0)
-            grid.addWidget(clustering_selected_label, 1, 0)
+            grid.addWidget(clustering_selected_label, 0, 0)
 
-            grid.addWidget(clustering_info, 2, 0)
-            grid.addWidget(clustering_selected_info, 3, 0)
+            grid.addWidget(clustering_info, 1, 0)
+            grid.addWidget(clustering_selected_info, 2, 0)
 
             vbox1.addLayout(grid)
             self.clust_title.setLayout(vbox1)
@@ -159,7 +159,7 @@ class ClusteringParameters(QtGui.QWidget):
                 for param_name in parameters_dict.keys():
 
                     particular_param_dict = parameters_dict[param_name]
-                    param = ClusteringParameters.ParameterNameAndValue(param_name,
+                    param = ClusteringParameters.ParameterNameAndValue(param_name, particular_param_dict["type"],
                                                                        particular_param_dict["default"],
                                                                        particular_param_dict["param_info"])
 
@@ -183,11 +183,34 @@ class ClusteringParameters(QtGui.QWidget):
 
     # An inner class for parameter labels (simplifies the dictionnary building process)
     class ParameterNameAndValue(QtGui.QGroupBox):
-        def __init__(self, param_name, param_default_value, param_info):
+        def __init__(self, param_name, param_type, param_default_value, param_info):
             super(ClusteringParameters.ParameterNameAndValue, self).__init__()
             self.grid = QtGui.QGridLayout()
+
+            # -- Parameter's name ------
             self.param_name_label = QtGui.QLabel(param_name)
-            self.param_value_input = QtGui.QLineEdit(param_default_value)
+
+            # --- Parameter type control ----
+            if type(param_type) is list:
+                print("It's a list !")
+                self.param_value_input = QtGui.QToolButton()
+                self.param_value_input.setText(param_default_value)
+                self.param_value_input.setStyleSheet("background-color: white;")
+                self.param_value_input.setPopupMode(QtGui.QToolButton.MenuButtonPopup)
+
+                param_value_chooser = QtGui.QMenu()
+
+                for param_value_choice in param_type:
+                    print(param_value_choice)
+                    param_choice = QtGui.QAction(param_value_choice, self)
+                    param_choice.triggered.connect(self.choice_clicked)
+                    param_value_chooser.addAction(param_choice)
+
+                self.param_value_input.setMenu(param_value_chooser)
+
+            else:
+                self.param_value_input = QtGui.QLineEdit(str(param_default_value))
+
             self.param_value_input.setToolTip(param_info)
             self.param_value_input.setStatusTip(param_info)
             self.param_value_input.setMaximumSize(QSize(150, 50))
@@ -195,6 +218,18 @@ class ClusteringParameters(QtGui.QWidget):
             self.grid.addWidget(self.param_name_label, 0, 0)
             self.grid.addWidget(self.param_value_input, 0, 1)
             self.setLayout(self.grid)
+
+        def choice_clicked(self):
+            """
+            Change label based on what button was pressed
+            """
+            choice = self.sender()
+            if isinstance(choice, QtGui.QAction):
+                self.param_value_input.setText(choice.text())
+
+        def update_param_value_label(self, new_user_value):
+            print(new_user_value)
+            self.param_value_input.setText(new_user_value)
 
         def get_name_value_pair(self):
             return str(self.param_name_label.text()), str(self.param_value_input.text())
@@ -293,11 +328,16 @@ class ClusteringChooser(QtGui.QToolButton):
         Kmeans_choice.setStatusTip('Perform KMeans algorithm on dataset')
         Kmeans_choice.triggered.connect(lambda: self.updateLabel("KMeans", self.showClustParamsWidget))
 
+        Agglomerative_choice = QtGui.QAction('&AgglomerativeClustering', self)
+        Agglomerative_choice.setStatusTip('Perform Agglomerative Clustering algorithm on dataset')
+        Agglomerative_choice.triggered.connect(lambda: self.updateLabel("AgglomerativeClustering", self.showClustParamsWidget))
+
         user_script_choice = QtGui.QAction('&Custom user script', self)
         user_script_choice.setStatusTip('Make a custom clustering script')
         user_script_choice.triggered.connect(lambda: self.updateLabel("Custom user script", self.showScriptEnvWidget))
 
         self.clustering_algo_menu.addAction(Kmeans_choice)
+        self.clustering_algo_menu.addAction(Agglomerative_choice)
         self.clustering_algo_menu.addAction(user_script_choice)
         self.setMenu(self.clustering_algo_menu)
 
@@ -307,7 +347,7 @@ class ClusteringChooser(QtGui.QToolButton):
         set_selected_clustering_method(selected_clustering)
         signal_to_emit.emit()
 
-    def get_selected_method_name(self) :
+    def get_selected_method_name(self):
         return self.currently_selected
 
 
@@ -350,7 +390,7 @@ class ClusteringView(QtGui.QWidget):
         runClusteringButton.setStyleSheet("background-color: #b4ecb4;")
         runClusteringButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/play.png'))
         runClusteringButton.setToolTip("Run selected clustering")
-        runClusteringButton.clicked.connect(lambda: self.runSelectedClust('kmeans', self.param_script_stack.get_user_params()))
+        runClusteringButton.clicked.connect(lambda: self.runSelectedClust(self.clust_chooser.get_selected_method_name(), self.param_script_stack.get_user_params()))
 
         goHomeButton = QtGui.QPushButton('Go back')
         goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))

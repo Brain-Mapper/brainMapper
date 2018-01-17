@@ -1,5 +1,5 @@
 {
-  "KMeans" : { "algo_info": "KMeans clustering calculates clusters. They are represented by a central point that is the mean of all the points in a given cluster",
+  "KMeans" : { "algo_info": "KMeans clustering calculates K clusters. They are represented by a central point that is the mean of all the points in a given cluster",
       "algo_usecase" : "General-purpose, even cluster size, flat geometry, not too many clusters. Metric used is Euclidean Distance",
       "param_list" : {
         "init": {
@@ -33,11 +33,33 @@
   "KMedoids" : { "algo_info": "KMedoids clustering uses the median value of all the points in a given cluster instead of the mean",
       "algo_usecase" : "General-purpose, even cluster size, flat geometry, not too many clusters. Metric used is Euclidean Distance",
       "param_list" : {
-          "n_clusters" : {
+        "n_clusters" : {
           "param_info" : "The number of clusters the user wishes to obtain",
           "type" : "int",
           "default" : "3"
         }
       }
+    },
+
+  "AgglomerativeClustering" : { "algo_info" : "Recursively merges the pair of clusters that minimally increases a given linkage distance.\n(see scikit-learn for more info)",
+    "algo_usecase" : "Many clusters, possibly connectivity constraints + \nLarge n_samples and n_clusters",
+    "param_list" : {
+      "n_clusters" : {
+          "param_info" : "The number of clusters the user wishes to obtain",
+          "type" : "int",
+          "default" : "2"
+      },
+      "affinity" : {
+          "param_info" : "Metric used to compute the linkage. Can be 'euclidean', 'l1', 'l2', 'manhattan' or 'cosine'\nIf linkage is 'ward', only 'euclidean' is accepted.",
+          "type" : ["euclidean", "l1", "l2","manhattan", "cosine"],
+          "default" : "euclidean"
+      },
+      "linkage" : {
+        "param_info": "Which linkage criterion to use : the linkage criterion determines which distance to use between sets of observation.\nThe algorithm will merge the pairs of cluster that minimize this criterion.\n- 'ward' minimizes the variance of the clusters being merged.\n- average uses the average of the distances of each observation of the two sets.\n- complete or maximum linkage uses the maximum distances between all observations of the two sets.",
+        "type": ["ward", "complete", "average"],
+        "default": "ward"
+      }
     }
+
+  }
 }
