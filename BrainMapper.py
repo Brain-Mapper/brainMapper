@@ -4,6 +4,7 @@ from ourLib.niftiHandlers.set import Set
 
 from ourLib.dataExtraction import extractor as xt
 from ourLib import clustering as clust
+from ourLib import calculations as calcul
 
 
 import os
@@ -17,10 +18,10 @@ current_collec = None
 selected = []
 toRM = []
 currentUsableDataset = None
+
 sets = []
 currentSet = None
 currentVizu = None
-
 
 # Dictionary of available clustering methods
 app_clustering_available = {}
@@ -29,6 +30,10 @@ with open('ressources/clustering_data/clustering_algorithms_available.json', 'r'
 
 # Global variable for currently selected clustering method
 currentClusteringMethod = None
+
+# Global variables for calculation results
+#currentCalculationResult = None
+
 
 
 def open_nifti(path):
@@ -91,14 +96,27 @@ def get_current_usableDataset():
     return currentUsableDataset
 
 
-def run_clustering(selectedClusteringMethod, params_list):
+def run_clustering(selectedClusteringMethod, params_dict):
     if selectedClusteringMethod == 'kmeans':
-        labels = clust.perform_kmeans(params_list[0], currentUsableDataset.export_as_clusterizable())
+        labels = clust.perform_kmeans(params_dict, currentUsableDataset.export_as_clusterizable())
     else:
         print('clustering method not recognised')
         labels = ['']
-
     return labels
+
+def run_calculation(algorithm,nifti_collection,arguments):
+	if algorithm == "Mean":
+		file_result,output = calcul.mean_opperation(nifti_collection)
+	if algorithm == "Boolean Interserction":
+		file_result,output = calcul.and_opperation(nifti_collection)
+	if algorithm == "Boolean Union":
+		file_result,output = calcul.or_opperation(nifti_collection)
+	if algorithm == "Normalization":
+		file_result,output = calcul.normalization_opperation(nifti_collection)
+	if algorithm == "Linear combination":
+		file_result,output = calcul.linear_combination_opperation(nifti_collection,arguments)
+	return file_result,output
+
 
 def get_selected_from_name(name):
     for x in selected:
@@ -203,17 +221,15 @@ def set_current_vizu(collView):
     global currentVizu
     currentVizu = collView
 
+
 def get_current_set():
     global currentSet
     return currentSet
 
-# --- currently selected clustering method ---
-def set_selected_clustering_method(method_name):
-    global currentClusteringMethod
-    currentClusteringMethod = method_name
 
 def get_all_sets():
     return sets 
+
 
 def setColNameInSet(name):
     old = get_current_coll()
@@ -223,3 +239,17 @@ def setColNameInSet(name):
     set_current_coll_name(name)
     cur_col = get_current_coll()
     add_coll(cur_col)
+
+
+# --- currently selected clustering method ---
+def set_selected_clustering_method(method_name):
+    global currentClusteringMethod
+    currentClusteringMethod = method_name
+
+
+def get_selected_clustering_info():
+    if currentClusteringMethod is not None:
+        return app_clustering_available[currentClusteringMethod]
+    else:
+        return None
+

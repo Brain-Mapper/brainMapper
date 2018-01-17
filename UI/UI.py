@@ -9,6 +9,9 @@ import resources
 from mainView import MainView
 from clusteringView import ClusteringView
 from editCollectionsView import EditCollectionsView
+from exportView import ExportView
+from calculationView import CalculationView
+
 
 if __name__ == '__main__':
     if __package__ is None:
@@ -63,12 +66,16 @@ class HomePage(QWidget):
         # Here are the custom widgets we will put on the stack
         self.mainview = MainView()
         self.clustering = ClusteringView()
+	self.calculation = CalculationView()
         self.edit_colls = EditCollectionsView()
+        self.export = ExportView()
         # -- Add them to stack widget
         self.stack.addWidget(self.mainview)
         self.stack.addWidget(self.clustering)
+	self.stack.addWidget(self.calculation)
         self.stack.addWidget(self.edit_colls)
-        
+        self.stack.addWidget(self.export)
+
         # Define behaviour when widget emit certain signals (see class MainView and Clustering View for more details
         #  on signals and events)
 
@@ -84,6 +91,14 @@ class HomePage(QWidget):
         self.edit_colls.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
         self.edit_colls.showMain.connect(self.updateMain)
 
+        self.mainview.showExport.connect(self.updateExportView)
+        self.export.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
+
+	# -- when mainView widget emits signal showCalcul, change current Widget in stack to calculation widget
+        self.mainview.showCalcul.connect(partial(self.stack.setCurrentWidget, self.calculation))
+        # -- when calculation widget emits signal showMain, change current Widget in stack to main view widget
+        self.calculation.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
+
         # Set current widget to main view by default
         self.stack.setCurrentWidget(self.mainview)
 
@@ -97,6 +112,10 @@ class HomePage(QWidget):
     
     def updateMain(self):
         self.mainview.update()
+
+    def updateExportView(self):
+        self.export.set_usable_data_set(get_current_usableDataset())
+        self.stack.setCurrentWidget(self.export)
 
 
 class UI(QtGui.QMainWindow):

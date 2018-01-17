@@ -274,6 +274,8 @@ class MainView(QtGui.QWidget):
     # by the HomePage widgets' instances (see UI.py, class HomePage)
     showClust = pyqtSignal()
     showEdit = pyqtSignal()
+    showExport = pyqtSignal()
+    showCalcul = pyqtSignal()
 
     def __init__(self):
         super(MainView, self).__init__()
@@ -301,6 +303,7 @@ class MainView(QtGui.QWidget):
         calcButton = QtGui.QPushButton("Calculations")
         calcButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/calculator.png'))
         calcButton.setStatusTip("Perform calculations on selected data")
+	calcButton.clicked.connect(self.calcul) # When calculation is clicked, change central views
 
         clusterButton = QtGui.QPushButton("Clustering")
         clusterButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/square.png'))
@@ -341,7 +344,9 @@ class MainView(QtGui.QWidget):
             if choice == QtGui.QMessageBox.Yes:
                 export_nifti()
             else:
+                extract_data_from_selected()
                 export_excel()
+                self.showExport.emit()
         else:
             QtGui.QMessageBox.information(self, "Selection empty","There's nothing to export.")
 
@@ -355,6 +360,12 @@ class MainView(QtGui.QWidget):
                 self.showClust.emit()
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's no data to extract and clusterize.")
+
+    def calcul(self):
+        if(get_selected()):
+            self.showCalcul.emit()
+        else:
+            QtGui.QMessageBox.information(self, "Selection empty", "There's no data to calculation.")
 
     def edit_pannel(self):
         if(get_selected()):
