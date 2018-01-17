@@ -237,7 +237,7 @@ class ClusteringParameters(QtGui.QWidget):
 
 # A custom widget to implement the script environment
 class ScriptEnvironment(QtGui.QWidget):
-    
+
     def __init__(self, title_style):
         super(ScriptEnvironment, self).__init__()
 
@@ -324,7 +324,7 @@ class ClusteringChooser(QtGui.QToolButton):
 
         self.clustering_algo_menu = QtGui.QMenu()
 
-        Kmeans_choice = QtGui.QAction('&KMeans', self)
+        Kmeans_choice = QtGui.QAction('KMeans', self)
         Kmeans_choice.setStatusTip('Perform KMeans algorithm on dataset')
         Kmeans_choice.triggered.connect(lambda: self.updateLabel("KMeans", self.showClustParamsWidget))
 
@@ -482,6 +482,7 @@ class ClusteringView(QtGui.QWidget):
         self.table_displayer.fill_with_extracted_data(usable_dataset_instance)
 
     def runSelectedClust(self, selectedMethod, param_dict):
-        print(param_dict)
+        # print(se)
+        # print(param_dict)
         labs = run_clustering(selectedMethod, param_dict)
         self.table_displayer.fill_clust_labels(labs)

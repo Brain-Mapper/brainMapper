@@ -99,14 +99,25 @@ def extract_data_from_selected():
 
 
 def get_current_usableDataset():
+    """
+    Retrieve the UsableDataSet instance obtained by extracting data before clustering
+    :return: a UsableDataSet instance
+    """
     return currentUsableDataset
 
 
 def run_clustering(selectedClusteringMethod, params_dict):
+    """
+    A function to run a type of clustering algorithm, triggered by run button from interface
+    :param selectedClusteringMethod: a sring that is the name of the user selected clustering method
+    :param params_dict: a dictionnary containing all necessary parameters for clustering and values given by the user
+    :return: a list of clustering labels (to which cluster does one individual belong to)
+    """
     clusterizable_dataset = currentUsableDataset.export_as_clusterizable()
+
     if selectedClusteringMethod == 'KMeans':
         labels = clust.perform_kmeans(params_dict, clusterizable_dataset)
-    if selectedClusteringMethod == 'AgglomerativeClustering':
+    elif selectedClusteringMethod == 'AgglomerativeClustering':
         labels = clust.perform_agglomerative_clustering(params_dict, clusterizable_dataset)
     else:
         print('clustering method not recognised')
