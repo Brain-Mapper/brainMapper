@@ -14,7 +14,7 @@
 
 import numpy as np
 import nibabel as nib
-from os import path
+
 # Take as argument the nifti's path file and load this one
 def load_nifti(nifti_file):
     img = nib.load(nifti_file)
@@ -57,13 +57,6 @@ def save_nifti(data_nifti,filename):
 	img = nib.Nifti1Image(data_nifti, np.eye(4))
   	nib.save(img,filename)        
   
-def extract_name_without_path(list_path):
-    list_name=[]
-    for filename in list_path:
-        (x,name)=path.split(filename)
-        list_name.append(name)
-    return list_name
-  
 def mean_opperation(Nifti_file_collection):    
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
@@ -77,7 +70,7 @@ def mean_opperation(Nifti_file_collection):
             z = voxels[2]
             file_Nifti_clusterised[x][y][z] = file_Nifti_clusterised[x][y][z]+ data[x][y][z]/float(len(Nifti_file_collection))
     print('Mean process is successfull !')
-    output ="[Algorithm] > Mean process\n[Input] > Nifti(s) file(s) : "+str(extract_name_without_path(Nifti_file_collection))+"\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {"+str(lx)+", "+str(ly)+", "+str(lz)+"}"
+    output ="<Algorithm> Mean process\n<Input> Nifti(s) file(s)"+str(Nifti_file_collection)+"\n<Parameter> None\n<Output> Nifti file, Shape {"+str(lx)+","+str(ly)+","+str(lz)+"}"
     return (file_Nifti_clusterised,output)
 
 

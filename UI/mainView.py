@@ -22,8 +22,7 @@ from datetime import *
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-from BrainMapper import * 
-        
+from BrainMapper import *     
 import resources
 
 class CollButton(QtGui.QCheckBox):
@@ -377,6 +376,7 @@ class MainView(QtGui.QWidget):
                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
             if choice == QtGui.QMessageBox.Yes:
                 extract_data_from_selected()
+		
                 self.showClust.emit()
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's no data to extract and clusterize.")
@@ -384,6 +384,7 @@ class MainView(QtGui.QWidget):
     def calcul(self):
         if(get_selected()):
             self.showCalcul.emit()
+
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's no data to calculation.")
 
