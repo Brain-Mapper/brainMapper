@@ -4,6 +4,7 @@ from ourLib.niftiHandlers.set import Set
 
 from ourLib.dataExtraction import extractor as xt
 from ourLib import clustering as clust
+from ourLib import calculations as calcul
 
 
 import os
@@ -17,10 +18,10 @@ current_collec = None
 selected = []
 toRM = []
 currentUsableDataset = None
+
 sets = []
 currentSet = None
 currentVizu = None
-
 
 # Dictionary of available clustering methods
 app_clustering_available = {}
@@ -29,6 +30,10 @@ with open('ressources/clustering_data/clustering_algorithms_available.json', 'r'
 
 # Global variable for currently selected clustering method
 currentClusteringMethod = None
+
+# Global variables for calculation results
+#currentCalculationResult = None
+
 
 
 def open_nifti(path):
@@ -102,10 +107,24 @@ def run_clustering(selectedClusteringMethod, params_dict):
         print('clustering method not recognised')
         labels = ['']
 
-    del clusterizable_dataset
-    gc.collect()
+    del clusterizable_dataset   # Deleting exported data : saves memory !!
+    # gc.collect()  # Call the garbage collector
 
     return labels
+
+
+def run_calculation(algorithm,nifti_collection,arguments):
+    if algorithm == "Mean":
+        file_result,output = calcul.mean_opperation(nifti_collection)
+    if algorithm == "Boolean Interserction":
+        file_result,output = calcul.and_opperation(nifti_collection)
+    if algorithm == "Boolean Union":
+        file_result,output = calcul.or_opperation(nifti_collection)
+    if algorithm == "Normalization":
+        file_result,output = calcul.normalization_opperation(nifti_collection)
+    if algorithm == "Linear combination":
+        file_result,output = calcul.linear_combination_opperation(nifti_collection,arguments)
+    return file_result,output
 
 
 def get_selected_from_name(name):
