@@ -59,7 +59,6 @@ class UsableDataCollection(object):
 
         return clusterizable
 
-
 class UsableDataSet(object):
     def __init__(self,dataset_name):
         self.dataset_name = dataset_name
@@ -91,3 +90,6 @@ class UsableDataSet(object):
         clusterizable = np.delete(clusterizable, 0, axis=0)
 
         return clusterizable
+
+
+

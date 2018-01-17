@@ -79,7 +79,6 @@ def extract_data_from_selected():
     global currentUsableDataset
     currentUsableDataset = xt.extract_from_collection_list(selected)
 
-
 def get_current_usableDataset():
     return currentUsableDataset
 
@@ -92,16 +91,17 @@ def run_clustering(selectedClusteringMethod, params_list):
         labels = ['']
     return labels
 
-def run_calculation(algorithm,nifti_collection,arguments):
-	if algorithm == "Mean":
+def run_calculation(selectedAlgorithm,nifti_collection,arguments):
+
+	if selectedAlgorithm == "Mean":
 		file_result,output = calcul.mean_opperation(nifti_collection)
-	if algorithm == "Boolean Interserction":
+	if selectedAlgorithm == "Boolean Intersection":
 		file_result,output = calcul.and_opperation(nifti_collection)
-	if algorithm == "Boolean Union":
+	if selectedAlgorithm == "Boolean Union":
 		file_result,output = calcul.or_opperation(nifti_collection)
-	if algorithm == "Normalization":
+	if selectedAlgorithm == "Normalization":
 		file_result,output = calcul.normalization_opperation(nifti_collection)
-	if algorithm == "Linear combination":
+	if selectedAlgorithm == "Linear combination":
 		file_result,output = calcul.linear_combination_opperation(nifti_collection,arguments)
 	return file_result,output
 

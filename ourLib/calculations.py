@@ -173,6 +173,7 @@ def baricentre_calculation_opperation(list_voxels):
     mean_x = mean_x/len(list_voxels)
     mean_y = mean_y/len(list_voxels)
     mean_z = mean_z/len(list_voxels)
-    return(mean_x,mean_y,mean_z)
+    output = "Centroide coordinate calculated: [X:"+str(mean_x)+", Y:"+str(mean_y)+" ,Z:"+ str(mean_z)+"]"
+    return(None,output)
 
 # Lib dependency imports

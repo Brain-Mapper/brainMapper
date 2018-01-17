@@ -402,26 +402,57 @@ class CalculationView(QtGui.QWidget):
 # --------------------- Action for CALCULATE button -------------------
 	def runCalculation(self):
 		print("calculation in progress...")
-		print currentUsableDataset
 		algorithm = self.leftlist.selectedItems()[0].text()
 		#extraction of arguments here
 		#
 		#  ... TO DO ...
 		#
 		arguments = []
-	
-		nifti_selected = []
+		nifti_selected = []		
+		
 		for collection in selected :
 			for nifti in collection.nifimage_dict.values():
 				nifti_selected.append(nifti.filename)
-		try:	
-			algorithm_result,output = run_calculation(algorithm,nifti_selected,arguments)	
-			QtGui.QMessageBox.information(self, "Successfull Calculation !", "The chosen algorithm : "+algorithm +"\nArguments : "+str(arguments))
-			return algorithm_result
-		except:
-			print "Error : impossible to execute this calcul "
-			QtGui.QMessageBox.information(self, "Error to calculate "+algorithm, "Check if Nifti files have the same dimensions")	
-			return None
+		if algorithm =="Mean":
+			try:
+				algorithm_result,output = run_calculation(algorithm,nifti_selected,arguments)
+				QtGui.QMessageBox.information(self, "SUCCESS", algorithm+" calculation done")
+			except:
+				QtGui.QMessageBox.information(self, "ERROR", "Impossible to execute "+algorithm+" algorithm.")
+		if algorithm =="Boolean Intersection":
+			try:
+				algorithm_result,output = run_calculation(algorithm,nifti_selected,arguments)
+				QtGui.QMessageBox.information(self, "SUCCESS", algorithm+" calculation done")
+			except:
+				QtGui.QMessageBox.information(self, "ERROR", "Impossible to execute "+algorithm+" algorithm.")
+		if algorithm =="Boolean Union":
+			try:
+				algorithm_result,output = run_calculation(algorithm,nifti_selected,arguments)
+				QtGui.QMessageBox.information(self, "SUCCESS", algorithm+" calculation done")
+			except:
+				QtGui.QMessageBox.information(self, "ERROR", "Impossible to execute "+algorithm+" algorithm.")
+		if algorithm =="Normalization":
+			try:
+				algorithm_result,output = run_calculation(algorithm,nifti_selected,arguments)
+				QtGui.QMessageBox.information(self, "SUCCESS", algorithm+" calculation done")
+			except:
+				QtGui.QMessageBox.information(self, "ERROR", "Impossible to execute "+algorithm+" algorithm.")
+		if algorithm =="Linear combination":
+			try:
+				algorithm_result,output = run_calculation(algorithm,nifti_selected,arguments)
+				QtGui.QMessageBox.information(self, "SUCCESS", algorithm+" calculation done")
+			except:
+				QtGui.QMessageBox.information(self, "ERROR", "Impossible to execute "+algorithm+" algorithm.\nPlease check if the coefficient list is correctly informed")
+		return algorithm_result,output
+		
+		#try:		
+		#	algorithm_result,output = run_calculation(algorithm,nifti_selected,arguments)	
+		#	QtGui.QMessageBox.information(self, "Successfull Calculation !", "The chosen algorithm : "+algorithm +"\nArguments : "+str(arguments))
+		#	return algorithm_result
+		#except:
+		#	print "Calculation error or method no implemented"
+		#	QtGui.QMessageBox.information(self, "Error to calculate "+algorithm, "Check if Nifti files have the same dimensions")	
+		#	return None
 
 
 

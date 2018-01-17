@@ -13,7 +13,6 @@
 
 import numpy as np
 import nibabel as nib
-import matplotlib.pyplot as plt
 
 # Take as argument the nifti's path file and load this one
 def load_nifti(nifti_file):
@@ -38,10 +37,6 @@ def Extract_voxels_from_Nifti_file(file_name):
                             list_voxels.append([x,y,z])
     return list_voxels
     
-
-#####################################################################
-#                         NIFTI OPPERATION                          #
-#####################################################################
 def max_shape(Nifti_collection):
         max_X = 0
         max_Y = 0
@@ -161,9 +156,6 @@ def normalization_opperation(Nifti_file_collection):
             y = voxels[1]
             z = voxels[2]
             file_Nifti_clusterised[x][y][z] = data[x][y][z]/float(somme_value)
-        #On enregistre le cluster dans un nouveau fichier Nifti 
-        img = nib.Nifti1Image(file_Nifti_clusterised, np.eye(4))
-        nib.save(img,file)
     print('Normalized process is successfull !')
     output =""
     return (file_Nifti_clusterised,output)
@@ -181,6 +173,7 @@ def baricentre_calculation_opperation(list_voxels):
     mean_x = mean_x/len(list_voxels)
     mean_y = mean_y/len(list_voxels)
     mean_z = mean_z/len(list_voxels)
+    output = "Centroide coordinate calculated: [X:"+str(mean_x)+", Y:"+str(mean_y)+" ,Z:"+ str(mean_z)+"]"
     return(mean_x,mean_y,mean_z)
 
 # Lib dependency imports
