@@ -27,16 +27,22 @@ def get_data(img):
 def Extract_voxels_from_Nifti_file(file_name):
     img = load_nifti(file_name)
     data = get_data(img)
-    list_voxels = []
+    
+    mask = data > 0
+    nb_interesting_voxels = len(data[mask].T)
+    list_voxels = np.zeros(shape=(nb_interesting_voxels, 3))
+    
     lx,ly,lz = data.shape
+    c = 0
     for x in range(1,lx):
         if data[x].sum()>0:
             for y in range(1,ly):
                 if data[x][y].sum()>0:
                     for z in range(1,lz):
                         if data[x][y][z]>0:
-                            list_voxels.append([x,y,z])
-    return list_voxels
+                            list_voxels[c]=[int(x),int(y),int(z)]
+                            c=c+1
+    return list_voxels.astype(int)
     
 def max_shape(Nifti_collection):
         max_X = 0

@@ -111,7 +111,7 @@ class CalculationView(QtGui.QWidget):
 
         self.console = QTextEdit(">>>")
         self.console.setReadOnly(True)
-        self.console.setFixedHeight(220)
+        self.console.setFixedHeight(180)
         vbox.addWidget(self.console)        
         
         buttonbox = QtGui.QHBoxLayout()
@@ -139,18 +139,25 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("The Addition algorithm make a addition with a collection of nifti makes the term some term of each voxel")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[5, 9, 0]   [0, 4, 0]       [5, 13, 0]\n\t[0, 0, 3]   [0, 7, 4]       [0, 7, 7]\nAddition ( \t[1, 1, 2] , [3, 0, 0] ) = [4, 1, 2]")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
-        # self.setTabText(0,"Calculation Details")
         self.stack1.setLayout(vbox)
 
     # ----- Boolean Intersection -----------------------
@@ -165,15 +172,23 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("The Boolean intersection takes a set of files and returns a binary file of 0 and 1. A voxel with 1 value means that for every file this voxels have strictely positive intensity")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[5, 9, 0]   [0, 4, 0]       [0, 1, 0]\n\t[0, 0, 3]   [0, 7, 4]       [0, 0, 1]\nBoolInter( \t[1, 1, 2] , [3, 0, 0] ) = [1, 0, 0]")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack2.setLayout(vbox)
@@ -190,15 +205,23 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("The Boolean union takes a set of files and returns a binary file of 0 and 1. A voxel with 1 value means that there exists in at least some files nifti a voxel whose intensity is strictly positive")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[5, 9, 0]   [0, 4, 0]       [1, 1, 0]\n\t[0, 0, 3]   [0, 7, 0]       [0, 1, 1]\nBoolUnion( \t[0, 1, 2] , [0, 0, 0] ) = [0, 1, 1]")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack3.setLayout(vbox)
@@ -215,15 +238,23 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("This algorithm calculates the centroid of each cluster present in one or a set of nifti files")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[0, 1, 0]\n\t[5, 2, 3]\nCentroid ( \t[0, 1, 0] ) = (1,1,1)")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack4.setLayout(vbox)
@@ -240,11 +271,10 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("TO DO")
+        description = QTextEdit("NO IMPLEMENTED")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
 
@@ -265,11 +295,10 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("TO WRITE")
+        description = QTextEdit("NO IMPLEMENTED")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
 
@@ -290,11 +319,10 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("TO WRITE")
+        description = QTextEdit("NO IMPLEMENTED")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
 
@@ -312,20 +340,26 @@ class CalculationView(QtGui.QWidget):
         options = QLabel("Options")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
-        layout.addRow("option1", QLineEdit())
-        layout.addRow("option2", QLineEdit())
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("This algorithm makes the sum of a set of nifti files by associating a weight to each one of them (to caracterizes the importance)")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("Linear(img1, .., imgN] , [c1, .., cN]) = c1*Ni_1 + .. + cN*Ni_N")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack8.setLayout(vbox)
@@ -342,15 +376,23 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("The Mean process averages a set of nifti files. The algorithm performs the sum for all voxels present in each file the divides the value obtained by the number of files")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[5, 9, 0]   [0, 4, 0]       [2.5, 6.5, 0.0]\n\t[0, 0, 3]   [0, 7, 0]       [0.0, 3.5, 1.5]\nMeanProc ( \t[0, 1, 2] , [0, 0, 0] ) = [0.0, 0.5, 1.0]")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack9.setLayout(vbox)
@@ -367,7 +409,6 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
@@ -392,11 +433,10 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("TO WRITE")
+        description = QTextEdit("NO IMPLEMENTED")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
 
