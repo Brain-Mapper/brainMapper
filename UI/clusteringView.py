@@ -12,7 +12,7 @@
 # 5 january 2018 - Added functions to fill table with extracted data
 
 from PyQt4 import QtGui
-from PyQt4.Qt import pyqtSignal
+from PyQt4.Qt import pyqtSignal, QFileDialog
 from PyQt4.QtCore import Qt, QSize, QObjectCleanupHandler
 
 import sys
@@ -21,6 +21,9 @@ import gc
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 from BrainMapper import *
 from functools import partial
+import ourLib.ExcelExport.excelExport as ee
+import  os
+
 
 import resources
 
@@ -367,6 +370,7 @@ class ClusteringView(QtGui.QWidget):
         self.table_displayer = None
         self.param_script_stack = None
         self.initClusteringView()
+        self.label = None
 
     def initClusteringView(self):
 
@@ -397,7 +401,13 @@ class ClusteringView(QtGui.QWidget):
         goHomeButton.setToolTip("Return to main page")
         goHomeButton.clicked.connect(self.showMain.emit)# When go back home button is clicked, change central views
 
+        exportButton = QtGui.QPushButton('Export')
+        exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
+        exportButton.setToolTip("Export to CSV file")
+        exportButton.clicked.connect(lambda: self.export())
+
         buttonsBox.addWidget(runClusteringButton)
+        buttonsBox.addWidget(exportButton)
         buttonsBox.addWidget(goHomeButton)
 
         topBox=QtGui.QHBoxLayout()
@@ -484,5 +494,13 @@ class ClusteringView(QtGui.QWidget):
     def runSelectedClust(self, selectedMethod, param_dict):
         # print(se)
         # print(param_dict)
-        labs = run_clustering(selectedMethod, param_dict)
-        self.table_displayer.fill_clust_labels(labs)
+        self.label = run_clustering(selectedMethod, param_dict)
+        self.table_displayer.fill_clust_labels(self.label)
+
+    def export(self):
+        if self.label is not None:
+            (f_path, f_name) = os.path.split(str(QFileDialog.getSaveFileName(self, "Browse Directory")))
+
+            ee.clustering_export(f_name, f_path, self.table_displayer.clustering_usable_dataset, self.label)
+        else:
+            QtGui.QMessageBox.information(self, "Run Clustering before", "No clsuter affectation")

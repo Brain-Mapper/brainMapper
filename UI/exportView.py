@@ -10,6 +10,8 @@
 #
 # 15 january 2018 - Initial design and coding. (@yoshcraft, Raphael A.)
 # 16 january 2018 - Basing graphic interface and add export csv method (@yoshcraft, Raphael A.)
+# 18 january 2018 - Modification to fit with the new export method (@yoshcraft, Raphael A.)
+
 
 
 
@@ -86,7 +88,7 @@ class ExportView(QtGui.QWidget):
         runExportButton = QtGui.QPushButton('Run')
         runExportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/play.png'))
         runExportButton.setStatusTip("Run the export")
-        runExportButton.clicked.connect(lambda: ee.export_control(self.fileNameEdit.text(), self.directoryEdit.text(), self.export_usable_dataset))
+        runExportButton.clicked.connect(lambda: ee.simple_export(self.fileNameEdit.text(), self.directoryEdit.text(), self.export_usable_dataset))
 
         selectButton = QtGui.QPushButton('browse')
         selectButton.clicked.connect(lambda: self.select_directory())
@@ -114,10 +116,6 @@ class ExportView(QtGui.QWidget):
 
     def set_usable_data_set(self,a_usable_dataset_instance):
         self.export_usable_dataset = a_usable_dataset_instance
-
-
-
-
 
 
 
