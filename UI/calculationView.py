@@ -43,8 +43,9 @@ class CalculationView(QtGui.QWidget):
         self.leftlist.insertItem(5, 'Entropy')
         self.leftlist.insertItem(6, 'Erosion')
         self.leftlist.insertItem(7, 'Linear combination')
-        self.leftlist.insertItem(8, 'Mean')
-        self.leftlist.insertItem(9, 'Normalization')
+        self.leftlist.insertItem(8, 'Mask')
+        self.leftlist.insertItem(9, 'Mean')
+        self.leftlist.insertItem(10, 'Normalization')
 
         self.stack1 = QWidget()
         self.stack2 = QWidget()
@@ -56,6 +57,7 @@ class CalculationView(QtGui.QWidget):
         self.stack8 = QWidget()
         self.stack9 = QWidget()
         self.stack10 = QWidget()
+        self.stack11 = QWidget()
 
         self.stack1UI()
         self.stack2UI()
@@ -67,6 +69,7 @@ class CalculationView(QtGui.QWidget):
         self.stack8UI()
         self.stack9UI()
         self.stack10UI()
+        self.stack11UI()
         
         self.Stack = QStackedWidget(self)
         self.Stack.addWidget(self.stack1)
@@ -79,6 +82,7 @@ class CalculationView(QtGui.QWidget):
         self.Stack.addWidget(self.stack8)
         self.Stack.addWidget(self.stack9)
         self.Stack.addWidget(self.stack10)
+        self.Stack.addWidget(self.stack11)
 
         self.goHomeButton = QtGui.QPushButton('Go back')
         self.goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
@@ -294,11 +298,20 @@ class CalculationView(QtGui.QWidget):
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("NO IMPLEMENTED")
+        description = QTextEdit("The entropy of an image is a decimal value that allows to characterize the degree of disorganization, or unpredictability of the information content of a system.")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("Entropy(Nifti img) = SUM(-Pi * log2(Pi))\nWhere Pi is the probability for the value i in the image to appear.")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack6.setLayout(vbox)
@@ -359,9 +372,41 @@ class CalculationView(QtGui.QWidget):
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack8.setLayout(vbox)
-
-    # ----- Mean ---------------------------------
+    # ----- Mask ---------------------------------
     def stack9UI(self):
+        vbox = QVBoxLayout(self)
+        layout = QFormLayout()
+        vbox.addLayout(layout)
+
+        options = QLabel("Options")
+        options.setStyleSheet("background-color: #FFCC33;")
+        layout.addRow(options)
+
+        descrip = QLabel("Description")
+        descrip.setStyleSheet("background-color: #FFCC33;")
+        layout.addRow(descrip)
+
+        descbox = QtGui.QVBoxLayout()
+        description = QTextEdit("The Mask process need two file : one named mask that permit to define which voxels in the second one will be selected. Only the voxels in the second one where the voxels in the mask with the same coordinates and a value > 0 will be selected.")
+        description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        description.setReadOnly(True)
+        
+        descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[1, 1, 0]   [2, 4, 9]       [2, 4, 0]\n\t[0, 0, 1]   [3, 7, 5]       [0, 0, 5]\nMaskProc ( \t[1, 0, 1] , [6, 8, 4] ) = [6, 0, 4]")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
+        description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
+        vbox.addLayout(descbox)
+        self.stack9.setLayout(vbox)
+        
+    # ----- Mean ---------------------------------
+    def stack10UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
         vbox.addLayout(layout)
@@ -391,10 +436,10 @@ class CalculationView(QtGui.QWidget):
         descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
-        self.stack9.setLayout(vbox)
+        self.stack10.setLayout(vbox)
 
     # ----- Normalization ------------------------------------
-    def stack10UI(self):
+    def stack11UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
         vbox.addLayout(layout)
@@ -415,7 +460,7 @@ class CalculationView(QtGui.QWidget):
         descbox.addWidget(description)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
-        self.stack10.setLayout(vbox)
+        self.stack11.setLayout(vbox)
 
 
     # def stack2UI(self):
@@ -457,76 +502,85 @@ class CalculationView(QtGui.QWidget):
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
-                                          
+        if algorithm=="Mask":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)
+                QtGui.QMessageBox.information(self, "Success",
+                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm. This algorithm can only takes 2 File : The mask and the one which will be applied the mask. Please verify that you have select just 2 file in your collection.")
+                                      
         if algorithm=="Linear combination":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm. Please check if you have correctly entering the coefficent list")
                                           
         if algorithm=="Boolean Intersection":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Boolean Union":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Normalization":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Centroide":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Addition":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Entropy":
-            #try:
+            try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-               # QtGui.QMessageBox.information(self, "SUCCESS",
-                #                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
-            #except:
-             #   QtGui.QMessageBox.warning(self, "ERROR",
-              #                            "Impossible to execute "+algorithm+" algorithm")
+                QtGui.QMessageBox.information(self, "Success",
+                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm")
 
 
 

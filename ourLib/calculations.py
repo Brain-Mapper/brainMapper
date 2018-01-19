@@ -152,6 +152,24 @@ def and_opperation(Nifti_file_collection):
     output ="[Algorithm] > Boolean Intersection\n[Input] > Nifti(s) file(s) : "+extract_name_without_path(Nifti_file_collection)+"\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {"+str(lx)+", "+str(ly)+", "+str(lz)+"}"
     return (file_Nifti_clusterised,output)
 
+
+def mask_opperation(mask,file,arguments):
+    if arguments=='Error':
+        return -1
+    (lx,ly,lz) = max_shape([mask,file])
+    file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
+    list_voxels = Extract_voxels_from_Nifti_file(mask)
+    img = load_nifti(file)
+    data = get_data(img)
+    for voxels in list_voxels:
+        x = voxels[0]
+        y = voxels[1]
+        z = voxels[2]
+        file_Nifti_clusterised[x][y][z] = data[x][y][z]
+    print('Mask opperation process is successfull !')
+    output ="[Algorithm] > Mask\n[Input] > Mask : "+extract_name_without_path([mask])+" File : "+extract_name_without_path([file])+"\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {"+str(lx)+", "+str(ly)+", "+str(lz)+"}"
+    return (file_Nifti_clusterised,output)
+
 def linear_combination_opperation(Nifti_file_collection,coef):
     (lx,ly,lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx,ly,lz), dtype='f')
@@ -223,15 +241,10 @@ def entropie_opperation(Nifti_file_collection):
                 symbol.append(data[e[0]][e[1]][e[2]])
                 occurForEachSymbol.append(0)
         numberOfOccur = sum(occurForEachSymbol)
-        print symbol
-        print occurForEachSymbol
         entropie = 0
         for i in occurForEachSymbol:
             Pi = float(i)/float(nbPixTot)
             entropie = entropie - Pi*np.log2(Pi)
-        print nbPixTot-numberOfOccur
-        print nbPixTot
-        print "\n"
         proba0 = float(nbPixTot-numberOfOccur)/float(nbPixTot)
         entropie = entropie - proba0*np.log2(proba0)
         return entropie

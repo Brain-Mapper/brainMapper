@@ -115,6 +115,11 @@ def run_calculation(selectedAlgorithm,nifti_collection,arguments):
         file_result,output = calcul.baricentre_opperation(nifti_collection,arguments)
     if selectedAlgorithm == "Linear combination":
         file_result,output = calcul.linear_combination_opperation(nifti_collection,arguments)
+    if selectedAlgorithm == "Mask":
+        if len(nifti_collection)==2:
+            file_result,output = calcul.mask_opperation(nifti_collection[0],nifti_collection[1],'Succes')
+        else:
+            file_result,output = calcul.mask_opperation(nifti_collection[0],nifti_collection[1],'Error')
     if selectedAlgorithm == "Mean":
         file_result,output = calcul.mean_opperation(nifti_collection)
     if selectedAlgorithm == "Normalization":
