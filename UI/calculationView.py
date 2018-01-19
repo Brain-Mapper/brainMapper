@@ -36,7 +36,7 @@ class CalculationView(QtGui.QWidget):
         super(CalculationView, self).__init__()
         self.leftlist = QListWidget()
         self.leftlist.insertItem(0, 'Addition')
-        self.leftlist.insertItem(1, 'Boolean Interserction')
+        self.leftlist.insertItem(1, 'Boolean Intersection')
         self.leftlist.insertItem(2, 'Boolean Union')
         self.leftlist.insertItem(3, 'Centroide')
         self.leftlist.insertItem(4, 'Dilation')
@@ -45,7 +45,6 @@ class CalculationView(QtGui.QWidget):
         self.leftlist.insertItem(7, 'Linear combination')
         self.leftlist.insertItem(8, 'Mean')
         self.leftlist.insertItem(9, 'Normalization')
-        self.leftlist.insertItem(10, 'Substraction')
 
         self.stack1 = QWidget()
         self.stack2 = QWidget()
@@ -57,7 +56,6 @@ class CalculationView(QtGui.QWidget):
         self.stack8 = QWidget()
         self.stack9 = QWidget()
         self.stack10 = QWidget()
-        self.stack11 = QWidget()
 
         self.stack1UI()
         self.stack2UI()
@@ -69,7 +67,6 @@ class CalculationView(QtGui.QWidget):
         self.stack8UI()
         self.stack9UI()
         self.stack10UI()
-        self.stack11UI()
         
         self.Stack = QStackedWidget(self)
         self.Stack.addWidget(self.stack1)
@@ -82,7 +79,6 @@ class CalculationView(QtGui.QWidget):
         self.Stack.addWidget(self.stack8)
         self.Stack.addWidget(self.stack9)
         self.Stack.addWidget(self.stack10)
-        self.Stack.addWidget(self.stack11)
 
         self.goHomeButton = QtGui.QPushButton('Go back')
         self.goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
@@ -151,7 +147,7 @@ class CalculationView(QtGui.QWidget):
         algorithm.setStyleSheet("background-color: #FFCC33;")
         
         calcul = QTextEdit("")
-        calcul.setText("\t[5, 9, 0]   [0, 4, 0]       [5, 13, 0]\n\t[0, 0, 3]   [0, 7, 4]       [0, 7, 7]\nAddition ( \t[1, 1, 2] , [3, 0, 0] ) = [4, 1, 2]")
+        calcul.setText("\t[5, 3, 0]   [0, 4, 0]       [5, 8, 0]\n\t[0, 0, 3]   [0, 7, 4]       [0, 7, 7]\nAddition ( \t[1, 1, 2] , [3, 0, 0] ) = [4, 1, 2]")
         calcul.setReadOnly(True)
         calcul.setFixedHeight(70)
         descbox.addWidget(algorithm)
@@ -421,29 +417,6 @@ class CalculationView(QtGui.QWidget):
         vbox.addLayout(descbox)
         self.stack10.setLayout(vbox)
 
-    # ----- Substraction ------------------------------------
-    def stack11UI(self):
-        vbox = QVBoxLayout(self)
-        layout = QFormLayout()
-        vbox.addLayout(layout)
-
-        options = QLabel("Options")
-        options.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(options)
-
-        descrip = QLabel("Description")
-        descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(descrip)
-
-        descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("NO IMPLEMENTED")
-        description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        description.setReadOnly(True)
-
-        descbox.addWidget(description)
-        description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
-        vbox.addLayout(descbox)
-        self.stack11.setLayout(vbox)
 
     # def stack2UI(self):
     #	layout = QFormLayout()
@@ -468,7 +441,6 @@ class CalculationView(QtGui.QWidget):
     # --------------------- Action for CALCULATE button -------------------
     def runCalculation(self):
         print("calculation in progress...")
-        print currentUsableDataset
         algorithm = self.leftlist.selectedItems()[0].text()
         # extraction of arguments here
         #
@@ -494,6 +466,7 @@ class CalculationView(QtGui.QWidget):
         if algorithm=="Linear combination":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)                
                 QtGui.QMessageBox.information(self, "SUCCESS",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
@@ -503,6 +476,7 @@ class CalculationView(QtGui.QWidget):
         if algorithm=="Boolean Intersection":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)                
                 QtGui.QMessageBox.information(self, "SUCCESS",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
@@ -511,6 +485,7 @@ class CalculationView(QtGui.QWidget):
         if algorithm=="Boolean Union":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)                
                 QtGui.QMessageBox.information(self, "SUCCESS",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
@@ -519,11 +494,39 @@ class CalculationView(QtGui.QWidget):
         if algorithm=="Normalization":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)                
                 QtGui.QMessageBox.information(self, "SUCCESS",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
                 QtGui.QMessageBox.warning(self, "ERROR",
                                           "Impossible to execute "+algorithm+" algorithm")
+        if algorithm=="Centroide":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)                
+                QtGui.QMessageBox.information(self, "SUCCESS",
+                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+            except:
+                QtGui.QMessageBox.warning(self, "ERROR",
+                                          "Impossible to execute "+algorithm+" algorithm")
+        if algorithm=="Addition":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)                
+                QtGui.QMessageBox.information(self, "SUCCESS",
+                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+            except:
+                QtGui.QMessageBox.warning(self, "ERROR",
+                                          "Impossible to execute "+algorithm+" algorithm")
+        if algorithm=="Entropy":
+            #try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)                
+               # QtGui.QMessageBox.information(self, "SUCCESS",
+                #                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+            #except:
+             #   QtGui.QMessageBox.warning(self, "ERROR",
+              #                            "Impossible to execute "+algorithm+" algorithm")
 
 
 

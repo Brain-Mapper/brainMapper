@@ -104,18 +104,24 @@ def run_clustering(selectedClusteringMethod, params_dict):
     return labels
 
 def run_calculation(selectedAlgorithm,nifti_collection,arguments):
-
-	if selectedAlgorithm == "Mean":
-		file_result,output = calcul.mean_opperation(nifti_collection)
-	if selectedAlgorithm == "Boolean Intersection":
-		file_result,output = calcul.and_opperation(nifti_collection)
-	if selectedAlgorithm == "Boolean Union":
-		file_result,output = calcul.or_opperation(nifti_collection)
-	if selectedAlgorithm == "Normalization":
-		file_result,output = calcul.normalization_opperation(nifti_collection)
-	if selectedAlgorithm == "Linear combination":
-		file_result,output = calcul.linear_combination_opperation(nifti_collection,arguments)
-	return file_result,output
+    
+    if selectedAlgorithm == "Addition":
+        file_result,output = calcul.addition_opperation(nifti_collection)
+    if selectedAlgorithm == "Boolean Intersection":
+        file_result,output = calcul.and_opperation(nifti_collection)
+    if selectedAlgorithm == "Boolean Union":
+        file_result,output = calcul.or_opperation(nifti_collection)
+    if selectedAlgorithm == "Centroide":
+        file_result,output = calcul.baricentre_opperation(nifti_collection,arguments)
+    if selectedAlgorithm == "Linear combination":
+        file_result,output = calcul.linear_combination_opperation(nifti_collection,arguments)
+    if selectedAlgorithm == "Mean":
+        file_result,output = calcul.mean_opperation(nifti_collection)
+    if selectedAlgorithm == "Normalization":
+        file_result,output = calcul.normalization_opperation(nifti_collection)
+    if selectedAlgorithm == "Entropy":
+        file_result,output = calcul.entropie_opperation(nifti_collection)
+    return file_result,output
 
 
 def get_selected_from_name(name):
