@@ -287,9 +287,13 @@ def creation_date(path_to_file):
 
 
 def add_set(my_set):
-    # --- Return the creation date for the file located at path_to_file
+    # --- Add my_set to the sets
 
     sets.append(my_set)
+
+def rm_set(my_set):
+    # --- Remove my_set from the sets
+    sets.remove(my_set)
 
 
 def get_current_vizu():

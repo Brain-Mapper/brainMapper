@@ -184,6 +184,13 @@ class SetButton(QtGui.QWidget):
     def test(self):
         # -- Test to print smthg when we click on an ite in the list of subset
         print self.SSList.currentText()
+
+    def updateSubSetName(self):
+        # -- Update the list of subsets shown. Usefull when a sub set is renamed
+        self.SSList.clear()
+        SSets = self.my_set.getAllSubSets()
+        for i in SSets:
+            self.SSList.addItem(str(i.get_name()))
         
     def current_set(self):
         # -- This current_set will vizualize the set and the collections inside when pressed
@@ -206,6 +213,7 @@ class SetButton(QtGui.QWidget):
                     self.my_set.add_empty_subset(str(text))
                     self.SSList.addItem(str(text))
                     ssSet = self.my_set.get_sub_set(str(text))
+                    self.my_set.get_sub_set(str(text)).setParent(self.my_set)
                     add_set(ssSet)
                     set_current_set(ssSet)
                     self.parent().parent().parent().parent().add(ssSet)
@@ -225,20 +233,26 @@ class SetButton(QtGui.QWidget):
                     if i in str(text):
                         new_ok = False
                 if new_ok and not exists_set(str(text)):
-                    self.my_set.set_name(str(text))
+                    rm_set(self.my_set)
+                    if(self.my_set.getParent() != None): #if its a subset
+                        self.my_set.getParent().remove_subset(self.my_set.get_name())
+                        self.my_set.set_name(str(text))
+                        self.my_set.getParent().add_subset(self.my_set)
+                    else:
+                        self.my_set.set_name(str(text))
                     size = self.setB.size()
                     self.setB.setText(str(text))
                     rec = QApplication.desktop().availableGeometry()
                     mainwind_h = rec.height()
                     mainwind_w = rec.width()
                     self.setB.setMaximumSize(size)
+                    add_set(self.my_set)
+                    self.parent().parent().parent().parent().update()
                 else :
                     err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
             except :
                 err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
-
-
-        
+                
 class SetAccessBar(QtGui.QWidget):
         # -- The SetAccessBar class will display all sets created 
     def __init__(self,parent=None):
@@ -281,6 +295,14 @@ class SetAccessBar(QtGui.QWidget):
     def add(self, my_set):
         # -- This add will add a SetButton
         self.vbox.addWidget(SetButton(my_set,self))
+
+    def update(self):
+        # -- Update the list of subsets shown. Usefull when a sub set is renamed
+        items = (self.vbox.itemAt(j).widget() for j in range(self.vbox.count()))
+        for i in items:
+            if isinstance(i, SetButton):
+                i.updateSubSetName()
+                
 
 
 class MainView(QtGui.QWidget):
