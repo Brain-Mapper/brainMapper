@@ -11,6 +11,7 @@
 # 2 january 201- Initial design and coding. (@vz-chameleon, Valentina Z.)
 # 14 january 2018 - Began the interface (@Graziella-Husson)
 # 15-16 january 2018 - Redo all the interface (@Graziella-Husson)
+# 30 january 2018 - Added tabs to interface for results of calculation and clustering (@Graziella-Husson)
 
 import os
 from PyQt4 import QtGui
@@ -196,8 +197,8 @@ class SetButton(QtGui.QWidget):
         # -- This current_set will vizualize the set and the collections inside when pressed
         set_current_set(self.my_set)
         set_current_vizu(self.vizu)
-        self.parent().parent().parent().parent().parent().parent().updateVizu(self.vizu)
-        self.parent().parent().parent().parent().parent().parent().upCollLabel()
+        self.parent().parent().parent().parent().parent().parent().parent().parent().updateVizu(self.vizu)
+        self.parent().parent().parent().parent().parent().parent().parent().parent().upCollLabel()
 
     def addSubet(self):
         # -- This addSubet will add a subset to the set selected. 
@@ -216,12 +217,12 @@ class SetButton(QtGui.QWidget):
                     self.my_set.get_sub_set(str(text)).setParent(self.my_set)
                     add_set(ssSet)
                     set_current_set(ssSet)
-                    self.parent().parent().parent().parent().add(ssSet)
+                    self.parent().parent().parent().parent().parent().parent().add(ssSet)
                 else :
                     err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
             except :
                 err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
-
+            
     def changeName(self):
         # -- This changeName will change the name of the set selected. 
         text, ok = QInputDialog.getText(self, 'Rename a set', "Enter a new name for your set currently named "+str(self.my_set.name)+":")
@@ -247,17 +248,27 @@ class SetButton(QtGui.QWidget):
                     mainwind_w = rec.width()
                     self.setB.setMaximumSize(size)
                     add_set(self.my_set)
-                    self.parent().parent().parent().parent().update()
+                    self.parent().parent().parent().parent().parent().parent().update()
                 else :
                     err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
             except :
                 err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
-                
-class SetAccessBar(QtGui.QWidget):
+     
+class SetAccessBar(QtGui.QTabWidget):
         # -- The SetAccessBar class will display all sets created 
     def __init__(self,parent=None):
         # -- Creates all abjects we need
         super(SetAccessBar, self).__init__(parent=parent)
+        
+        self.tab1 = QWidget()
+        self.addTab(self.tab1,"Tab 1")
+        self.setTabText(0,"All")
+        self.tab2 = QWidget()
+        self.addTab(self.tab2,"Tab 2")
+        self.setTabText(1,"Clustering")
+        self.tab3 = QWidget()
+        self.addTab(self.tab3,"Tab 3")
+        self.setTabText(2,"Calculation")
         
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height()/1.4
@@ -265,19 +276,35 @@ class SetAccessBar(QtGui.QWidget):
         self.setMaximumSize(QSize(mainwind_w/3.76, mainwind_h))
         
         group = QtGui.QGroupBox()
-        self.vbox = QtGui.QVBoxLayout()
+        group2 = QtGui.QGroupBox()
+        group3 = QtGui.QGroupBox()
+        self.tab1.vbox = QtGui.QVBoxLayout()
+        self.tab2.vbox2 = QtGui.QVBoxLayout()
+        self.tab3.vbox3 = QtGui.QVBoxLayout()
         
         my_set = newSet("default")
         set_current_set(my_set)
 
-        group.setLayout(self.vbox)
+        group.setLayout(self.tab1.vbox)
+        group2.setLayout(self.tab2.vbox2)
+        group3.setLayout(self.tab3.vbox3)
 
         scroll = QtGui.QScrollArea()
         scroll.setWidget(group)
         scroll.setWidgetResizable(True)
         scroll.setFixedHeight(mainwind_h*0.8)
         
-        self.vbox.addWidget(SetButton(my_set,self))
+        scroll2 = QtGui.QScrollArea()
+        scroll2.setWidget(group2)
+        scroll2.setWidgetResizable(True)
+        scroll2.setFixedHeight(mainwind_h*0.8)
+        
+        scroll3 = QtGui.QScrollArea()
+        scroll3.setWidget(group3)
+        scroll3.setWidgetResizable(True)
+        scroll3.setFixedHeight(mainwind_h*0.8)
+        
+        self.tab1.vbox.addWidget(SetButton(my_set,self))
         
         hbox=QtGui.QVBoxLayout()
         title_style = "QLabel { background-color : #ffcc33 ; color : black;  font-style : bold; font-size : 14px;}"
@@ -288,21 +315,40 @@ class SetAccessBar(QtGui.QWidget):
         title1.setStyleSheet(title_style)
         hbox.addWidget(title1)
         hbox.addWidget(scroll)
+        self.tab1.setLayout(hbox)
 
-        self.setLayout(hbox)
+        hbox2=QtGui.QVBoxLayout()
+        title2 = QtGui.QLabel('Sets results of clustering')
+        title2.setFixedWidth(self.width()-10)
+        title2.setFixedHeight(20)
+        title2.setAlignment(QtCore.Qt.AlignCenter)
+        title2.setStyleSheet(title_style)
+        hbox2.addWidget(title2)
+        hbox2.addWidget(scroll2)
+        self.tab2.setLayout(hbox2)
+
+        hbox3=QtGui.QVBoxLayout()
+        title3 = QtGui.QLabel('Sets results of calculation')
+        title3.setFixedWidth(self.width()-10)
+        title3.setFixedHeight(20)
+        title3.setAlignment(QtCore.Qt.AlignCenter)
+        title3.setStyleSheet(title_style)
+        hbox3.addWidget(title3)
+        hbox3.addWidget(scroll3)
+        self.tab3.setLayout(hbox3)
                
 
     def add(self, my_set):
         # -- This add will add a SetButton
-        self.vbox.addWidget(SetButton(my_set,self))
+        self.tab1.vbox.addWidget(SetButton(my_set,self))
 
     def update(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
-        items = (self.vbox.itemAt(j).widget() for j in range(self.vbox.count()))
+        items = (self.tab1.vbox.itemAt(j).widget() for j in range(self.tab1.vbox.count()))
         for i in items:
             if isinstance(i, SetButton):
                 i.updateSubSetName()
-                
+        self.parent().parent().upCollLabel()
 
 
 class MainView(QtGui.QWidget):
