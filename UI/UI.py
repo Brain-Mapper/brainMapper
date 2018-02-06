@@ -206,25 +206,20 @@ class UI(QtGui.QMainWindow):
 # -- We create a set with the name given by the user (if its free) and give it to the mainpage
         text, ok = QInputDialog.getText(self, 'Create a Set', "Enter a name for your set :")
         if str(text)!= "":
-##            try:
-##                new_ok = True
-##                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
-##                for i in not_ok:
-##                    if i in str(text):
-##                        new_ok = False
-##                if new_ok and not exists_set(str(text)):
-##                    new_set = newSet(str(text))
-##                    homepage.mainview.show_set(new_set)
-##                else :
-##                    err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
-##            except :
-##                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
-            if not exists_set(str(text)):
-                new_set = newSet(str(text))
-                homepage.mainview.show_set(new_set)
-            else :
-                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
-        
+            try:
+                new_ok = True
+                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
+                for i in not_ok:
+                    if i in str(text):
+                        new_ok = False
+                if new_ok and not exists_set(str(text)):
+                    new_set = newSet(str(text))
+                    homepage.mainview.show_set(new_set)
+                else :
+                    err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
+            except :
+                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
+
 def main():
     
     app = QtGui.QApplication(sys.argv)
