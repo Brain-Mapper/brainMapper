@@ -22,7 +22,7 @@ sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 from BrainMapper import *
 from functools import partial
 import ourLib.ExcelExport.excelExport as ee
-import  os
+import os
 
 
 import resources
@@ -393,21 +393,27 @@ class ClusteringView(QtGui.QWidget):
         runClusteringButton = QtGui.QPushButton('Run')
         runClusteringButton.setStyleSheet("background-color: #b4ecb4;")
         runClusteringButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/play.png'))
-        runClusteringButton.setToolTip("Run selected clustering")
+        runClusteringButton.setStatusTip("Run selected clustering")
         runClusteringButton.clicked.connect(lambda: self.runSelectedClust(self.clust_chooser.get_selected_method_name(), self.param_script_stack.get_user_params()))
 
         goHomeButton = QtGui.QPushButton('Go back')
         goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
-        goHomeButton.setToolTip("Return to main page")
+        goHomeButton.setStatusTip("Return to main page")
         goHomeButton.clicked.connect(self.showMain.emit)# When go back home button is clicked, change central views
 
         exportButton = QtGui.QPushButton('Export')
         exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
-        exportButton.setToolTip("Export to CSV file")
+        exportButton.setStatusTip("Export to CSV file")
         exportButton.clicked.connect(lambda: self.export())
+
+        saveButton = QtGui.QPushButton('Save as set')
+        saveButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
+        saveButton.setStatusTip("Save the results in a set (available in home page)")
+        saveButton.clicked.connect(lambda: self.save())
 
         buttonsBox.addWidget(runClusteringButton)
         buttonsBox.addWidget(exportButton)
+        buttonsBox.addWidget(saveButton)
         buttonsBox.addWidget(goHomeButton)
 
         topBox=QtGui.QHBoxLayout()
@@ -503,4 +509,11 @@ class ClusteringView(QtGui.QWidget):
 
             ee.clustering_export(f_name, f_path, self.table_displayer.clustering_usable_dataset, self.label)
         else:
-            QtGui.QMessageBox.information(self, "Run Clustering before", "No clsuter affectation")
+            QtGui.QMessageBox.information(self, "Run Clustering before", "No cluster affectation")
+
+    def save(self):
+        if self.label is not None:
+            makeClusterResultSet(self.table_displayer.clustering_usable_dataset, self.label)
+        else:
+            QtGui.QMessageBox.information(self, "Run Clustering before", "No cluster affectation")
+

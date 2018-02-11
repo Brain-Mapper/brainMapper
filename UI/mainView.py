@@ -342,6 +342,15 @@ class SetAccessBar(QtGui.QTabWidget):
         # -- This add will add a SetButton
         self.tab1.vbox.addWidget(SetButton(my_set,self))
 
+    def add2(self):
+        items = (self.tab2.vbox2.itemAt(j).widget() for j in range(self.tab2.vbox2.count()))
+        for i in items:
+            self.tab2.vbox2.removeWidget(i)
+            i.setParent(None)
+            i.deleteLater()
+        for j in getClusterResultSets():
+            self.tab2.vbox2.addWidget(SetButton(j,self))
+
     def update(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
         items = (self.tab1.vbox.itemAt(j).widget() for j in range(self.tab1.vbox.count()))
@@ -491,4 +500,5 @@ class MainView(QtGui.QWidget):
             label = label[:nb] + "-"
         self.collectionsDisplayBox.update_label(label)
 
-
+    def updateClusterRes(self):
+        self.setAccessBox.add2()

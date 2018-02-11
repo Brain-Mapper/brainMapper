@@ -25,25 +25,60 @@ if __name__ == '__main__':
 
 class Help(QMainWindow):
     def __init__(self):
-        QMainWindow.__init__(self)
+        super(QMainWindow, self).__init__()
         self.setWindowTitle('Help')
         self.setWindowIcon(QtGui.QIcon(':ressources/help.png'))
-        self.setGeometry(QRect(100, 100, 400, 200))
-        label = QLabel(self)
+        self.setFixedSize(465,235)
+        centralwidget = QWidget(self)
+        horizontalLayoutWidget = QWidget(centralwidget)
+        horizontalLayoutWidget.setGeometry(QRect(0, 0, 461, 231));
+        horizontalLayout = QHBoxLayout(horizontalLayoutWidget);
+       
+        label = QLabel(horizontalLayoutWidget)
         pixmap = QPixmap(':ressources/logo.png')
         label.setPixmap(pixmap)
         label.resize(pixmap.width(), pixmap.height())
         label.move(10,10)
-        names = QLabel("Raphael Agathon & Maxime Cluchague",self)
-        names2 = QLabel("  Graziella Husson & Valentina Zelaya", self)
-        title= QLabel("BrainMapper", self)
-        icons_credits=QLabel("BrainMapper icon made by Graziella Husson \nApp icons made by Icomoon from www.flaticon."
-                             "com ", self)
-        names.setGeometry(QtCore.QRect(70, 110, 400, 100))
-        names2.setGeometry(QtCore.QRect(73, 130, 400, 100))
-        title.setGeometry(QtCore.QRect(210, 20, 400, 100))
-        icons_credits.setGeometry(QtCore.QRect(10, 80, 400, 100))
+
+        horizontalLayout.addWidget(label)
+        
+        verticalLayout = QVBoxLayout()
+        label1 = QLabel(horizontalLayoutWidget)
+        label1.setText("BrainMapper icon made by Graziella Husson")
+        verticalLayout.addWidget(label1)
+
+        label_2 = QLabel(horizontalLayoutWidget)
+        label_2.setText("App icons made by Icomoon from flaticon.com")
+        verticalLayout.addWidget(label_2)
+
+        label_3 = QLabel(horizontalLayoutWidget)
+        label_3.setText("Developped by :")
+        verticalLayout.addWidget(label_3)
+
+        label_5 = QLabel(horizontalLayoutWidget)
+        label_5.setText("Raphael Agathon, Maxime Cluchague,")
+        verticalLayout.addWidget(label_5)
+
+        label_4 = QLabel(horizontalLayoutWidget)
+        label_4.setText("Graziella Husson & Valentina Zelaya")
+        verticalLayout.addWidget(label_4)
+
+        pushButton = QPushButton(horizontalLayoutWidget)
+        pushButton.setText("Show help")
+        pushButton.clicked.connect(lambda : self.openUrl(""))
+        verticalLayout.addWidget(pushButton)
+
+        horizontalLayout.addLayout(verticalLayout)
+
+        self.setCentralWidget(centralwidget);
         self.show()
+
+    def openUrl(self,url):
+        _root = QFileInfo(__file__).absolutePath()
+        url = QtCore.QUrl.fromLocalFile(_root + '/help/manual.html')
+        if not QtGui.QDesktopServices.openUrl(url):
+            QtGui.QMessageBox.warning(self, 'Open Url', 'Could not open url')
+ 
 
 # In PyQt we cannot open two windows at a time easily, so we will have to change the central widget of our app
 # according to what the user clicks on... To do so, we will use an instance of the following class
@@ -83,6 +118,7 @@ class HomePage(QWidget):
         self.mainview.showClust.connect(self.updateClusteringView)
         # -- when clustering widget emits signal showMain, change current Widget in stack to main view widget
         self.clustering.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
+        self.clustering.showMain.connect(self.updateMainCluster)
 
         self.mainview.showEdit.connect(self.updateEditView)
         # -- when mainView widget emits signal showEdit, change current Widget in stack to clustering widget
@@ -112,6 +148,9 @@ class HomePage(QWidget):
     
     def updateMain(self):
         self.mainview.update()
+
+    def updateMainCluster(self):
+        self.mainview.updateClusterRes()
 
     def updateExportView(self):
         self.export.set_usable_data_set(get_current_usableDataset())

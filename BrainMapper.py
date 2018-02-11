@@ -18,6 +18,7 @@ toRM = []  # Contains all images to remove in edit view (can be used somewhere e
 currentUsableDataset = None
 
 sets = []  # List of all sets (and sub sets) created (usefull to know if a name is already used)
+clusteringsets = []  # List of all sets (and sub sets) created as a result for clustering
 currentSet = None  # The current set shown in main view
 currentVizu = None  # The current collections shown in main view
 
@@ -346,3 +347,37 @@ def get_selected_clustering_info():
         return app_clustering_available[currentClusteringMethod]
     else:
         return None
+
+def makeClusterResultSet(a_usable_dataset, label):
+    found = False
+    colls = []
+    new_set = Set("Res Clust")
+    setName = str(new_set).split("0x")
+    setName = setName[1]
+    setName = "Res Clust" + setName[:-1]
+    new_set.set_name(setName)
+    for udcoll in a_usable_dataset.get_usable_data_list():
+        extracted_data_dictionary = udcoll.get_extracted_data_dict()
+        row_cont = 0
+        for origin_file in extracted_data_dictionary.keys():
+            data_array = extracted_data_dictionary[origin_file]
+            for data_rows in range(0, data_array.shape[0]):
+                coll_name= str(label[row_cont])
+                row_cont = row_cont + 1
+                for i in colls:
+                    if(i.name == coll_name):
+                        found = True
+                        if not i.imExists(origin_file.filename):
+                            i.add(origin_file)       
+                if not found:
+                    c = ImageCollection(coll_name, new_set)
+                    c.add(origin_file)
+                    colls.append(c)
+                else:
+                    found = False
+    for i in colls:
+        new_set.add_collection(i)
+    clusteringsets.append(new_set)
+
+def getClusterResultSets():
+    return clusteringsets
