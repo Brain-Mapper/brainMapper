@@ -211,7 +211,7 @@ class ClusteringParameters(QtGui.QWidget):
             else:
                 self.param_value_input = QtGui.QLineEdit(str(param_default_value))
 
-            self.param_value_input.setToolTip(param_info)
+            # self.param_value_input.setToolTip(param_info)
             self.param_value_input.setStatusTip(param_info)
             # self.param_value_input.setMaximumSize(QSize(150, 50)
 
