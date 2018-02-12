@@ -6,6 +6,8 @@ from functools import partial
 
 import resources
 
+import sys
+
 from mainView import MainView
 from clusteringView import ClusteringView
 from editCollectionsView import EditCollectionsView
@@ -170,6 +172,7 @@ class UI(QtGui.QMainWindow):
         self.initUI()
         
     def initUI(self):
+
         self.statusBar() # lower bar for tips
         
         global homepage
@@ -262,6 +265,25 @@ class UI(QtGui.QMainWindow):
 def main():
     
     app = QtGui.QApplication(sys.argv)
+
+    # INIT APP STYLE ACCORDING TO OS
+
+    OS = sys.platform
+    print("user os : "+ str(OS))
+
+    if sys.platform.startswith('linux'):
+        app.setStyle(QStyleFactory.create("gtk"))
+        print("Linux !")
+    elif sys.platform.startswith('darwin'):
+        app.setStyle(QStyleFactory.create("macintosh"))
+    elif sys.platform.startswith('win32'):
+        app.setStyle(QStyleFactory.create("windowsxp"))
+    elif sys.platform.startswith('cygwin'):
+        app.setStyle(QStyleFactory.create("windowsxp"))
+    else :
+        app.setStyle(QStyleFactory.create("gtk"))
+
+    print str(app.style())
     ex = UI()
     sys.exit(app.exec_())
 
