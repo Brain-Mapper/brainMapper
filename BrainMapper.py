@@ -37,7 +37,6 @@ currentClusteringMethod = None
 # currentCalculationResult = None
 
 
-
 def open_nifti(path):
     # --- Opens a nifti file from path
 
@@ -101,6 +100,14 @@ def extract_data_from_selected():
     currentUsableDataset = xt.extract_from_collection_list(selected)
 
 
+def extract_data_as_centroids_from_selected():
+    # --- Extract the interesting data from the selected image collections using extractor's module functions
+    # --- :return: A UsableDataSet instance (see dataExtraction.usable_data)
+
+    global currentUsableDataset
+    currentUsableDataset = xt.extract_from_collection_list_using_centroids(selected)
+
+
 def get_current_usableDataset():
     """
     Retrieve the UsableDataSet instance obtained by extracting data before clustering
@@ -134,7 +141,7 @@ def run_clustering(selectedClusteringMethod, params_dict):
 
 def run_calculation(selectedAlgorithm, nifti_collection, arguments):
     if selectedAlgorithm == "Mean":
-        file_result, output = calcul.mean_opperation(nifti_collection)
+        file_result, output = calcul.mean_operation(nifti_collection)
     if selectedAlgorithm == "Boolean Intersection":
         file_result, output = calcul.and_opperation(nifti_collection)
     if selectedAlgorithm == "Boolean Union":
