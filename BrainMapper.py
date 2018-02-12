@@ -350,7 +350,7 @@ def get_selected_clustering_info():
         return None
 
 def makeClusterResultSet(a_usable_dataset, label):
-    new_set = uds.extract_set_images_by_cluster(a_usable_dataset, label)
+    new_set = uds.extract_set_images_by_cluster(a_usable_dataset, label, 'ressources/template_mni/mni_icbm152_t1_tal_nlin_asym_09a.nii')
     add_set(new_set)
     clusteringsets.append(new_set)
 

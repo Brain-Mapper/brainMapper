@@ -36,15 +36,18 @@ class CollButton(QtGui.QCheckBox):
         self.stateChanged.connect(self.selectColl)
 
         list = self.coll.get_img_list()
-        dates = []
-        for l in list :
-            dates.append(creation_date(str(l)))
-        date = max(dates)
-        d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
+        try :
+            dates = []
+            for l in list :
+                dates.append(creation_date(str(l)))
+            date = max(dates)
+            d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
+        except :
+            d = "" #TODO : make it current date
         label = "Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
         self.setText(label)
-        self.setStyleSheet("CollButton {border: 1px solid black;} ")
-
+        self.setStyleSheet("CollButton {spacing: 5px;border: 1px solid #cccccc;border-radius: 8px;padding: 1px 18px 1px 3px;max-width: 225%;}; CollButton::indicator {width: 13px; height: 13px;};")
+                           
     def selectColl(self):
         # -- This selectColl will add or delete the collection from the selected ones
         if(self.isChecked()):
@@ -55,14 +58,17 @@ class CollButton(QtGui.QCheckBox):
     def update(self):
         # -- This update will update the information of the collection if they have changed in the edit collection view
         list = self.coll.get_img_list()
-        if list :
-            dates = []
-            for l in list :
-                dates.append(creation_date(str(l)))
-            date = max(dates)
-            d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
-        else :
-            d = "None"
+        try:
+            if list :
+                dates = []
+                for l in list :
+                    dates.append(creation_date(str(l)))
+                date = max(dates)
+                d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
+            else :
+                d = "None"
+        except:
+            d="None"
         self.setText("Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d))        
 
 class CollectionsView(QtGui.QWidget):
