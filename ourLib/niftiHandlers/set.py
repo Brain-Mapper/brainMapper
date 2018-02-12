@@ -32,6 +32,7 @@ class Set(object):
         self.name = name
         self.subset_dict = dict()
         self.collection_dict = dict()
+        self.parent = None
 
     def add_empty_subset(self, name):
         """
@@ -211,4 +212,12 @@ class Set(object):
                 self.remove_collection(i.name)
                 new_col = coll.set_name(name)
                 self.add_collection(coll)
-                
+
+    def setParent(self, parent):
+        self.parent = parent
+
+    def getParent(self):
+        return self.parent
+
+    def getAllSubSets(self):
+        return self.subset_dict.values()

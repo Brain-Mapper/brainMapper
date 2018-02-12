@@ -15,6 +15,7 @@
 # 11 december 2017 - First attempts at masking  (@vz-chameleon, Valentina Z.)
 # 18 december 2017 - Added Maxime's functions for data extraction (@maximeCluchague via @vz-chameleon)
 # 5 january 2018 - Adding another data extraction function, depending on numpy (@vz-chameleon)
+# 12 february 2018 - Added functions to extract data using centroids
 
 # Lib dependency imports
 import numpy as np
@@ -24,12 +25,10 @@ from os import path
 if __package__ is None:
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
     from usable_data import UsableDataCollection,UsableDataSet
-    from niftiHandlers.imagecollection import ImageCollection
-    from niftiHandlers.nifimage import NifImage
+    from ..calculations import image_centroid
 else:
     from usable_data import UsableDataCollection, UsableDataSet
-    from ..niftiHandlers.nifimage import NifImage
-    from ..niftiHandlers.imagecollection import ImageCollection
+
 
 def extract(a_nifti_img_obj):
     # # Check if given param is NifImage class instance
@@ -104,7 +103,7 @@ def extract_from_collection(a_nifti_imgcoll_obj):
     # For each NifImage istance in the collection, extract data and stack results
     img_list = a_nifti_imgcoll_obj.get_img_list()
     
-    for nifimg in a_nifti_imgcoll_obj.get_img_list().items():
+    for nifimg in img_list.items():
         collection_usable_data.add_extracted_data_entry(nifimg[1], extract(nifimg[1]))
 
     return collection_usable_data
@@ -124,4 +123,28 @@ def extract_from_collection_list(a_nifti_imgcoll_list):
         clustering_usable_data.add_usable_data_collection(extract_from_collection(imgcoll))
 
     return clustering_usable_data
+
+
+# -------------------------- Using centroids --------------------------
+
+def extract_from_collection_as_centroid(a_nifti_imgcoll_obj):
+    from ..calculations import image_centroid
+    collection_usable_data = UsableDataCollection(a_nifti_imgcoll_obj.get_name())
+    # For each NifImage istance in the collection, extract data and stack results
+    img_list = a_nifti_imgcoll_obj.get_img_list()
+
+    # For each img, ad the result of calculations' module functions, image_centroid, to the usable data set
+    for nifimg in img_list.items():
+        collection_usable_data.add_extracted_data_entry(nifimg[1], image_centroid(nifimg[1]))
+
+    return collection_usable_data
+
+
+def extract_from_collection_list_using_centroids(a_nifti_imgcoll_list):
+    centroids_usable_data = UsableDataSet('Clustering with centroids')
+
+    for imgcoll in a_nifti_imgcoll_list:
+        centroids_usable_data.add_usable_data_collection(extract_from_collection_as_centroid(imgcoll))
+
+    return centroids_usable_data
 

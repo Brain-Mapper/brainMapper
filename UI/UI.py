@@ -6,11 +6,14 @@ from functools import partial
 
 import resources
 
+import sys
+
 from mainView import MainView
 from clusteringView import ClusteringView
 from editCollectionsView import EditCollectionsView
 from exportView import ExportView
 from calculationView import CalculationView
+
 
 
 if __name__ == '__main__':
@@ -25,25 +28,59 @@ if __name__ == '__main__':
 
 class Help(QMainWindow):
     def __init__(self):
-        QMainWindow.__init__(self)
+        super(QMainWindow, self).__init__()
         self.setWindowTitle('Help')
         self.setWindowIcon(QtGui.QIcon(':ressources/help.png'))
-        self.setGeometry(QRect(100, 100, 400, 200))
-        label = QLabel(self)
+        self.setFixedSize(465,235)
+        centralwidget = QWidget(self)
+        horizontalLayoutWidget = QWidget(centralwidget)
+        horizontalLayoutWidget.setGeometry(QRect(0, 0, 461, 231));
+        horizontalLayout = QHBoxLayout(horizontalLayoutWidget);
+       
+        label = QLabel(horizontalLayoutWidget)
         pixmap = QPixmap(':ressources/logo.png')
         label.setPixmap(pixmap)
         label.resize(pixmap.width(), pixmap.height())
         label.move(10,10)
-        names = QLabel("Raphael Agathon & Maxime Cluchague",self)
-        names2 = QLabel("  Graziella Husson & Valentina Zelaya", self)
-        title= QLabel("BrainMapper", self)
-        icons_credits=QLabel("BrainMapper icon made by Graziella Husson \nApp icons made by Icomoon from www.flaticon."
-                             "com ", self)
-        names.setGeometry(QtCore.QRect(70, 110, 400, 100))
-        names2.setGeometry(QtCore.QRect(73, 130, 400, 100))
-        title.setGeometry(QtCore.QRect(210, 20, 400, 100))
-        icons_credits.setGeometry(QtCore.QRect(10, 80, 400, 100))
+
+        horizontalLayout.addWidget(label)
+        
+        verticalLayout = QVBoxLayout()
+        label1 = QLabel(horizontalLayoutWidget)
+        label1.setText("BrainMapper icon made by Graziella Husson")
+        verticalLayout.addWidget(label1)
+
+        label_2 = QLabel(horizontalLayoutWidget)
+        label_2.setText("App icons made by Icomoon from flaticon.com")
+        verticalLayout.addWidget(label_2)
+
+        label_3 = QLabel(horizontalLayoutWidget)
+        label_3.setText("Developped by :")
+        verticalLayout.addWidget(label_3)
+
+        label_5 = QLabel(horizontalLayoutWidget)
+        label_5.setText("Raphael Agathon, Maxime Cluchague,")
+        verticalLayout.addWidget(label_5)
+
+        label_4 = QLabel(horizontalLayoutWidget)
+        label_4.setText("Graziella Husson & Valentina Zelaya")
+        verticalLayout.addWidget(label_4)
+
+        pushButton = QPushButton(horizontalLayoutWidget)
+        pushButton.setText("Show help")
+        pushButton.clicked.connect(lambda : self.openUrl(""))
+        verticalLayout.addWidget(pushButton)
+
+        horizontalLayout.addLayout(verticalLayout)
+
+        self.setCentralWidget(centralwidget);
         self.show()
+
+    def openUrl(self,url):
+        url = QtCore.QUrl('https://brain-mapper.github.io/BrainMapper-help/')
+        if not QtGui.QDesktopServices.openUrl(url):
+            QtGui.QMessageBox.warning(self, 'Open Url', 'Could not open url')
+ 
 
 # In PyQt we cannot open two windows at a time easily, so we will have to change the central widget of our app
 # according to what the user clicks on... To do so, we will use an instance of the following class
@@ -66,13 +103,13 @@ class HomePage(QWidget):
         # Here are the custom widgets we will put on the stack
         self.mainview = MainView()
         self.clustering = ClusteringView()
-	self.calculation = CalculationView()
+        self.calculation = CalculationView()
         self.edit_colls = EditCollectionsView()
         self.export = ExportView()
         # -- Add them to stack widget
         self.stack.addWidget(self.mainview)
         self.stack.addWidget(self.clustering)
-	self.stack.addWidget(self.calculation)
+        self.stack.addWidget(self.calculation)
         self.stack.addWidget(self.edit_colls)
         self.stack.addWidget(self.export)
 
@@ -83,6 +120,7 @@ class HomePage(QWidget):
         self.mainview.showClust.connect(self.updateClusteringView)
         # -- when clustering widget emits signal showMain, change current Widget in stack to main view widget
         self.clustering.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
+        self.clustering.showMain.connect(self.updateMainCluster)
 
         self.mainview.showEdit.connect(self.updateEditView)
         # -- when mainView widget emits signal showEdit, change current Widget in stack to clustering widget
@@ -94,7 +132,7 @@ class HomePage(QWidget):
         self.mainview.showExport.connect(self.updateExportView)
         self.export.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
 
-	# -- when mainView widget emits signal showCalcul, change current Widget in stack to calculation widget
+    # -- when mainView widget emits signal showCalcul, change current Widget in stack to calculation widget
         self.mainview.showCalcul.connect(partial(self.stack.setCurrentWidget, self.calculation))
         # -- when calculation widget emits signal showMain, change current Widget in stack to main view widget
         self.calculation.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
@@ -112,6 +150,9 @@ class HomePage(QWidget):
     
     def updateMain(self):
         self.mainview.update()
+
+    def updateMainCluster(self):
+        self.mainview.updateClusterRes()
 
     def updateExportView(self):
         self.export.set_usable_data_set(get_current_usableDataset())
@@ -131,6 +172,7 @@ class UI(QtGui.QMainWindow):
         self.initUI()
         
     def initUI(self):
+
         self.statusBar() # lower bar for tips
         
         global homepage
@@ -164,7 +206,8 @@ class UI(QtGui.QMainWindow):
 
         excelAction = QtGui.QAction('&Import from Excel file', self)
         excelAction.setStatusTip('Import from Excel file')
-        excelAction.triggered.connect(self.buttonClicked)
+        excelAction.setShortcut('Ctrl+E')
+        excelAction.triggered.connect(self.fromExcel)
 
         niftiAction = QtGui.QAction('&Import from NIfTI file(s)', self)
         niftiAction.setStatusTip('Create a collection with one or several NIfTI images (added in the current set)')
@@ -188,21 +231,35 @@ class UI(QtGui.QMainWindow):
         print "Test passed. SUCCESS!"
 
     def fromNiFile(self):
+# -- We create a collection with the list of images the user selected and give it to the main view and the edit view
         file = QFileDialog.getOpenFileNames()
         if (file != ""):
-##            try:
-##                collec = do_image_collection(file)
-##            except:
-##                err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
-##                #print (sys.exc_info()[0])
-            collec = do_image_collection(file)
-            homepage.mainview.show_coll(collec)
-            homepage.edit_colls.fill_coll()
+            try:
+                collec = do_image_collection(file)
+                homepage.mainview.show_coll(collec)
+                homepage.edit_colls.fill_coll()
+            except:
+                err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
+
+# -- We create a collection with the list of images the user selected and give it to the main view and the edit view
+
+
+    def fromExcel(self):
+        file = str(QFileDialog.getOpenFileName())
+        if (file != ""):
+            try:
+                collec = simple_import(file, os.path.join(os.path.dirname(__file__), 'ressources/template_mni/mni_icbm152_t1_tal_nlin_asym_09a.nii'))
+                homepage.mainview.show_coll(collec)
+                homepage.edit_colls.fill_coll()
+            except:
+                err = QtGui.QMessageBox.critical(self, "Error",
+                                                 "An error has occured. Maybe you tried to open a non-CSV file")
         
     def showHelp(self):
         self.w = Help()
 
     def createSet(self):
+# -- We create a set with the name given by the user (if its free) and give it to the mainpage
         text, ok = QInputDialog.getText(self, 'Create a Set', "Enter a name for your set :")
         if str(text)!= "":
             try:
@@ -218,10 +275,32 @@ class UI(QtGui.QMainWindow):
                     err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
             except :
                 err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
-            
+
 def main():
     
     app = QtGui.QApplication(sys.argv)
+
+    # INIT APP STYLE ACCORDING TO OS
+
+    OS = sys.platform
+    print("user os : "+ str(OS))
+    #
+    # for s in QStyleFactory.keys():
+    #     print(s)
+
+    if sys.platform.startswith('linux'):
+        app.setStyle(QStyleFactory.create("GTK+"))
+        print("Linux !")
+    elif sys.platform.startswith('darwin'):
+        app.setStyle(QStyleFactory.create("Cleanlooks"))
+    elif sys.platform.startswith('win32'):
+        app.setStyle(QStyleFactory.create("Cleanlooks"))
+    elif sys.platform.startswith('cygwin'):
+        app.setStyle(QStyleFactory.create("Windows"))
+    else :
+        app.setStyle(QStyleFactory.create("GTK+"))
+
+    print str(app.style())
     ex = UI()
     sys.exit(app.exec_())
 

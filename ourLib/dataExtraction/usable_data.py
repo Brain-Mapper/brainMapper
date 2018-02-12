@@ -12,11 +12,23 @@
 #
 # HISTORY
 #
-# 18 december 2018 - Initial design and coding. (@vz-chameleon, Valentina Z.)
+# 18 december 2017 - Initial design and coding. (@vz-chameleon, Valentina Z.)
 # 26 december 2017 - Restructuring for further complexity handling (@vz-chameleon, Valentina Z.)
+# 12 feb 2018 - Adding method to make a set from a UsableDataSet (@Graziella-Husson)
 
 import numpy as np
+from numpy import zeros
 
+from nibabel import Nifti1Image,load
+if __package__ is None:
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from niftiHandlers.imagecollection import ImageCollection
+    from niftiHandlers.nifimage import NifImage
+    from niftiHandlers.set import Set
+else:
+    from ..niftiHandlers.nifimage import NifImage
+    from ..niftiHandlers.imagecollection import ImageCollection
+    from ..niftiHandlers.set import Set
 
 class UsableDataCollection(object):
     def __init__(self, an_imgcollection_name):
@@ -90,6 +102,65 @@ class UsableDataSet(object):
         clusterizable = np.delete(clusterizable, 0, axis=0)
 
         return clusterizable
+
+    def extract_set_images_by_cluster(self, label, template_mni_path):
+        new_set = Set("Clust")
+        setName = str(new_set).split("0x")
+        setName = setName[1]
+        setName = "Clust" + setName[:-1]
+        new_set.set_name(setName)
+        found = False        
+        colls = []
+        point_dict = dict()
+        template_data = load(template_mni_path)
+        template_affine = template_data.affine
+        template_shape = template_data.shape
+        
+        for udcoll in self.get_usable_data_list():
+            extracted_data_dictionary = udcoll.get_extracted_data_dict()
+            row_cont = 0
+            for origin_file in extracted_data_dictionary.keys():
+                data_array = extracted_data_dictionary[origin_file]
+                for data_rows in range(0, data_array.shape[0]):
+                    point = [int(float(data_array[data_rows, 0])), int(float(data_array[data_rows, 1])), int(float(data_array[data_rows, 2])), int(float(data_array[data_rows, 3]))]
+                    coll_name= str(label[row_cont])
+                    row_cont = row_cont + 1
+                    for i in colls:
+                        if(i.name == coll_name):
+                            found = True
+                            point_dict[coll_name].append(point)
+                    if not found:
+                        c = ImageCollection(coll_name, new_set)
+                        point_dict[coll_name] = []
+                        point_dict[coll_name].append(point)
+                        colls.append(c)
+                    else:
+                        found = False
+        # recreate nifti image from this points
+        for key in point_dict.keys():
+            print key
+            recreate_affine = template_affine
+            recreate_data = zeros(template_shape)
+
+            for point in point_dict[key]:
+                recreate_data[point[0], point[1], point[2]] = point[3]
+
+            recreate_image = Nifti1Image(recreate_data, recreate_affine)
+            ni_image = NifImage(key + ".nii", recreate_image)
+
+            for c in colls:
+                if(str(key) == c.name):
+                    # put nifti images into a imageCollection
+                    c.add(ni_image)
+            
+        for i in colls:
+            new_name = str(i).split("0x")
+            new_name = new_name[1]
+            new_name = str(i.name)+"_"+ new_name[:-1]
+            i.set_name(new_name)
+            new_set.add_collection(i) 
+        return new_set
+
 
 
 

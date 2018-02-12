@@ -72,3 +72,9 @@ class ImageCollection(object):
 
     def getSetName(self):
         return self.set_n
+
+    def imExists(self, name):
+        for nifImage in self.nifimage_dict.values():
+            if(nifImage.filename == name):
+                return True
+        return False
