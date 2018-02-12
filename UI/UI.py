@@ -74,8 +74,7 @@ class Help(QMainWindow):
         self.show()
 
     def openUrl(self,url):
-        _root = QFileInfo(__file__).absolutePath()
-        url = QtCore.QUrl.fromLocalFile(_root + '/help/manual.html')
+        url = QtCore.QUrl('https://brain-mapper.github.io/BrainMapper-help/')
         if not QtGui.QDesktopServices.openUrl(url):
             QtGui.QMessageBox.warning(self, 'Open Url', 'Could not open url')
  

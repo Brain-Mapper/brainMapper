@@ -195,6 +195,7 @@ class SetButton(QtGui.QWidget):
         
     def current_set(self):
         # -- This current_set will vizualize the set and the collections inside when pressed
+        print self.vizu
         set_current_set(self.my_set)
         set_current_vizu(self.vizu)
         self.parent().parent().parent().parent().parent().parent().parent().parent().updateVizu(self.vizu)
@@ -343,13 +344,14 @@ class SetAccessBar(QtGui.QTabWidget):
         self.tab1.vbox.addWidget(SetButton(my_set,self))
 
     def add2(self):
-        items = (self.tab2.vbox2.itemAt(j).widget() for j in range(self.tab2.vbox2.count()))
-        for i in items:
-            self.tab2.vbox2.removeWidget(i)
-            i.setParent(None)
-            i.deleteLater()
         for j in getClusterResultSets():
-            self.tab2.vbox2.addWidget(SetButton(j,self))
+            s = SetButton(j,self)
+            for c in j.get_all_nifti_set():
+                s.vizu.add(c)
+                add_coll(c)
+            self.tab2.vbox2.addWidget(s)
+            rmClusterResultSets(j)
+        
 
     def update(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed

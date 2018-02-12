@@ -12,11 +12,20 @@
 #
 # HISTORY
 #
-# 18 december 2018 - Initial design and coding. (@vz-chameleon, Valentina Z.)
+# 18 december 2017 - Initial design and coding. (@vz-chameleon, Valentina Z.)
 # 26 december 2017 - Restructuring for further complexity handling (@vz-chameleon, Valentina Z.)
+# 12 feb 2018 - Adding method to make a set from a UsableDataSet (@Graziella-Husson)
 
 import numpy as np
-
+if __package__ is None:
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from niftiHandlers.imagecollection import ImageCollection
+    from niftiHandlers.nifimage import NifImage
+    from niftiHandlers.set import Set
+else:
+    from ..niftiHandlers.nifimage import NifImage
+    from ..niftiHandlers.imagecollection import ImageCollection
+    from ..niftiHandlers.set import Set
 
 class UsableDataCollection(object):
     def __init__(self, an_imgcollection_name):
@@ -90,6 +99,37 @@ class UsableDataSet(object):
         clusterizable = np.delete(clusterizable, 0, axis=0)
 
         return clusterizable
+
+    def extract_set_images_by_cluster(self, label):
+        new_set = Set("Res Clust")
+        setName = str(new_set).split("0x")
+        setName = setName[1]
+        setName = "Res Clust" + setName[:-1]
+        new_set.set_name(setName)
+        found = False
+        colls = []
+        for udcoll in self.get_usable_data_list():
+            extracted_data_dictionary = udcoll.get_extracted_data_dict()
+            row_cont = 0
+            for origin_file in extracted_data_dictionary.keys():
+                data_array = extracted_data_dictionary[origin_file]
+                for data_rows in range(0, data_array.shape[0]):
+                    coll_name= str(label[row_cont])
+                    row_cont = row_cont + 1
+                    for i in colls:
+                        if(i.name == coll_name):
+                            found = True
+                            if not i.imExists(origin_file.filename):
+                                i.add(origin_file)       
+                    if not found:
+                        c = ImageCollection(coll_name, new_set)
+                        c.add(origin_file)
+                        colls.append(c)
+                    else:
+                        found = False
+        for i in colls:
+            new_set.add_collection(i)
+        return new_set
 
 
 

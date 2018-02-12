@@ -404,12 +404,12 @@ class ClusteringView(QtGui.QWidget):
         exportButton = QtGui.QPushButton('Export')
         exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
         exportButton.setStatusTip("Export to CSV file")
-        exportButton.clicked.connect(lambda: self.export())
+        exportButton.clicked.connect(self.export)
 
         saveButton = QtGui.QPushButton('Save as set')
         saveButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
         saveButton.setStatusTip("Save the results in a set (available in home page)")
-        saveButton.clicked.connect(lambda: self.save())
+        saveButton.clicked.connect(self.save)
 
         buttonsBox.addWidget(runClusteringButton)
         buttonsBox.addWidget(exportButton)
@@ -514,6 +514,8 @@ class ClusteringView(QtGui.QWidget):
     def save(self):
         if self.label is not None:
             makeClusterResultSet(self.table_displayer.clustering_usable_dataset, self.label)
+            QtGui.QMessageBox.information(self, "Results saved!", "A set has been created in the clustering results tab at home page.")
+
         else:
             QtGui.QMessageBox.information(self, "Run Clustering before", "No cluster affectation")
 
