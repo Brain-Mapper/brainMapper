@@ -31,6 +31,11 @@ else:
 
 
 def extract(a_nifti_img_obj):
+    """
+    Extract data from a NIfTI file representation as an array of arrays
+    :param a_nifti_img_obj: A NifImage instance
+    :return: An array (nb_voxels_non_zero_intensity)x4 containing several arrays [X,Y,Z,Intensity]
+    """
     # # Check if given param is NifImage class instance
     # if not isinstance(a_nifti_img_obj, NifImage):
     #     raise ValueError(
@@ -94,6 +99,11 @@ def extract2(a_nifti_img_obj):
 
 
 def extract_from_collection(a_nifti_imgcoll_obj):
+    """
+    Extract data from a NIfTI collection as a concatenated array of results from extract(nifiamge)
+    :param a_nifti_imgcoll_obj: An ImageCollection instance
+    :return: An array of arrays [X,Y,Z, Intensity]
+    """
     # # Check if given param is ImageCollection class instance
     # if not a.__class__ is ImageCollection:
     #     raise ValueError(
@@ -110,6 +120,11 @@ def extract_from_collection(a_nifti_imgcoll_obj):
 
 
 def extract_from_collection_list(a_nifti_imgcoll_list):
+    """
+    Extract data from a NIfTI collection list containing several collections as a concatenated array of extract_from_collection(imgcoll)
+    :param a_nifti_imgcoll_list:
+    :return: An array of arrays [X,Y,Z,Intensity]
+    """
     # # Check if all elements of list are ImageCollection class instances
     # print(isinstance(x, ImageCollection) for x in a_nifti_imgcoll_list)
     # print(all(ImageCollection is x.__class___ for x in a_nifti_imgcoll_list))
@@ -125,9 +140,17 @@ def extract_from_collection_list(a_nifti_imgcoll_list):
     return clustering_usable_data
 
 
+# ---------------------------------------------------------------------
 # -------------------------- Using centroids --------------------------
+# ---------------------------------------------------------------------
 
 def extract_from_collection_as_centroid(a_nifti_imgcoll_obj):
+    """
+    Extract data from a collection using centroids calculated using image_centroid functions from calculations module
+    :param a_nifti_imgcoll_obj: An ImageCollection instance
+    :return: A UsableDataCollection instance
+    """
+    # Import function that calculates the centroid of a NifImage instance is here to avoid circular imports
     from ..calculations import image_centroid
     collection_usable_data = UsableDataCollection(a_nifti_imgcoll_obj.get_name())
     # For each NifImage istance in the collection, extract data and stack results
@@ -141,6 +164,12 @@ def extract_from_collection_as_centroid(a_nifti_imgcoll_obj):
 
 
 def extract_from_collection_list_using_centroids(a_nifti_imgcoll_list):
+    """
+    Extract data from a collection list using centroids as representation
+    This function calls 'extract_from_collection_as_centroid(a_nifti_imgcoll)' function
+    :param a_nifti_imgcoll_list: A list of ImageCollections instances
+    :return: A UsableDataSet instance
+    """
     centroids_usable_data = UsableDataSet('Clustering with centroids')
 
     for imgcoll in a_nifti_imgcoll_list:

@@ -18,7 +18,9 @@ from imagecollection import ImageCollection
 from nifimage import NifImage
 import os
 
+
 class Set(object):
+    """ A custom structure to contain several image collections """
 
     def __init__(self, name):
         """
