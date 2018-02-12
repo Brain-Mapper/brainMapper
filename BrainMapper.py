@@ -173,16 +173,27 @@ def run_clustering(selectedClusteringMethod, params_dict):
 
 
 def run_calculation(selectedAlgorithm, nifti_collection, arguments):
-    if selectedAlgorithm == "Mean":
-        file_result, output = calcul.mean_operation(nifti_collection)
+    if selectedAlgorithm == "Addition":
+        file_result, output = calcul.addition_opperation(nifti_collection)
     if selectedAlgorithm == "Boolean Intersection":
         file_result, output = calcul.and_opperation(nifti_collection)
     if selectedAlgorithm == "Boolean Union":
         file_result, output = calcul.or_opperation(nifti_collection)
-    if selectedAlgorithm == "Normalization":
-        file_result, output = calcul.normalization_opperation(nifti_collection)
+    if selectedAlgorithm == "Centroide":
+        file_result, output = calcul.baricentre_opperation(nifti_collection, arguments)
     if selectedAlgorithm == "Linear combination":
         file_result, output = calcul.linear_combination_opperation(nifti_collection, arguments)
+    if selectedAlgorithm == "Mask":
+        if len(nifti_collection) == 2:
+            file_result, output = calcul.mask_opperation(nifti_collection[0], nifti_collection[1], 'Succes')
+        else:
+            file_result, output = calcul.mask_opperation(nifti_collection[0], nifti_collection[1], 'Error')
+    if selectedAlgorithm == "Mean":
+        file_result, output = calcul.mean_opperation(nifti_collection)
+    if selectedAlgorithm == "Normalization":
+        file_result, output = calcul.normalization_opperation(nifti_collection)
+    if selectedAlgorithm == "Entropy":
+        file_result, output = calcul.entropie_opperation(nifti_collection)
     return file_result, output
 
 
@@ -476,7 +487,8 @@ def makeClusterResultSet(a_usable_dataset, label):
     :param label: cluster label
     :return:
     """
-    new_set = uds.extract_set_images_by_cluster(a_usable_dataset, label, 'ressources/template_mni/mni_icbm152_t1_tal_nlin_asym_09a.nii')
+    new_set = uds.extract_set_images_by_cluster(a_usable_dataset, label,
+                                                'ressources/template_mni/mni_icbm152_t1_tal_nlin_asym_09a.nii')
     add_set(new_set)
     clusteringsets.append(new_set)
 
@@ -495,7 +507,6 @@ def rmClusterResultSets(s):
     :return: Nothing
     """
     clusteringsets.remove(s)
-
 
 # ---- IMPORT ----
 def simple_import(csv_file_path, template_mni_path):

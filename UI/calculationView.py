@@ -36,16 +36,16 @@ class CalculationView(QtGui.QWidget):
         super(CalculationView, self).__init__()
         self.leftlist = QListWidget()
         self.leftlist.insertItem(0, 'Addition')
-        self.leftlist.insertItem(1, 'Boolean Interserction')
+        self.leftlist.insertItem(1, 'Boolean Intersection')
         self.leftlist.insertItem(2, 'Boolean Union')
         self.leftlist.insertItem(3, 'Centroide')
         self.leftlist.insertItem(4, 'Dilation')
         self.leftlist.insertItem(5, 'Entropy')
         self.leftlist.insertItem(6, 'Erosion')
         self.leftlist.insertItem(7, 'Linear combination')
-        self.leftlist.insertItem(8, 'Mean')
-        self.leftlist.insertItem(9, 'Normalization')
-        self.leftlist.insertItem(10, 'Substraction')
+        self.leftlist.insertItem(8, 'Mask')
+        self.leftlist.insertItem(9, 'Mean')
+        self.leftlist.insertItem(10, 'Normalization')
 
         self.stack1 = QWidget()
         self.stack2 = QWidget()
@@ -111,7 +111,7 @@ class CalculationView(QtGui.QWidget):
 
         self.console = QTextEdit(">>>")
         self.console.setReadOnly(True)
-        self.console.setFixedHeight(220)
+        self.console.setFixedHeight(180)
         vbox.addWidget(self.console)        
         
         buttonbox = QtGui.QHBoxLayout()
@@ -139,18 +139,25 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("The Addition algorithm make a addition with a collection of nifti makes the term some term of each voxel")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[5, 3, 0]   [0, 4, 0]       [5, 8, 0]\n\t[0, 0, 3]   [0, 7, 4]       [0, 7, 7]\nAddition ( \t[1, 1, 2] , [3, 0, 0] ) = [4, 1, 2]")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
-        # self.setTabText(0,"Calculation Details")
         self.stack1.setLayout(vbox)
 
     # ----- Boolean Intersection -----------------------
@@ -165,15 +172,23 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("The Boolean intersection takes a set of files and returns a binary file of 0 and 1. A voxel with 1 value means that for every file this voxels have strictely positive intensity")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[5, 9, 0]   [0, 4, 0]       [0, 1, 0]\n\t[0, 0, 3]   [0, 7, 4]       [0, 0, 1]\nBoolInter( \t[1, 1, 2] , [3, 0, 0] ) = [1, 0, 0]")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack2.setLayout(vbox)
@@ -190,15 +205,23 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("The Boolean union takes a set of files and returns a binary file of 0 and 1. A voxel with 1 value means that there exists in at least some files nifti a voxel whose intensity is strictly positive")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[5, 9, 0]   [0, 4, 0]       [1, 1, 0]\n\t[0, 0, 3]   [0, 7, 0]       [0, 1, 1]\nBoolUnion( \t[0, 1, 2] , [0, 0, 0] ) = [0, 1, 1]")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack3.setLayout(vbox)
@@ -215,15 +238,23 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("This algorithm calculates the centroid of each cluster present in one or a set of nifti files")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[0, 1, 0]\n\t[5, 2, 3]\nCentroid ( \t[0, 1, 0] ) = (1,1,1)")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack4.setLayout(vbox)
@@ -240,11 +271,10 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("TO DO")
+        description = QTextEdit("NO IMPLEMENTED")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
 
@@ -265,15 +295,23 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("TO WRITE")
+        description = QTextEdit("The entropy of an image is a decimal value that allows to characterize the degree of disorganization, or unpredictability of the information content of a system.")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("Entropy(Nifti img) = SUM(-Pi * log2(Pi))\nWhere Pi is the probability for the value i in the image to appear.")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack6.setLayout(vbox)
@@ -290,11 +328,10 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("TO WRITE")
+        description = QTextEdit("NO IMPLEMENTED")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
 
@@ -312,25 +349,30 @@ class CalculationView(QtGui.QWidget):
         options = QLabel("Options")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
-        layout.addRow("option1", QLineEdit())
-        layout.addRow("option2", QLineEdit())
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("This algorithm makes the sum of a set of nifti files by associating a weight to each one of them (to caracterizes the importance)")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("Linear(img1, .., imgN] , [c1, .., cN]) = c1*Ni_1 + .. + cN*Ni_N")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack8.setLayout(vbox)
-
-    # ----- Mean ---------------------------------
+    # ----- Mask ---------------------------------
     def stack9UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
@@ -342,20 +384,28 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("The Mean process averages a set of nifti files. The algorithm performs the sum for all voxels present in each file the divides the value obtained by the number of files")
+        description = QTextEdit("The Mask process need two file : one named mask that permit to define which voxels in the second one will be selected. Only the voxels in the second one where the voxels in the mask with the same coordinates and a value > 0 will be selected.")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[1, 1, 0]   [2, 4, 9]       [2, 4, 0]\n\t[0, 0, 1]   [3, 7, 5]       [0, 0, 5]\nMaskProc ( \t[1, 0, 1] , [6, 8, 4] ) = [6, 0, 4]")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack9.setLayout(vbox)
-
-    # ----- Normalization ------------------------------------
+        
+    # ----- Mean ---------------------------------
     def stack10UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
@@ -367,20 +417,28 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("The normalization algorithm creates one nifti file result for each input nifti file. This algorithm create a file where the values for each voxel are between 0 and 1. Different ways exit to normalize a nifti file, you can select in the options panel the desired method")
+        description = QTextEdit("The Mean process averages a set of nifti files. The algorithm performs the sum for all voxels present in each file the divides the value obtained by the number of files")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
-
+        
         descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("\t[5, 9, 0]   [0, 4, 0]       [2.5, 6.5, 0.0]\n\t[0, 0, 3]   [0, 7, 0]       [0.0, 3.5, 1.5]\nMeanProc ( \t[0, 1, 2] , [0, 0, 0] ) = [0.0, 0.5, 1.0]")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack10.setLayout(vbox)
 
-    # ----- Substraction ------------------------------------
+    # ----- Normalization ------------------------------------
     def stack11UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
@@ -392,11 +450,10 @@ class CalculationView(QtGui.QWidget):
 
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
-        layout.addRow(QLabel("\n"))
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("TO WRITE")
+        description = QTextEdit("The normalization algorithm creates one nifti file result for each input nifti file. This algorithm create a file where the values for each voxel are between 0 and 1. Different ways exit to normalize a nifti file, you can select in the options panel the desired method")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
 
@@ -404,6 +461,7 @@ class CalculationView(QtGui.QWidget):
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack11.setLayout(vbox)
+
 
     # def stack2UI(self):
     #	layout = QFormLayout()
@@ -428,7 +486,6 @@ class CalculationView(QtGui.QWidget):
     # --------------------- Action for CALCULATE button -------------------
     def runCalculation(self):
         print("calculation in progress...")
-        print currentUsableDataset
         algorithm = self.leftlist.selectedItems()[0].text()
         # extraction of arguments here
         #
@@ -445,44 +502,84 @@ class CalculationView(QtGui.QWidget):
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
-                                          
+        if algorithm=="Mask":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)
+                QtGui.QMessageBox.information(self, "Success",
+                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm. This algorithm can only takes 2 File : The mask and the one which will be applied the mask. Please verify that you have select just 2 file in your collection.")
+                                      
         if algorithm=="Linear combination":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                self.console.setText(">>> \n"+output)                
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm. Please check if you have correctly entering the coefficent list")
                                           
         if algorithm=="Boolean Intersection":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                self.console.setText(">>> \n"+output)                
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Boolean Union":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                self.console.setText(">>> \n"+output)                
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Normalization":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
-                QtGui.QMessageBox.information(self, "SUCCESS",
+                self.console.setText(">>> \n"+output)                
+                QtGui.QMessageBox.information(self, "Success",
                                               "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
             except:
-                QtGui.QMessageBox.warning(self, "ERROR",
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm")
+        if algorithm=="Centroide":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)                
+                QtGui.QMessageBox.information(self, "Success",
+                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm")
+        if algorithm=="Addition":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)                
+                QtGui.QMessageBox.information(self, "Success",
+                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm")
+        if algorithm=="Entropy":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)                
+                QtGui.QMessageBox.information(self, "Success",
+                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
 
 
