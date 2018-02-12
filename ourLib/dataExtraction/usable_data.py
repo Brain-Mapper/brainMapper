@@ -12,7 +12,7 @@
 #
 # HISTORY
 #
-# 18 december 2018 - Initial design and coding. (@vz-chameleon, Valentina Z.)
+# 18 december 2017 - Initial design and coding. (@vz-chameleon, Valentina Z.)
 # 26 december 2017 - Restructuring for further complexity handling (@vz-chameleon, Valentina Z.)
 
 import numpy as np
