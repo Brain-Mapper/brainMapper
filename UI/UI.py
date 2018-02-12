@@ -206,6 +206,7 @@ class UI(QtGui.QMainWindow):
 
         excelAction = QtGui.QAction('&Import from Excel file', self)
         excelAction.setStatusTip('Import from Excel file')
+        excelAction.setShortcut('Ctrl+E')
         excelAction.triggered.connect(self.fromExcel)
 
         niftiAction = QtGui.QAction('&Import from NIfTI file(s)', self)
@@ -253,7 +254,6 @@ class UI(QtGui.QMainWindow):
             except:
                 err = QtGui.QMessageBox.critical(self, "Error",
                                                  "An error has occured. Maybe you tried to open a non-CSV file")
-
         
     def showHelp(self):
         self.w = Help()
