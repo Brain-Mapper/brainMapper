@@ -1,10 +1,15 @@
-from ourLib.niftiHandlers.nifimage import NifImage as ni
+from ourLib.niftiHandlers.nifimage import NifImage
 from ourLib.niftiHandlers.imagecollection import ImageCollection
 from ourLib.niftiHandlers.set import Set
 
 from ourLib.dataExtraction import extractor as xt
 from ourLib import clustering as clust
 from ourLib import calculations as calcul
+
+from nibabel import Nifti1Image,load
+from numpy import zeros
+from csv import reader as csv_reader
+import time
 
 import os
 import platform
@@ -38,7 +43,7 @@ currentClusteringMethod = None
 def open_nifti(path):
     # --- Opens a nifti file from path
 
-    image = ni.from_file(path)
+    image = NifImage.from_file(path)
     # print(image.get_affine_matrix())
     return image
 
@@ -274,16 +279,20 @@ def set_current_set(new_set):
 
 def creation_date(path_to_file):
     # --- Return the creation date for the file located at path_to_file
-
-    if platform.system() == 'Windows':
-        return os.path.getctime(path_to_file)
+    filename, file_extension = os.path.splitext(path_to_file)
+    if file_extension == ".csv":
+        print(time.time())
+        return time.time()
     else:
-        stat = os.stat(path_to_file)
-        try:
-            return stat.st_birthtime
-        except AttributeError:
-            # We're probably on Linux.
-            return stat.st_mtime
+        if platform.system() == 'Windows':
+            return os.path.getctime(path_to_file)
+        else:
+            stat = os.stat(path_to_file)
+            try:
+                return stat.st_birthtime
+            except AttributeError:
+                # We're probably on Linux.
+                return stat.st_mtime
 
 
 def add_set(my_set):
@@ -342,3 +351,140 @@ def get_selected_clustering_info():
         return app_clustering_available[currentClusteringMethod]
     else:
         return None
+
+
+def simple_import(csv_file_path, template_mni_path):
+    """
+    Method to import imageColection from a excel file.
+    For this :method we considere that :
+    - generated nifti have the same shape than the MNI152 one.
+    - generated nifti have the same affine than the MNI152 one.
+
+    The generated nifti and the imageCollection are not save with this method. they are just laod.
+    So nifimage object have their strict file name as file name
+
+    :param csv_file_path: path of the csv file.
+    :param template_shape:
+    :param template_affine:
+    :return: imageCollection
+    """
+    file = open(csv_file_path, "rb")
+    print(1)
+
+    simple_header = [
+        u'File_Name_Nifti',
+        u'Surgeon_ID',
+        u'Patient_ID',
+        u'Localisation',
+        u'Point_Name',
+        u'Type_Of_Answer',
+        u'X',
+        u'Y',
+        u'Z',
+        u'Intensity'
+    ]
+
+    clustering_header = [
+        u'Image Coll ID',
+        u'Origin filename',
+        u'X',
+        u'Y',
+        u'Z',
+        u'Intensity',
+        u'Assigned cluster'
+    ]
+
+    try:
+        reader = csv_reader(file)
+
+        row = reader.next()
+        print(row)
+
+        # part for a simple import
+        if row == simple_header:
+            print('yes')
+            point_dict = dict()
+
+            template_data = load(template_mni_path)
+            template_affine = template_data.affine
+            template_shape = template_data.shape
+
+            coll = ImageCollection("default", currentSet)
+            # We want an unique name for each collection
+            # To do so we use the object ID
+            name = str(coll).split("0x")
+            name = name[1]
+            coll.set_name(name[:-1])
+
+            for row in reader:
+                point = [int(float(row[6])), int(float(row[7])), int(float(row[8])), int(float(row[9]))]
+                # regroup all points of the same file
+                if row[0] in point_dict.keys():
+                    point_dict[row[0]].append(point)
+                else:
+                    point_dict[row[0]] = []
+                    point_dict[row[0]].append(point)
+
+            # recreate nifti image from this points
+            for key in point_dict.keys():
+
+                recreate_affine = template_affine
+                recreate_data = zeros(template_shape)
+
+                for point in point_dict[key]:
+                    recreate_data[point[0], point[1], point[2]] = point[3]
+
+                recreate_image = Nifti1Image(recreate_data, recreate_affine)
+                ni_image = NifImage(key + ".csv", recreate_image)
+
+                # put nifti images into a imageCollection
+                coll.add(ni_image)
+
+        # pat for clustering import
+        elif row == clustering_header:
+            print('yes')
+            point_dict = dict()
+
+            template_data = load(template_mni_path)
+            template_affine = template_data.affine
+            template_shape = template_data.shape
+
+            coll = ImageCollection("default", currentSet)
+            # We want an unique name for each collection
+            # To do so we use the object ID
+            name = str(coll).split("0x")
+            name = name[1]
+            coll.set_name(name[:-1])
+
+            for row in reader:
+                point = [int(float(row[2])), int(float(row[3])), int(float(row[4])), int(float(row[5]))]
+                # regroup all points of the same file
+                if row[6] in point_dict.keys():
+                    point_dict[row[6]].append(point)
+                else:
+                    point_dict[row[6]] = []
+                    point_dict[row[6]].append(point)
+
+                    # recreate nifti image from this points
+                    for key in point_dict.keys():
+
+                        recreate_affine = template_affine
+                        recreate_data = zeros(template_shape)
+
+                        for point in point_dict[key]:
+                            recreate_data[point[0], point[1], point[2]] = point[3]
+
+                        recreate_image = Nifti1Image(recreate_data, recreate_affine)
+                        ni_image = NifImage("Cluster_" + key + ".csv", recreate_image)
+
+                        # put nifti images into a imageCollection
+                        coll.add(ni_image)
+
+
+        else:
+            print('Please use a valid csv file')
+
+    finally:
+
+        file.close()
+    return coll
