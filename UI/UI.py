@@ -15,6 +15,7 @@ from exportView import ExportView
 from calculationView import CalculationView
 
 
+
 if __name__ == '__main__':
     if __package__ is None:
         import sys
@@ -205,7 +206,7 @@ class UI(QtGui.QMainWindow):
 
         excelAction = QtGui.QAction('&Import from Excel file', self)
         excelAction.setStatusTip('Import from Excel file')
-        excelAction.triggered.connect(self.buttonClicked)
+        excelAction.triggered.connect(self.fromExcel)
 
         niftiAction = QtGui.QAction('&Import from NIfTI file(s)', self)
         niftiAction.setStatusTip('Create a collection with one or several NIfTI images (added in the current set)')
@@ -238,7 +239,21 @@ class UI(QtGui.QMainWindow):
                 homepage.edit_colls.fill_coll()
             except:
                 err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
-                #print (sys.exc_info()[0])
+
+# -- We create a collection with the list of images the user selected and give it to the main view and the edit view
+
+
+    def fromExcel(self):
+        file = str(QFileDialog.getOpenFileName())
+        if (file != ""):
+            try:
+                collec = simple_import(file, os.path.join(os.path.dirname(__file__), 'ressources/template_mni/mni_icbm152_t1_tal_nlin_asym_09a.nii'))
+                homepage.mainview.show_coll(collec)
+                homepage.edit_colls.fill_coll()
+            except:
+                err = QtGui.QMessageBox.critical(self, "Error",
+                                                 "An error has occured. Maybe you tried to open a non-CSV file")
+
         
     def showHelp(self):
         self.w = Help()

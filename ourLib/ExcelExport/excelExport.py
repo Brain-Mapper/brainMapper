@@ -13,6 +13,10 @@
 
 
 import os
+import csv
+import nibabel as nib
+import numpy as np
+from ourLib.niftiHandlers.imagecollection import ImageCollection
 
 
 def export_control(name, path):
@@ -50,7 +54,7 @@ def simple_export(name, path, a_usable_dataset):
     if export_control(name, path):
         file_path = os.path.join(str(path), str(name) + '.csv')
 
-        entetes = [
+        header = [
             u'File_Name_Nifti',
             u'Surgeon_ID',
             u'Patient_ID',
@@ -63,7 +67,7 @@ def simple_export(name, path, a_usable_dataset):
             u'Intensity'
         ]
         f = open(file_path, 'w')
-        f.write(",".join(entetes) + "\n")
+        f.write(",".join(header) + "\n")
 
         for udcoll in a_usable_dataset.get_usable_data_list():
 
@@ -96,7 +100,7 @@ def clustering_export(name, path, a_usable_dataset, label):
     if export_control(name, path):
         file_path = os.path.join(str(path), str(name) + '.csv')
 
-        entetes = [
+        header = [
             u'Image Coll ID',
             u'Origin filename',
             u'X',
@@ -106,7 +110,7 @@ def clustering_export(name, path, a_usable_dataset, label):
             u'Assigned cluster'
         ]
         f = open(file_path, 'w')
-        f.write(",".join(entetes) + "\n")
+        f.write(",".join(header) + "\n")
         row_cont = 0
 
         for udcoll in a_usable_dataset.get_usable_data_list():
@@ -132,7 +136,3 @@ def clustering_export(name, path, a_usable_dataset, label):
 
                     f.write(",".join(new_line) + "\n")
         f.close()
-
-
-
-
