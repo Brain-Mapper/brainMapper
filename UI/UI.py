@@ -270,18 +270,21 @@ def main():
 
     OS = sys.platform
     print("user os : "+ str(OS))
+    #
+    # for s in QStyleFactory.keys():
+    #     print(s)
 
     if sys.platform.startswith('linux'):
-        app.setStyle(QStyleFactory.create("gtk"))
+        app.setStyle(QStyleFactory.create("GTK+"))
         print("Linux !")
     elif sys.platform.startswith('darwin'):
-        app.setStyle(QStyleFactory.create("macintosh"))
+        app.setStyle(QStyleFactory.create("Cleanlooks"))
     elif sys.platform.startswith('win32'):
-        app.setStyle(QStyleFactory.create("windowsxp"))
+        app.setStyle(QStyleFactory.create("Windows"))
     elif sys.platform.startswith('cygwin'):
-        app.setStyle(QStyleFactory.create("windowsxp"))
+        app.setStyle(QStyleFactory.create("Windows"))
     else :
-        app.setStyle(QStyleFactory.create("gtk"))
+        app.setStyle(QStyleFactory.create("GTK+"))
 
     print str(app.style())
     ex = UI()
