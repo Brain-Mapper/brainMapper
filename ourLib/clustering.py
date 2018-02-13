@@ -33,7 +33,8 @@ def perform_agglomerative_clustering(param_dict, X) :
 
 
 def perform_DBSCAN(param_dict, X):
-    dbscan = DBSCAN(eps=float(param_dict['eps']), min_samples=int(param_dict['min_samples']), metric=param_dict["metric"]).fit(X)
+    dbscan = DBSCAN(eps=float(param_dict["eps"]), min_samples=int(param_dict["min_samples"]), metric=param_dict["metric"]).fit(X)
+    print dbscan.labels_
     return dbscan.labels_
 
 
@@ -106,12 +107,12 @@ def kmedoids_cluster(data_matrix, distances, k=3):
         old_medoids_index[:] = curr_medoids_index[:]
         curr_medoids_index[:] = new_medoids_index[:]
 
-    clusters_labels = np.array([])
+    clusters_labels = []
     c = 0
     for cluster_index in clusters:
         clust_i, = np.where(curr_medoids_index == cluster_index)
-        print
-        clusters_labels = np.append(clusters_labels, [int(clust_i)])
+        print int(clust_i)
+        clusters_labels.append(int(clust_i))
         c = c+1
 
     return clusters_labels, curr_medoids
