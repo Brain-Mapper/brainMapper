@@ -463,25 +463,26 @@ class CalculationView(QtGui.QWidget):
         self.stack11.setLayout(vbox)
 
 
-    # def stack2UI(self):
-    #	layout = QFormLayout()
-    #	sex = QHBoxLayout()
-    #	sex.addWidget(QRadioButton("option1"))
-    #	sex.addWidget(QRadioButton("option2"))
-    #	layout.addRow(QLabel("blabla"),sex)
-    #	layout.addRow("blabla",QLineEdit())
-    #
-    #	self.stack2.setLayout(layout)
-
-    # def stack3UI(self):
-    #	layout = QFormLayout()#QHBoxLayout()
-    #	layout.addWidget(QLabel("option1"))
-    #	layout.addWidget(QCheckBox("option2"))
-    #	layout.addWidget(QCheckBox("option2"))
-    #	self.stack3.setLayout(layout)
-
     def display(self, i):
         self.Stack.setCurrentIndex(i)
+        
+    def popUpSaveFileResultCalculation(self,algorithm,result):
+        choice = QtGui.QMessageBox()
+        choice.setWindowTitle('Success !') 
+        l = choice.layout()
+        l.setContentsMargins(20, 10, 10, 20)
+        l.addWidget(QLabel(algorithm +" algorithm has been correctly applicated on nifti(s) file(s)\n\n\n\nDo you want save the algorithm's result ?"),
+        l.rowCount() - 3, 0, 1, l.columnCount() - 2, Qt.AlignCenter)
+        choice.setStandardButtons(QMessageBox.Cancel | QMessageBox.Save)
+        wantToSave = choice.exec_()
+        if wantToSave == QtGui.QMessageBox.Save:
+            for e in result:
+                ##############################################################
+                #                                                            #
+                #                           TO DO                            # 
+                #                                                            #
+                ##############################################################
+                print "remplir la collection de nifti"
 
     # --------------------- Action for CALCULATE button -------------------
     def runCalculation(self):
@@ -499,20 +500,23 @@ class CalculationView(QtGui.QWidget):
                 nifti_selected.append(nifti.filename)
         
         if algorithm=="Mean":
-            try:
-                algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
-                self.console.setText(">>> \n"+output)
-                QtGui.QMessageBox.information(self, "Success",
-                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
-            except:
-                QtGui.QMessageBox.warning(self, "Error",
-                                          "Impossible to execute "+algorithm+" algorithm")
+            if len(nifti_selected)<2:
+                    QtGui.QMessageBox.warning(self, "Error",
+                                              algorithm + "algorithm "+ " must have two or more input file")
+            else:
+                try:
+                        algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                        self.console.setText(">>> \n"+output)
+                        self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
+                        
+                except:
+                    QtGui.QMessageBox.warning(self, "Error",
+                                              "Impossible to execute "+algorithm+" algorithm")                
         if algorithm=="Mask":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)
-                QtGui.QMessageBox.information(self, "Success",
-                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm. This algorithm can only takes 2 File : The mask and the one which will be applied the mask. Please verify that you have select just 2 file in your collection.")
@@ -521,8 +525,7 @@ class CalculationView(QtGui.QWidget):
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "Success",
-                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm. Please check if you have correctly entering the coefficent list")
@@ -531,8 +534,7 @@ class CalculationView(QtGui.QWidget):
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "Success",
-                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
@@ -540,8 +542,7 @@ class CalculationView(QtGui.QWidget):
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "Success",
-                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
@@ -549,8 +550,7 @@ class CalculationView(QtGui.QWidget):
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "Success",
-                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
@@ -558,8 +558,7 @@ class CalculationView(QtGui.QWidget):
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "Success",
-                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
@@ -567,8 +566,7 @@ class CalculationView(QtGui.QWidget):
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "Success",
-                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
@@ -576,8 +574,7 @@ class CalculationView(QtGui.QWidget):
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                QtGui.QMessageBox.information(self, "Success",
-                                              "Algorithm " + algorithm + " correctly applicated on nifti(s) file(s)")
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
