@@ -10,6 +10,7 @@
 #
 # 2 january 2018 - Initial design and coding. (@vz-chameleon, Valentina Z.)
 # 5 january 2018 - Added functions to fill table with extracted data
+# 13 fev 2018 - Add histogram view (@Graziella-Husson)
 
 from PyQt4 import QtGui
 from PyQt4.Qt import pyqtSignal, QFileDialog
@@ -23,7 +24,9 @@ from BrainMapper import *
 from functools import partial
 import ourLib.ExcelExport.excelExport as ee
 import os
-
+import pyqtgraph as pg
+import numpy as np
+import pyqtgraph.opengl as gl
 
 import resources
 
@@ -466,19 +469,20 @@ class ClusteringView(QtGui.QWidget):
         graph_title = QtGui.QLabel('Results Graphs')
         graph_title.setStyleSheet(title_style)
 
-        grid = QtGui.QGridLayout()
-        grid.setSpacing(8)
+        self.grid = QtGui.QGridLayout()
+        self.grid.setSpacing(8)
 
-        graph1 = QtGui.QTextEdit()
-        graph2 = QtGui.QTextEdit()
-        graph3 = QtGui.QTextEdit()
-        grid.addWidget(graph1, 1, 0)
-        grid.addWidget(graph2, 1, 1)
-        grid.addWidget(graph3, 1, 2)
+        self.graph1 = pg.GraphicsWindow()
+        self.graph1.resize(300,150)
+        self.graph1.setStatusTip("Show an histogramm representing the number of points in each cluster.")
+        self.graph2 = gl.GLViewWidget()
+        self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.grid.addWidget(self.graph1, 1, 0)
+        self.grid.addWidget(self.graph2, 1, 1)
 
         graphBox.addWidget(graph_title)
-        graphBox.addLayout(grid)
-
+        graphBox.addLayout(self.grid)
+        self.graph2.show()
         # Set graph widgets's layout
         graphWidget.setLayout(graphBox)
 
@@ -514,6 +518,8 @@ class ClusteringView(QtGui.QWidget):
         # print(param_dict)
         self.label = run_clustering(selectedMethod, param_dict)
         self.table_displayer.fill_clust_labels(self.label)
+        self.add_hist(param_dict,self.label)
+        self.add_3D(self.table_displayer.clustering_usable_dataset, self.label)
 
     def export(self):
         if self.label is not None:
@@ -531,3 +537,30 @@ class ClusteringView(QtGui.QWidget):
         else:
             QtGui.QMessageBox.information(self, "Run Clustering before", "No cluster affectation")
 
+    def add_hist(self,param_dict,label):
+        k = float(param_dict["n_clusters"])
+        self.graph1.clear()
+        plt = self.graph1.addPlot()
+        ## make interesting distribution of values
+        vals = np.hstack([label])
+
+        ## compute standard histogram
+        y,x = np.histogram(vals, bins=np.linspace(0, k, k+1))
+
+        ## Using stepMode=True causes the plot to draw two lines for each sample.
+        ## notice that len(x) == len(y)+1
+        plt.plot(x, y, stepMode=True, fillLevel=0, brush=(0,0,255,150))
+
+    def add_3D(self,clustering_usable_dataset, label):
+        old = self.grid.itemAt(1).widget()
+        self.grid.removeWidget(old)
+        old.setParent(None)
+        self.graph2 = gl.GLViewWidget()
+        self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.grid.addWidget(self.graph2, 1, 1)
+        res = makePoints(clustering_usable_dataset, label)
+        sp1 = gl.GLScatterPlotItem(pos=res[0], size=res[1], color=res[2], pxMode=True)
+        sp1.translate(5,5,0)
+        sp1.setGLOptions('opaque')
+        self.graph2.addItem(sp1)
+        

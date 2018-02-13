@@ -520,3 +520,6 @@ def simple_import(csv_file_path, template_mni_path):
     coll = imp.simple_import(csv_file_path, template_mni_path, currentSet)
     add_coll(coll)
     return coll
+
+def makePoints(clustering_usable_dataset, label):
+    return uds.extract_points(clustering_usable_dataset, label)
