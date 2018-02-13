@@ -402,7 +402,7 @@ class ClusteringView(QtGui.QWidget):
         goHomeButton = QtGui.QPushButton('Go back')
         goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
         goHomeButton.setStatusTip("Return to main page")
-        goHomeButton.clicked.connect(self.showMain.emit)# When go back home button is clicked, change central views
+        goHomeButton.clicked.connect(self.go_back)# When go back home button is clicked, change central views
 
         exportButton = QtGui.QPushButton('Export')
         exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
@@ -551,4 +551,13 @@ class ClusteringView(QtGui.QWidget):
         sp1.translate(5,5,0)
         sp1.setGLOptions('opaque')
         self.graph2.addItem(sp1)
-        
+
+    def go_back(self):# -- When the user wants to return to the main view, we reinit the cluster view
+        self.graph1.clear()
+        old = self.grid.itemAt(1).widget()
+        self.grid.removeWidget(old)
+        old.setParent(None)
+        self.graph2 = gl.GLViewWidget()
+        self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.grid.addWidget(self.graph2, 1, 1)
+        self.showMain.emit()
