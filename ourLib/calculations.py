@@ -108,7 +108,7 @@ def addition_opperation(Nifti_file_collection):
     output = "[Algorithm] > Addition\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         Nifti_file_collection) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
-    return (file_Nifti_clusterised, output)
+    return ([file_Nifti_clusterised], output)
 
 
 def mean_opperation(Nifti_file_collection):
@@ -128,7 +128,7 @@ def mean_opperation(Nifti_file_collection):
     output = "[Algorithm] > Mean\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         Nifti_file_collection) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
-    return (file_Nifti_clusterised, output)
+    return ([file_Nifti_clusterised], output)
 
 
 def or_opperation(Nifti_file_collection):
@@ -145,7 +145,7 @@ def or_opperation(Nifti_file_collection):
     output = "[Algorithm] > Boolean Union\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         Nifti_file_collection) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
-    return (file_Nifti_clusterised, output)
+    return ([file_Nifti_clusterised], output)
 
 
 def and_opperation(Nifti_file_collection):
@@ -170,7 +170,7 @@ def and_opperation(Nifti_file_collection):
     output = "[Algorithm] > Boolean Intersection\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         Nifti_file_collection) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
-    return (file_Nifti_clusterised, output)
+    return ([file_Nifti_clusterised], output)
 
 
 def mask_opperation(mask, file, arguments):
@@ -191,7 +191,7 @@ def mask_opperation(mask, file, arguments):
         [mask]) + " File : " + extract_name_without_path(
         [file]) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(lx) + ", " + str(
         ly) + ", " + str(lz) + "}"
-    return (file_Nifti_clusterised, output)
+    return ([file_Nifti_clusterised], output)
 
 
 def linear_combination_opperation(Nifti_file_collection, coef):
@@ -212,7 +212,7 @@ def linear_combination_opperation(Nifti_file_collection, coef):
     output = "[Algorithm] > Linear combination\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         Nifti_file_collection) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
-    return (file_Nifti_clusterised, output)
+    return ([file_Nifti_clusterised], output)
 
 
 def normalization_opperation(Nifti_file_collection):
@@ -231,7 +231,7 @@ def normalization_opperation(Nifti_file_collection):
     print('Normalized process is successfull !')
     output = "[Algorithm] > Normalization\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         Nifti_file_collection) + "\n[Arguments] > None\n[Output] > One Nifti file for each input file"
-    return (file_Nifti_clusterised, output)
+    return ([file_Nifti_clusterised], output)
 
 
 # Extract volume of voxel's center of gravity from a nifti file
