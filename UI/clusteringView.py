@@ -26,7 +26,7 @@ import ourLib.ExcelExport.excelExport as ee
 import os
 import pyqtgraph as pg
 import numpy as np
-
+import pyqtgraph.opengl as gl
 
 import resources
 
@@ -463,15 +463,14 @@ class ClusteringView(QtGui.QWidget):
         self.graph1 = pg.GraphicsWindow()
         self.graph1.resize(300,150)
         self.graph1.setStatusTip("Show an histogramm representing the number of points in each cluster.")
-        graph2 = QtGui.QTextEdit()
-        graph3 = QtGui.QTextEdit()
+        self.graph2 = gl.GLViewWidget()
+        self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         grid.addWidget(self.graph1, 1, 0)
-        grid.addWidget(graph2, 1, 1)
-        grid.addWidget(graph3, 1, 2)
+        grid.addWidget(self.graph2, 1, 1)
 
         graphBox.addWidget(graph_title)
         graphBox.addLayout(grid)
-
+        self.graph2.show()
         # Set graph widgets's layout
         graphWidget.setLayout(graphBox)
 
@@ -508,6 +507,7 @@ class ClusteringView(QtGui.QWidget):
         self.label = run_clustering(selectedMethod, param_dict)
         self.table_displayer.fill_clust_labels(self.label)
         self.add_hist(param_dict,self.label)
+        self.add_3D()
 
     def export(self):
         if self.label is not None:
@@ -539,3 +539,16 @@ class ClusteringView(QtGui.QWidget):
         ## notice that len(x) == len(y)+1
         plt.plot(x, y, stepMode=True, fillLevel=0, brush=(0,0,255,150))
 
+    def add_3D(self):
+
+        pos = np.empty((53, 3))
+        size = np.empty((53))
+        color = np.empty((53, 4))
+        pos[0] = (1,0,0); size[0] = 0.5;   color[0] = (1.0, 0.0, 0.0, 0.5)
+        pos[1] = (0,1,0); size[1] = 0.2;   color[1] = (0.0, 0.0, 1.0, 0.5)
+        pos[2] = (0,0,1); size[2] = 2./3.; color[2] = (0.0, 1.0, 0.0, 0.5)
+            
+        sp1 = gl.GLScatterPlotItem(pos=pos, size=size, color=color, pxMode=False)
+        sp1.translate(5,5,0)
+        self.graph2.addItem(sp1)
+        
