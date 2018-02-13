@@ -30,16 +30,28 @@ else:
     from ..niftiHandlers.imagecollection import ImageCollection
     from ..niftiHandlers.set import Set
 
+
 class UsableDataCollection(object):
+    """
+    A data structure for containing all relevant information in a usable format for calculations and clustering
+    from ImageCollection instances
+    """
     def __init__(self, an_imgcollection_name):
-        self.imgcoll_origin=an_imgcollection_name
+
+        # The image coll ID from which the data comes
+        self.imgcoll_origin = an_imgcollection_name
         # A dictionary to contain the pair key: name of file of origin (ex: 'P92_UL_MN0.nii'),
         #                                  value : usable data array (numpy array containing extracted data)
         self.extracted_data_dict = dict()
-
-        self.rownum=0
+        self.rownum = 0
 
     def add_extracted_data_entry(self, origin_filename, usable_data_array):
+        """
+        Add an entry to the usable data collection
+        :param origin_filename: The filename from which the data comes
+        :param usable_data_array: a shape=(lines x 4) array to add to the structure
+        :return:
+        """
         # Check whether the given array passed in argument has 4 columns (X,Y,Z, Intensity)
         colnum=(usable_data_array.shape)[1]
         if (colnum > 4) or (colnum < 4):
@@ -49,7 +61,12 @@ class UsableDataCollection(object):
         self.rownum = self.rownum + (usable_data_array.shape)[0]
         self.extracted_data_dict[origin_filename] = usable_data_array
 
-    def remove_extracted_data_entry(self,origin_filename):
+    def remove_extracted_data_entry(self, origin_filename):
+        """
+        Remove the data entry coming from a specific NIfTI file
+        :param origin_filename: The filename from which the data comes
+        :return: Nothing
+        """
         del self.extracted_data_dict[origin_filename]
 
     def get_imgcoll_name(self):
@@ -62,6 +79,10 @@ class UsableDataCollection(object):
         return self.rownum
 
     def export_as_clusterizable(self):
+        """
+        Export a single array using all others to the format used by scikit-learn lib clustering algorithms
+        :return: An array with several lines and 4 columns stacked to be used with sklearn algorithms
+        """
         clusterizable = np.zeros(shape=(1, 4))  # An empty line of zeros to start with
         for data_array in self.extracted_data_dict.values():
             clusterizable = np.concatenate((clusterizable, data_array), axis=0)
@@ -71,7 +92,11 @@ class UsableDataCollection(object):
 
         return clusterizable
 
+
 class UsableDataSet(object):
+    """
+    A data structure for keeping extracted data to be used in calculations and clustering
+    """
     def __init__(self,dataset_name):
         self.dataset_name = dataset_name
         # A dictionary to contain the pair key: name of ImageCollection of origin, value : UsableDataCollection instance
