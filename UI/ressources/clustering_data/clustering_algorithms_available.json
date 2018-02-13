@@ -31,12 +31,17 @@
     },
 
   "KMedoids" : { "algo_info": "KMedoids clustering uses the median value of all the points in a given cluster instead of the mean",
-      "algo_usecase" : "General-purpose, even cluster size, flat geometry, not too many clusters. Metric used is Euclidean Distance",
+      "algo_usecase" : "General-purpose, even cluster size, flat geometry, not too many clusters.",
       "param_list" : {
         "n_clusters" : {
           "param_info" : "The number of clusters the user wishes to obtain",
           "type" : "int",
           "default" : "3"
+        },
+        "metric" : {
+          "param_info" : "Metric used to compute the distance between points. Can be 'euclidean', or 'manhattan'",
+          "type" : ["euclidean","manhattan"],
+          "default" : "euclidean"
         }
       }
     },
@@ -60,6 +65,27 @@
         "default": "ward"
       }
     }
+  },
+  "DBSCAN" : { "algo_info": "Density-Based Spatial Clustering of Applications with Noise. Finds core samples of high density and expands clusters from them. Good for data which contains clusters of similar density.",
+      "algo_usecase" : "Non-flat geometry, uneven cluster sizes, very large number of samples, medium number of clusters.",
+      "param_list" : {
+        "eps" : {
+          "param_info" : "The maximum distance between two samples for them to be considered as in the same neighborhood",
+          "type" : "float",
+          "default" : "0.3"
+        },
+        "min_samples" : {
+          "param_info" : "The number of samples (or total weight) in a neighborhood for a point to be considered as a core point. This includes the point itself",
+          "type" : "int",
+          "default" : "10"
+        },
+        "metric" : {
+          "param_info" : "Metric used to compute the distance between points. Can be 'euclidean', or 'manhattan'",
+          "type" : ["euclidean","manhattan"],
+          "default" : "euclidean"
+        }
+      }
+    }
 
-  }
+
 }

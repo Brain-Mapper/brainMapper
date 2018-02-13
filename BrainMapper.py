@@ -160,8 +160,15 @@ def run_clustering(selectedClusteringMethod, params_dict):
 
     if selectedClusteringMethod == 'KMeans':
         labels = clust.perform_kmeans(params_dict, clusterizable_dataset)
+
+    elif selectedClusteringMethod == 'KMedoids':
+        labels = clust.perform_kmedoids(params_dict, clusterizable_dataset)
+
     elif selectedClusteringMethod == 'AgglomerativeClustering':
         labels = clust.perform_agglomerative_clustering(params_dict, clusterizable_dataset)
+
+    elif selectedClusteringMethod == 'DBSCAN':
+        labels = clust.perform_DBSCAN(params_dict, clusterizable_dataset)
     else:
         print('clustering method not recognised')
         labels = ['']
