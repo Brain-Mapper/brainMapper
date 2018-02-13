@@ -171,7 +171,7 @@ class ClusteringParameters(QtGui.QWidget):
                 placeholder_label = QtGui.QLabel("No parameters to show")
                 self.vbox.addWidget(placeholder_label)
 
-            self.vbox.addStretch(5)
+            #self.vbox.addStretch(5)
             self.setLayout(self.vbox)
 
         def save_user_params(self):
@@ -192,13 +192,14 @@ class ClusteringParameters(QtGui.QWidget):
 
             # -- Parameter's name ------
             self.param_name_label = QtGui.QLabel(param_name)
+            self.param_name_label.setMinimumSize(QSize(100, 21))
 
             # --- Parameter type control ----
             if type(param_type) is list:
                 print("It's a list !")
                 self.param_value_input = QtGui.QToolButton()
-                self.param_value_input.setText(param_default_value)
-                self.param_value_input.setStyleSheet("background-color: white;")
+                self.param_value_input.setText(str(param_default_value))
+                #self.param_value_input.setStyleSheet("background-color: white;")
                 self.param_value_input.setPopupMode(QtGui.QToolButton.MenuButtonPopup)
 
                 param_value_chooser = QtGui.QMenu()
@@ -212,11 +213,13 @@ class ClusteringParameters(QtGui.QWidget):
                 self.param_value_input.setMenu(param_value_chooser)
 
             else:
-                self.param_value_input = QtGui.QLineEdit(str(param_default_value))
+                self.param_value_input = QtGui.QLineEdit()
+                self.param_value_input.setPlaceholderText(str(param_default_value))
 
             # self.param_value_input.setToolTip(param_info)
             self.param_value_input.setStatusTip(param_info)
-            # self.param_value_input.setMaximumSize(QSize(150, 50)
+            self.param_value_input.setMinimumSize(QSize(150, 19))
+            self.param_value_input.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
 
             self.grid.addWidget(self.param_name_label, 0, 0)
             self.grid.addWidget(self.param_value_input, 0, 1)

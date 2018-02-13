@@ -1,6 +1,6 @@
 {
-  "KMeans" : { "algo_info": "KMeans clustering calculates K clusters. They are represented by a central point that is the mean of all the points in a given cluster",
-      "algo_usecase" : "General-purpose, even cluster size, flat geometry, not too many clusters. Metric used is Euclidean Distance",
+  "KMeans" : { "algo_info": "Calculates K clusters represented by a central point that is the mean of all the points in a given cluster",
+      "algo_usecase" : "General-purpose, even cluster size, flat geometry, not too many clusters. Metric is Euclidean Dist.",
       "param_list" : {
         "init": {
           "param_info" : "A way to initialise the centers : randomly or kmeans++ (see scikit-learn documentation on kmeans)",
@@ -41,7 +41,7 @@
       }
     },
 
-  "AgglomerativeClustering" : { "algo_info" : "Recursively merges the pair of clusters that minimally increases a given linkage distance.\n(see scikit-learn for more info)",
+  "AgglomerativeClustering" : { "algo_info" : "Recursively merges the pair of clusters that minimally increases a given linkage distance (see scikit-learn).",
     "algo_usecase" : "Many clusters, possibly connectivity constraints + \nLarge n_samples and n_clusters",
     "param_list" : {
       "n_clusters" : {
