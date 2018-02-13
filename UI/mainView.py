@@ -12,6 +12,7 @@
 # 14 january 2018 - Began the interface (@Graziella-Husson)
 # 15-16 january 2018 - Redo all the interface (@Graziella-Husson)
 # 30 january 2018 - Added tabs to interface for results of calculation and clustering (@Graziella-Husson)
+# 13 february 2018 - Change of the way of exporting a to CSV (@yoshcraft, Raphael A.)
 
 import os
 from PyQt4 import QtGui
@@ -26,6 +27,7 @@ from os import path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from BrainMapper import *
 import resources
+import ourLib.ExcelExport.excelExport as ee
 import time
 
 
@@ -446,18 +448,62 @@ class MainView(QtGui.QWidget):
         get_current_vizu().add(coll)
 
     def export(self):
-        if (get_selected()):
-            choice = QtGui.QMessageBox.question(self, 'Export selected files',
-                                                "Export into a NIfTI file? (if No : Excel file)",
-                                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-            if choice == QtGui.QMessageBox.Yes:
-                export_nifti()
-            else:
-                extract_data_from_selected()
-                export_excel()
-                self.showExport.emit()
+        # if (get_selected()):
+        #     choice = QtGui.QMessageBox.question(self, 'Export selected files',
+        #                                         "Export into a NIfTI file? (if No : Excel file)",
+        #                                         QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        #     if choice == QtGui.QMessageBox.Yes:
+        #         export_nifti()
+        #     else:
+        #         extract_data_from_selected()
+        #         export_excel()
+        #         self.showExport.emit()
+        # else:
+        #     QtGui.QMessageBox.information(self, "Selection empty", "There's nothing to export.")
+        if get_selected():
+            choice = QtGui.QMessageBox()
+            choice.setWindowTitle('Export dataSet')
+
+            nifti_opt = QRadioButton("Export to Nifti")
+            excel_export = QRadioButton("Export to CSV")
+            nifti_opt.setChecked(True)
+
+            l = choice.layout()
+            l.setContentsMargins(20, 0, 0, 20)
+            l.addWidget(QLabel("You have selected (" + str(len(
+                get_selected())) + ") image collections. \nPlease select the way "
+                                   "you would like to export these files : "),
+                        l.rowCount() - 3, 0, 1, l.columnCount() - 2, Qt.AlignCenter)
+            rb_box = QtGui.QGroupBox()
+            vbox = QtGui.QVBoxLayout()
+            vbox.addWidget(nifti_opt)
+            vbox.addWidget(excel_export)
+
+            rb_box.setLayout(vbox)
+            l.addWidget(rb_box, l.rowCount() - 2, 0, Qt.AlignCenter)
+
+            choice.setStandardButtons(QMessageBox.Cancel | QMessageBox.Apply)
+
+            ret = choice.exec_()
+
+            if ret == QtGui.QMessageBox.Apply:
+
+                if nifti_opt.isChecked():
+                    export_nifti()
+
+                elif excel_export.isChecked():
+                    (f_path, f_name) = os.path.split(str(QFileDialog.getSaveFileName(self, "Browse Directory")))
+                    extract_data_from_selected()
+                    ee.simple_export(f_name, f_path, get_current_usableDataset())
+                    export_excel()
+
+                else:
+                    print "WTF ?!!?"
+
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's nothing to export.")
+
+
 
     def extract_and_cluster(self):
         if get_selected():
