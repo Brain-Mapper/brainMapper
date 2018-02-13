@@ -78,7 +78,9 @@ class ClusteringDataTable(QtGui.QTableWidget):
         for lab in assigned_labels_array:
             item = QtGui.QTableWidgetItem(str(lab))
             item.setTextAlignment(Qt.AlignCenter)
+            print str(lab)
             item.setBackground(QtGui.QColor(colors[str(lab)]))
+
             self.setItem(row_count, 6, item)
             row_count = row_count + 1
 
