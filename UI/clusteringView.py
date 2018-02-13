@@ -457,19 +457,19 @@ class ClusteringView(QtGui.QWidget):
         graph_title = QtGui.QLabel('Results Graphs')
         graph_title.setStyleSheet(title_style)
 
-        grid = QtGui.QGridLayout()
-        grid.setSpacing(8)
+        self.grid = QtGui.QGridLayout()
+        self.grid.setSpacing(8)
 
         self.graph1 = pg.GraphicsWindow()
         self.graph1.resize(300,150)
         self.graph1.setStatusTip("Show an histogramm representing the number of points in each cluster.")
         self.graph2 = gl.GLViewWidget()
         self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        grid.addWidget(self.graph1, 1, 0)
-        grid.addWidget(self.graph2, 1, 1)
+        self.grid.addWidget(self.graph1, 1, 0)
+        self.grid.addWidget(self.graph2, 1, 1)
 
         graphBox.addWidget(graph_title)
-        graphBox.addLayout(grid)
+        graphBox.addLayout(self.grid)
         self.graph2.show()
         # Set graph widgets's layout
         graphWidget.setLayout(graphBox)
@@ -507,7 +507,7 @@ class ClusteringView(QtGui.QWidget):
         self.label = run_clustering(selectedMethod, param_dict)
         self.table_displayer.fill_clust_labels(self.label)
         self.add_hist(param_dict,self.label)
-        self.add_3D()
+        self.add_3D(self.table_displayer.clustering_usable_dataset, self.label)
 
     def export(self):
         if self.label is not None:
@@ -539,16 +539,16 @@ class ClusteringView(QtGui.QWidget):
         ## notice that len(x) == len(y)+1
         plt.plot(x, y, stepMode=True, fillLevel=0, brush=(0,0,255,150))
 
-    def add_3D(self):
-
-        pos = np.empty((53, 3))
-        size = np.empty((53))
-        color = np.empty((53, 4))
-        pos[0] = (1,0,0); size[0] = 0.5;   color[0] = (1.0, 0.0, 0.0, 0.5)
-        pos[1] = (0,1,0); size[1] = 0.2;   color[1] = (0.0, 0.0, 1.0, 0.5)
-        pos[2] = (0,0,1); size[2] = 2./3.; color[2] = (0.0, 1.0, 0.0, 0.5)
-            
-        sp1 = gl.GLScatterPlotItem(pos=pos, size=size, color=color, pxMode=False)
+    def add_3D(self,clustering_usable_dataset, label):
+        old = self.grid.itemAt(1).widget()
+        self.grid.removeWidget(old)
+        old.setParent(None)
+        self.graph2 = gl.GLViewWidget()
+        self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.grid.addWidget(self.graph2, 1, 1)
+        res = makePoints(clustering_usable_dataset, label)
+        sp1 = gl.GLScatterPlotItem(pos=res[0], size=res[1], color=res[2], pxMode=True)
         sp1.translate(5,5,0)
+        sp1.setGLOptions('opaque')
         self.graph2.addItem(sp1)
         
