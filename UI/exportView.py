@@ -11,6 +11,8 @@
 # 15 january 2018 - Initial design and coding. (@yoshcraft, Raphael A.)
 # 16 january 2018 - Basing graphic interface and add export csv method (@yoshcraft, Raphael A.)
 # 18 january 2018 - Modification to fit with the new export method (@yoshcraft, Raphael A.)
+# 13 february 2018 - Useless, cause of some modification of the csv exporting method, in waiting of the nifti
+#  export implementation
 
 
 
