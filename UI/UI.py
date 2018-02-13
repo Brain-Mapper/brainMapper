@@ -214,10 +214,16 @@ class UI(QtGui.QMainWindow):
         niftiAction.setShortcut('Ctrl+N')
         niftiAction.triggered.connect(self.fromNiFile)
 
+        workspaceAction = QtGui.QAction('&Import workspace', self)
+        workspaceAction.setStatusTip('Import Set and ImageCollection from a workspace and add its to the current set')
+        workspaceAction.triggered.connect(self.fromWorkspace)
+
         # ADDING ACTIONS TO MENUS
         fileMenu = menubar.addMenu('&Program')
         fileMenu.addAction(saveAction)
         fileMenu.addAction(exitAction)
+        workspaceMenu = menubar.addMenu('&Workspace')
+        workspaceMenu.addAction(workspaceAction)
         SetMenu = menubar.addMenu('&New Set')
         SetMenu.addAction(setAction)
         CollecMenu = menubar.addMenu('&New Collection')
@@ -254,6 +260,14 @@ class UI(QtGui.QMainWindow):
             except:
                 err = QtGui.QMessageBox.critical(self, "Error",
                                                  "An error has occured. Maybe you tried to open a non-CSV file")
+
+    def fromWorkspace(self):
+        folder_path = str(QFileDialog.getExistingDirectory())
+        set = general_workspace_import(folder_path)
+        # TODO frontend
+        #  for key in set.subset_dict.keys():
+        #    homepage.mainview.show_set(set.subset_dict[key])
+
         
     def showHelp(self):
         self.w = Help()

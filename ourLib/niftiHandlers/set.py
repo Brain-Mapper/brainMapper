@@ -47,14 +47,14 @@ class Set(object):
         else:
             print('The Subset name : %s already exist' % name)
 
-    def add_empty_collection(self, name):
+    def add_empty_collection(self, name, set_name):
         """
         Method to create a empty image collection into the Set.
         :param name: name of the new ImageCollection.
         control if the name doesn't exist in collection_dict.
         """
         if name not in self.collection_dict.keys():
-            self.collection_dict[name] = ImageCollection(name)
+            self.collection_dict[name] = ImageCollection(name, set_name)
         else:
             print('The Image Collection name : %s already exist' % name)
 
