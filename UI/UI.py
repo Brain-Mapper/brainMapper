@@ -263,10 +263,14 @@ class UI(QtGui.QMainWindow):
 
     def fromWorkspace(self):
         folder_path = str(QFileDialog.getExistingDirectory())
-        set = general_workspace_import(folder_path)
-        # TODO frontend
-        for key in set.subset_dict.keys():
-            homepage.mainview.show_set(set.subset_dict[key])
+        test = general_worspace_import_control(folder_path)
+        if test is None:
+            set = general_workspace_import(folder_path)
+            for key in set.subset_dict.keys():
+                homepage.mainview.show_set(set.subset_dict[key])
+        else:
+            err = QtGui.QMessageBox.critical(self, "Error",
+                                             "An error has occured. Bad workspace construction")
 
         
     def showHelp(self):

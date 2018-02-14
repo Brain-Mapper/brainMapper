@@ -518,9 +518,24 @@ def simple_import(csv_file_path, template_mni_path):
     return coll
 
 def general_workspace_import(folder_path):
-    global currentSet
     ws.recursive_import(folder_path, currentSet)
     return currentSet
+
+def general_worspace_import_control(folder_path):
+
+    sets_name = []
+    for set in sets:
+        sets_name.append(set.get_name())
+    test = ws.recursive_import_control(folder_path, sets_name)
+    return test
+
+def workspace_save(folder_path):
+    set_no_add = sets
+    set_already_add = []
+
+    #TODO set creation
+
+
 
 
 
