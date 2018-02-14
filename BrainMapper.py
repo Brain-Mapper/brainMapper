@@ -517,14 +517,9 @@ def simple_import(csv_file_path, template_mni_path):
     add_coll(coll)
     return coll
 
-
-def recursive_workspace_import(folder_path, actual_set):
-    ws.recursive_import(folder_path, actual_set)
-
-
 def general_workspace_import(folder_path):
     global currentSet
-    recursive_workspace_import(folder_path, currentSet)
+    ws.recursive_import(folder_path, currentSet)
     return currentSet
 
 
