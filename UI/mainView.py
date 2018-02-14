@@ -363,14 +363,19 @@ class SetAccessBar(QtGui.QTabWidget):
 
     def add(self, my_set):
         # -- This add will add a SetButton
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()
+        mainwind_w = rec.width()
         new_set_button = SetButton(my_set,self)
         if (my_set.number_of_collection() != 0):
-            for i in my_set.get_all_nifti_set() :
+            for i in my_set.get_coll().values() :
                 new_set_button.vizu.add(i)
+                add_coll(i)
         if (my_set.number_of_subset() != 0 ):
             for i in my_set.getAllSubSets():
                 new_set_button.addFullSubSet(i)
                 self.add(i)
+        new_set_button.setMaximumSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
         self.tab1.vbox.addWidget(new_set_button)
 
     def add2(self):

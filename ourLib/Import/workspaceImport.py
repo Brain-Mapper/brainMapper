@@ -31,8 +31,7 @@ def recursive_import(folder_path, actual_set):
                     recursive_import(item_path, actual_set.subset_dict[item])
                 # case for the imageCollection
                 elif n == len(item_list):
-                    print item
-                    actual_set.add_empty_collection(item, actual_set.get_name())
+                    actual_set.add_empty_collection(item, actual_set)
                     for sub_item in item_list:
                         if not sub_item.startswith('.'):
                             actual_set.collection_dict[item].add(NifImage.from_file(os.path.join(item_path, sub_item)))
