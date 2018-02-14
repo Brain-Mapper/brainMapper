@@ -20,7 +20,8 @@ from ourLib.dataExtraction import extractor as xt
 from ourLib.dataExtraction.usable_data import UsableDataSet as uds
 from ourLib import clustering as clust
 from ourLib import calculations as calcul
-from ourLib.excelImport import excelImport as imp
+from ourLib.Import import excelImport as imp
+from ourLib.Import import workspaceImport as ws
 
 import os
 import platform
@@ -518,26 +519,7 @@ def simple_import(csv_file_path, template_mni_path):
 
 
 def recursive_workspace_import(folder_path, actual_set):
-    list = os.listdir(folder_path)
-    for item in list:
-        if item != '.DS_Store':
-            item_path = os.path.join(folder_path, item)
-            if os.path.isdir(item_path):
-                item_list = os.listdir(item_path)
-                # case for the set
-                n = 0
-                for sub_item in item_list:
-                    n = n + os.path.isfile(os.path.join(item_path, sub_item))
-                # 1 because whe have one hidden file
-                if n == 1:
-                    actual_set.add_empty_subset(item)
-                    recursive_workspace_import(item_path, actual_set.subset_dict[item])
-                # case for the imageCollection
-                elif n == len(item_list):
-                    actual_set.add_empty_collection(item, actual_set.get_name())
-                    for sub_item in item_list:
-                        if sub_item != '.DS_Store':
-                            actual_set.collection_dict[item].add(NifImage.from_file(os.path.join(item_path, sub_item)))
+    ws.recursive_import(folder_path, actual_set)
 
 
 def general_workspace_import(folder_path):

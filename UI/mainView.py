@@ -236,6 +236,14 @@ class SetButton(QtGui.QWidget):
             except :
                 err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
 
+    def addFullSubSet(self,ssSet):
+        text = subset.get_name()
+        self.SSList.addItem(str(text))
+        self.my_set.get_sub_set(str(text)).setParent(self.my_set)
+        add_set(ssSet)
+        self.parent().parent().parent().parent().parent().parent().add(ssSet)
+
+
     def changeName(self):
         # -- This changeName will change the name of the set selected. 
         text, ok = QInputDialog.getText(self, 'Rename a set',
@@ -356,7 +364,15 @@ class SetAccessBar(QtGui.QTabWidget):
 
     def add(self, my_set):
         # -- This add will add a SetButton
-        self.tab1.vbox.addWidget(SetButton(my_set,self))
+        new_set_button = SetButton(my_set,self)
+        if (my_set.number_of_collection() != 0):
+            for i in my_set.get_all_nifti_set() :
+                new_set_button.vizu.add(i)
+        if (my_set.number_of_subset() != 0 ):
+            for i in my_set.getAllSubSets().values():
+                new_set_button.addFullSubSet(i)
+                self.add(i)
+        self.tab1.vbox.addWidget(new_set_button)
 
     def add2(self):
         for j in getClusterResultSets():
