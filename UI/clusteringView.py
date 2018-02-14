@@ -10,6 +10,7 @@
 #
 # 2 january 2018 - Initial design and coding. (@vz-chameleon, Valentina Z.)
 # 5 january 2018 - Added functions to fill table with extracted data
+# 13 fev 2018 - Add histogram view (@Graziella-Husson)
 
 from PyQt4 import QtGui
 from PyQt4.Qt import pyqtSignal, QFileDialog
@@ -23,7 +24,9 @@ from BrainMapper import *
 from functools import partial
 import ourLib.ExcelExport.excelExport as ee
 import os
-
+import pyqtgraph as pg
+import numpy as np
+import pyqtgraph.opengl as gl
 
 import resources
 
@@ -75,7 +78,9 @@ class ClusteringDataTable(QtGui.QTableWidget):
         for lab in assigned_labels_array:
             item = QtGui.QTableWidgetItem(str(lab))
             item.setTextAlignment(Qt.AlignCenter)
+            print str(lab)
             item.setBackground(QtGui.QColor(colors[str(lab)]))
+
             self.setItem(row_count, 6, item)
             row_count = row_count + 1
 
@@ -331,19 +336,33 @@ class ClusteringChooser(QtGui.QToolButton):
         self.clustering_algo_menu = QtGui.QMenu()
 
         Kmeans_choice = QtGui.QAction('KMeans', self)
-        Kmeans_choice.setStatusTip('Perform KMeans algorithm on dataset')
+        Kmeans_choice.setStatusTip('Apply KMeans algorithm to dataset')
         Kmeans_choice.triggered.connect(lambda: self.updateLabel("KMeans", self.showClustParamsWidget))
 
+        Kmedoids_choice = QtGui.QAction('&KMedoids', self)
+        Kmedoids_choice.setStatusTip('Apply KMedoids algorithm to dataset')
+        Kmedoids_choice.triggered.connect(
+            lambda: self.updateLabel("KMedoids", self.showClustParamsWidget))
+
         Agglomerative_choice = QtGui.QAction('&AgglomerativeClustering', self)
-        Agglomerative_choice.setStatusTip('Perform Agglomerative Clustering algorithm on dataset')
+        Agglomerative_choice.setStatusTip('Apply Agglomerative Clustering algorithm to dataset')
         Agglomerative_choice.triggered.connect(lambda: self.updateLabel("AgglomerativeClustering", self.showClustParamsWidget))
+
+        # I have some problems with DBSCAN
+
+        # DBSCAN_choice = QtGui.QAction('&DBSCAN', self)
+        # DBSCAN_choice.setStatusTip('Apply DBSCAN algorithm to dataset')
+        # DBSCAN_choice.triggered.connect(
+        #     lambda: self.updateLabel("DBSCAN", self.showClustParamsWidget))
 
         user_script_choice = QtGui.QAction('&Custom user script', self)
         user_script_choice.setStatusTip('Make a custom clustering script')
         user_script_choice.triggered.connect(lambda: self.updateLabel("Custom user script", self.showScriptEnvWidget))
 
         self.clustering_algo_menu.addAction(Kmeans_choice)
+        self.clustering_algo_menu.addAction(Kmedoids_choice)
         self.clustering_algo_menu.addAction(Agglomerative_choice)
+        # self.clustering_algo_menu.addAction(DBSCAN_choice)
         self.clustering_algo_menu.addAction(user_script_choice)
         self.setMenu(self.clustering_algo_menu)
 
@@ -402,7 +421,7 @@ class ClusteringView(QtGui.QWidget):
         goHomeButton = QtGui.QPushButton('Go back')
         goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
         goHomeButton.setStatusTip("Return to main page")
-        goHomeButton.clicked.connect(self.showMain.emit)# When go back home button is clicked, change central views
+        goHomeButton.clicked.connect(self.go_back)# When go back home button is clicked, change central views
 
         exportButton = QtGui.QPushButton('Export')
         exportButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/libreoffice.png'))
@@ -457,19 +476,20 @@ class ClusteringView(QtGui.QWidget):
         graph_title = QtGui.QLabel('Results Graphs')
         graph_title.setStyleSheet(title_style)
 
-        grid = QtGui.QGridLayout()
-        grid.setSpacing(8)
+        self.grid = QtGui.QGridLayout()
+        self.grid.setSpacing(8)
 
-        graph1 = QtGui.QTextEdit()
-        graph2 = QtGui.QTextEdit()
-        graph3 = QtGui.QTextEdit()
-        grid.addWidget(graph1, 1, 0)
-        grid.addWidget(graph2, 1, 1)
-        grid.addWidget(graph3, 1, 2)
+        self.graph1 = pg.GraphicsWindow()
+        self.graph1.resize(300,150)
+        self.graph1.setStatusTip("Show an histogramm representing the number of points in each cluster.")
+        self.graph2 = gl.GLViewWidget()
+        self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.grid.addWidget(self.graph1, 1, 0)
+        self.grid.addWidget(self.graph2, 1, 1)
 
         graphBox.addWidget(graph_title)
-        graphBox.addLayout(grid)
-
+        graphBox.addLayout(self.grid)
+        self.graph2.show()
         # Set graph widgets's layout
         graphWidget.setLayout(graphBox)
 
@@ -505,6 +525,8 @@ class ClusteringView(QtGui.QWidget):
         # print(param_dict)
         self.label = run_clustering(selectedMethod, param_dict)
         self.table_displayer.fill_clust_labels(self.label)
+        self.add_hist(param_dict,self.label)
+        self.add_3D(self.table_displayer.clustering_usable_dataset, self.label)
 
     def export(self):
         if self.label is not None:
@@ -522,3 +544,39 @@ class ClusteringView(QtGui.QWidget):
         else:
             QtGui.QMessageBox.information(self, "Run Clustering before", "No cluster affectation")
 
+    def add_hist(self,param_dict,label):
+        k = float(param_dict["n_clusters"])
+        self.graph1.clear()
+        plt = self.graph1.addPlot()
+        ## make interesting distribution of values
+        vals = np.hstack([label])
+
+        ## compute standard histogram
+        y,x = np.histogram(vals, bins=np.linspace(0, k, k+1))
+
+        ## Using stepMode=True causes the plot to draw two lines for each sample.
+        ## notice that len(x) == len(y)+1
+        plt.plot(x, y, stepMode=True, fillLevel=0, brush=(0,0,255,150))
+
+    def add_3D(self,clustering_usable_dataset, label):
+        old = self.grid.itemAt(1).widget()
+        self.grid.removeWidget(old)
+        old.setParent(None)
+        self.graph2 = gl.GLViewWidget()
+        self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.grid.addWidget(self.graph2, 1, 1)
+        res = makePoints(clustering_usable_dataset, label)
+        sp1 = gl.GLScatterPlotItem(pos=res[0], size=res[1], color=res[2], pxMode=True)
+        sp1.translate(5,5,0)
+        sp1.setGLOptions('opaque')
+        self.graph2.addItem(sp1)
+
+    def go_back(self):# -- When the user wants to return to the main view, we reinit the cluster view
+        self.graph1.clear()
+        old = self.grid.itemAt(1).widget()
+        self.grid.removeWidget(old)
+        old.setParent(None)
+        self.graph2 = gl.GLViewWidget()
+        self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.grid.addWidget(self.graph2, 1, 1)
+        self.showMain.emit()

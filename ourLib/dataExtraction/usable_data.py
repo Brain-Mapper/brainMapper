@@ -186,6 +186,26 @@ class UsableDataSet(object):
             new_set.add_collection(i) 
         return new_set
 
-
-
-
+    def extract_points(self, label):
+        def make_colors(n):
+            import random
+            col_dict = dict()
+            for i in range(0, n):
+                col= (random.uniform(0, 1),random.uniform(0, 1),random.uniform(0, 1),1)
+                col_dict[str(i)] = col
+            return col_dict
+        colors = make_colors(len(label))
+        l = len(label)
+        pos = np.empty((l, 3))
+        size = np.empty((l))
+        color = np.empty((l,4))
+        for udcoll in self.get_usable_data_list():
+            extracted_data_dictionary = udcoll.get_extracted_data_dict()
+            row_cont = 0
+            for origin_file in extracted_data_dictionary.keys():
+                data_array = extracted_data_dictionary[origin_file]
+                for data_rows in range(0, data_array.shape[0]):
+                    pos[row_cont] = (int(float(data_array[data_rows, 0])), int(float(data_array[data_rows, 1])), int(float(data_array[data_rows, 2]))); size[row_cont] =5 ; color[row_cont] = colors[str(label[row_cont])]
+                    row_cont = row_cont + 1
+        res = [pos,size,color]
+        return res

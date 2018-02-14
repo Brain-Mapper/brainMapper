@@ -24,10 +24,10 @@ from os import path
 
 if __package__ is None:
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-    from usable_data import UsableDataCollection,UsableDataSet
+    from usable_data import UsableDataCollection, UsableDataSet
     from ..calculations import image_centroid
 else:
-    from usable_data import UsableDataCollection, UsableDataSet
+    from ..dataExtraction.usable_data import UsableDataCollection, UsableDataSet
 
 
 def extract(a_nifti_img_obj):

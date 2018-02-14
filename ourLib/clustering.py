@@ -1,18 +1,20 @@
 # NAME
-#        calculations
+#        clustering
 #
 # DESCRIPTION
 #
-#       The module 'calculations' contains methods for mathematical or preprocessing operations on
-#       nifti image collections, sets or single files
+#       The module 'clustering' contains methods for clustering on
+#       nifti image collections extracted data
 #
 # HISTORY
 #
 # 6 january 2018 - Initial design and coding. (@vz-chameleon, Valentina Z.)
-# 16 january 2018 - Added functions for k-medoids clustering
+# 16 january 2018 - Added functions for k-medoids clustering (@vz-chameleon, Valentina Z.)
+# 12 february 2018 - Finished K-Medoids and added DBSCAN (@vz-chameleon, Valentina Z.)
 
 
-from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
+from sklearn.neighbors import DistanceMetric
 import numpy as np
 import random
 
@@ -30,36 +32,99 @@ def perform_agglomerative_clustering(param_dict, X) :
     return agglo_clust.labels_
 
 
+def perform_DBSCAN(param_dict, X):
+    dbscan = DBSCAN(eps=float(param_dict["eps"]), min_samples=int(param_dict["min_samples"]), metric=param_dict["metric"]).fit(X)
+    print dbscan.labels_
+    return dbscan.labels_
+
+
+def perform_kmedoids(param_dict, X):
+    distances_matrix_pairwise = compute_distances(X, param_dict['metric'])
+
+    print distances_matrix_pairwise
+    medoids_result = kmedoids_cluster(X, distances_matrix_pairwise, int(param_dict["n_clusters"]))
+    print ("Results[0] : "+str(medoids_result[0]))
+    print ("Results[1] : " + str(medoids_result[1]))
+    return medoids_result[0]
+
+
 # ------------------ K Medoids implementation ------------------
 
-def kmedoids_cluster(distances, k=3):
+def compute_distances(data_matrix, distance, normalize=False):
+    """
+    Compute distances between data points
+    :param data_matrix: The array containing the data shape=(ND x 4)
+    :param distance: 'euclidean' or 'manhattan'
+    :param normalize: False by default
+    :return: The symmetric matrix of distances
+    """
+
+    # Euclidean or Manhattan
+    dist = DistanceMetric.get_metric(distance)
+    # See sklearn.neighbors.DistanceMetric documentation to see the distance matrix returned
+    return dist.pairwise(data_matrix)
+
+
+def kmedoids_cluster(data_matrix, distances, k=3):
+    """
+    Perform kmedoids clustering
+    :param distances: The symmetric matrix of distances between data points
+    :param k: number of clusters
+    :return: array of cluster labels and latest medoids
+    """
     m = distances.shape[0]  # number of points
+    print ("number of points :"+str(m))
 
-    # Pick k random medoids.
-    curr_medoids = np.array([-1] * k)
-    while not len(np.unique(curr_medoids)) == k:
-        curr_medoids = np.array([random.randint(0, m - 1) for _ in range(k)])
-    old_medoids = np.array([-1] * k)  # Doesn't matter what we initialize these to.
-    new_medoids = np.array([-1] * k)
+    # Pick k random medoids and keep their indexes in data_matrix
+    curr_medoids_index = np.array([-1] * k)
+    while not len(np.unique(curr_medoids_index)) == k:
+        curr_medoids_index = np.array([random.randint(0, m - 1) for _ in range(k)])
 
-    # Until the medoids stop updating, do the following:
-    while not ((old_medoids == curr_medoids).all()):
+    curr_medoids = np.zeros(shape=(k, data_matrix.shape[1]))
+
+    c = 0
+    for index in curr_medoids_index:
+        curr_medoids[c] = np.array(data_matrix[index])
+        c = c+1
+    print ("current medoids init: "+str(curr_medoids))
+
+    old_medoids_index = np.array([-1] * k)
+    new_medoids_index = np.array([-1] * k)
+
+    while not (old_medoids_index == curr_medoids_index).all():
 
         # Assign each point to cluster with closest medoid.
-        clusters = assign_points_to_clusters(curr_medoids, distances)
+        clusters = assign_points_to_clusters(curr_medoids_index, distances)
+
+        print ("clusters :" + str(clusters))
 
         # Update cluster medoids to be lowest cost point.
-        for curr_medoid in curr_medoids:
+        for curr_medoid in curr_medoids_index:
             cluster = np.where(clusters == curr_medoid)[0]
-            new_medoids[curr_medoids == curr_medoid] = compute_new_medoid(cluster, distances)
+            print("cluster : "+str(cluster))
+            new_medoids_index[curr_medoids_index == curr_medoid] = compute_new_medoid(cluster, distances)
 
-        old_medoids[:] = curr_medoids[:]
-        curr_medoids[:] = new_medoids[:]
+        old_medoids_index[:] = curr_medoids_index[:]
+        curr_medoids_index[:] = new_medoids_index[:]
 
-    return clusters, curr_medoids
+    clusters_labels = []
+    c = 0
+    for cluster_index in clusters:
+        clust_i, = np.where(curr_medoids_index == cluster_index)
+        print int(clust_i)
+        clusters_labels.append(int(clust_i))
+        c = c+1
+
+    return clusters_labels, curr_medoids
 
 
 def assign_points_to_clusters(medoids, distances):
+    """
+    Assign data entries to its nearest cluster based on distance to cluster's medoid
+    :param medoids: An array containing the medoids of each cluster
+    :param distances: The symmetric matrix of distances between data points
+    :return:
+    """
     distances_to_medoids = distances[:, medoids]
     clusters = medoids[np.argmin(distances_to_medoids, axis=1)]
     clusters[medoids] = medoids
@@ -67,10 +132,18 @@ def assign_points_to_clusters(medoids, distances):
 
 
 def compute_new_medoid(cluster, distances):
+    """
+    Update the medoid point of each cluster after assigns
+    :param cluster: The cluster of which the medoid should be updated
+    :param distances: The symmetric matrix of distances between data points
+    :return:
+    """
     mask = np.ones(distances.shape)
     mask[np.ix_(cluster, cluster)] = 0.
     cluster_distances = np.ma.masked_array(data=distances, mask=mask, fill_value=10e9)
     costs = cluster_distances.sum(axis=1)
     return costs.argmin(axis=0, fill_value=10e9)
 
-# def compute_distances(data_matrix, distance, normalize=True)
+
+
+
