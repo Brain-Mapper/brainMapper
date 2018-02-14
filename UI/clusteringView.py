@@ -345,10 +345,12 @@ class ClusteringChooser(QtGui.QToolButton):
         Agglomerative_choice.setStatusTip('Apply Agglomerative Clustering algorithm to dataset')
         Agglomerative_choice.triggered.connect(lambda: self.updateLabel("AgglomerativeClustering", self.showClustParamsWidget))
 
-        DBSCAN_choice = QtGui.QAction('&DBSCAN', self)
-        DBSCAN_choice.setStatusTip('Apply DBSCAN algorithm to dataset')
-        DBSCAN_choice.triggered.connect(
-            lambda: self.updateLabel("DBSCAN", self.showClustParamsWidget))
+        # I have some problems with DBSCAN
+
+        # DBSCAN_choice = QtGui.QAction('&DBSCAN', self)
+        # DBSCAN_choice.setStatusTip('Apply DBSCAN algorithm to dataset')
+        # DBSCAN_choice.triggered.connect(
+        #     lambda: self.updateLabel("DBSCAN", self.showClustParamsWidget))
 
         user_script_choice = QtGui.QAction('&Custom user script', self)
         user_script_choice.setStatusTip('Make a custom clustering script')
@@ -357,7 +359,7 @@ class ClusteringChooser(QtGui.QToolButton):
         self.clustering_algo_menu.addAction(Kmeans_choice)
         self.clustering_algo_menu.addAction(Kmedoids_choice)
         self.clustering_algo_menu.addAction(Agglomerative_choice)
-        self.clustering_algo_menu.addAction(DBSCAN_choice)
+        # self.clustering_algo_menu.addAction(DBSCAN_choice)
         self.clustering_algo_menu.addAction(user_script_choice)
         self.setMenu(self.clustering_algo_menu)
 
