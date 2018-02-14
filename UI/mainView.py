@@ -228,15 +228,17 @@ class SetButton(QtGui.QWidget):
         self.SSList = QtGui.QComboBox()
         self.SSList.setStatusTip("Show all sub sets")
         self.SSList.setFixedSize(QSize(mainwind_w / 100, mainwind_h / 30))
-        self.SSList.activated.connect(self.test)
+        self.SSList.activated.connect(self.showSubSet)
         hbox.addWidget(self.SSList)
 
         self.setLayout(hbox)
         self.setFixedSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
 
-    def test(self):
-        # -- Test to print smthg when we click on an ite in the list of subset
-        print self.SSList.currentText()
+    def showSubSet(self):
+        # -- When we click on an item in the list of subset, we update current vizu and set
+        new_set = getSetByName(self.SSList.currentText())
+        set_current_set(new_set)
+        self.parent().parent().parent().parent().parent().parent().updateSet(new_set)
 
     def updateSubSetName(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
@@ -247,7 +249,6 @@ class SetButton(QtGui.QWidget):
 
     def current_set(self):
         # -- This current_set will vizualize the set and the collections inside when pressed
-        print self.vizu
         set_current_set(self.my_set)
         set_current_vizu(self.vizu)
         self.parent().parent().parent().parent().parent().parent().parent().parent().updateVizu(self.vizu)
@@ -408,7 +409,6 @@ class SetAccessBar(QtGui.QTabWidget):
             self.tab2.vbox2.addWidget(s)
             rmClusterResultSets(j)
         
-
     def update(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
         items = (self.tab1.vbox.itemAt(j).widget() for j in range(self.tab1.vbox.count()))
@@ -416,6 +416,16 @@ class SetAccessBar(QtGui.QTabWidget):
             if isinstance(i, SetButton):
                 i.updateSubSetName()
         self.parent().parent().upCollLabel()
+
+    def updateSet(self,new_set):
+        # -- Update the list of subsets shown. Usefull when a sub set is renamed
+        items = (self.tab1.vbox.itemAt(j).widget() for j in range(self.tab1.vbox.count()))
+        for i in items:
+            if isinstance(i, SetButton):
+                if i.my_set.get_name() == new_set.get_name():
+                    set_current_vizu(i.vizu)
+                    self.parent().parent().updateVizu(i.vizu)
+                    self.parent().parent().upCollLabel()
 
 class MainView(QtGui.QWidget):
     # -- ! ATTRIBUTES SHARED by EVERY class instance ! --

@@ -452,6 +452,15 @@ def get_all_sets():
     """
     return sets
 
+def getSetByName(name):
+    """
+    :return: the set that have the name 'name' in sets list. If it doesn't exist, return None
+    """
+    for i in sets:
+        if i.get_name() == name :
+            return i
+    return None
+    
 
 def setColNameInSet(name):
     """
