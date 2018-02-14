@@ -265,8 +265,8 @@ class UI(QtGui.QMainWindow):
         folder_path = str(QFileDialog.getExistingDirectory())
         set = general_workspace_import(folder_path)
         # TODO frontend
-        #  for key in set.subset_dict.keys():
-        #    homepage.mainview.show_set(set.subset_dict[key])
+        for key in set.subset_dict.keys():
+            homepage.mainview.show_set(set.subset_dict[key])
 
         
     def showHelp(self):
