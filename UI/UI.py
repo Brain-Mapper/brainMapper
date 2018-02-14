@@ -306,7 +306,7 @@ def main():
         app.setStyle(QStyleFactory.create("GTK+"))
         print("Linux !")
     elif sys.platform.startswith('darwin'):
-        app.setStyle(QStyleFactory.create("Cleanlooks"))
+        app.setStyle(QStyleFactory.create("GKT+"))
     elif sys.platform.startswith('win32'):
         app.setStyle(QStyleFactory.create("Cleanlooks"))
     elif sys.platform.startswith('cygwin'):
