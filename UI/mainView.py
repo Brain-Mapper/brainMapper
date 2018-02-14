@@ -232,7 +232,7 @@ class SetButton(QtGui.QWidget):
         hbox.addWidget(self.SSList)
 
         self.setLayout(hbox)
-        self.setMaximumSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
+        self.setFixedSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
 
     def test(self):
         # -- Test to print smthg when we click on an ite in the list of subset
