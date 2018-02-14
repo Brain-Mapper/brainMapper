@@ -81,17 +81,21 @@ class CollButton(QtGui.QCheckBox):
 class CollectionsView(QtGui.QWidget):
     # -- The CollectionsView class will display all the collections in the current set
     def __init__(self, label):
+
         self.i = 1
         self.j = 1
         super(CollectionsView, self).__init__()
-        self.name = label
-        set_current_vizu(self)
-        self.vbox = QtGui.QGridLayout()
-        self.vbox.setAlignment(QtCore.Qt.AlignTop)
+
+        
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height() / 1.4
         mainwind_w = rec.width() / 1.5
         self.setMinimumSize(QSize(mainwind_w / 1.35, mainwind_h * 0.9))
+        self.max = int((mainwind_w / 1.35)/150)
+        print self.max
+        
+        self.name = label
+        set_current_vizu(self)
 
         title_style = "QLabel { background-color : #ffcc33 ; color : black;  font-style : bold; font-size : 14px;}"
         self.title2 = QtGui.QLabel("List of image collections for set " + str(self.name))
@@ -101,6 +105,26 @@ class CollectionsView(QtGui.QWidget):
         self.title2.setAlignment(QtCore.Qt.AlignCenter)
         self.title2.setStyleSheet(title_style)
 
+        buttonsBox = QtGui.QHBoxLayout()
+        buttonsBox.addStretch(1)
+        
+        deselectButton = QtGui.QPushButton("Deselect all")
+        deselectButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/circle.png'))
+        deselectButton.clicked.connect(self.deselectAll)
+        deselectButton.setStatusTip("Deselect all Image Collections in this set")
+        deselectButton.setFixedSize(QSize(mainwind_w / 8, mainwind_h / 20))
+        buttonsBox.addWidget(deselectButton,0, Qt.AlignRight)
+
+        selectButton = QtGui.QPushButton("Select all")
+        selectButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
+        selectButton.clicked.connect(self.selectAll)
+        selectButton.setStatusTip("Select all Image Collections in this set")
+        selectButton.setFixedSize(QSize(mainwind_w / 8, mainwind_h / 20))
+        buttonsBox.addWidget(selectButton,0, Qt.AlignRight)
+        
+        self.vbox = QtGui.QGridLayout()
+        self.vbox.setAlignment(QtCore.Qt.AlignTop)
+        
         group = QtGui.QGroupBox()
         group.setLayout(self.vbox)
 
@@ -111,15 +135,17 @@ class CollectionsView(QtGui.QWidget):
 
         hbox = QtGui.QVBoxLayout()
         hbox.addWidget(self.title2)
+        hbox.addLayout(buttonsBox)
         hbox.addWidget(scroll)
 
         self.setLayout(hbox)
+        
 
     def add(self, my_coll):
         # -- This add will add a collection to vizualize according to the grid 3 x X where X is unlimited thanks to the scroll bar
         self.vbox.addWidget(CollButton(my_coll), self.j, self.i)
         self.i += 1
-        if self.i > 3:
+        if self.i > self.max:
             self.i = 1
             self.j += 1
 
@@ -145,6 +171,21 @@ class CollectionsView(QtGui.QWidget):
         self.name = label
         self.title2.setText("List of image collections for set " + str(label))
 
+    def deselectAll(self):
+        items = (self.vbox.itemAt(j).widget() for j in range(self.vbox.count()))
+        for i in items:
+            if isinstance(i, QCheckBox):
+                if (i.isChecked()):
+                    i.toggle()
+                    rm_coll(i.coll)
+
+    def selectAll(self):
+        items = (self.vbox.itemAt(j).widget() for j in range(self.vbox.count()))
+        for i in items:
+            if isinstance(i, QCheckBox):
+                if not (i.isChecked()):
+                    i.toggle()
+                    add_coll(i.coll)
 
 class SetButton(QtGui.QWidget):
     # -- The SetButton class will display all info for a set
@@ -187,15 +228,17 @@ class SetButton(QtGui.QWidget):
         self.SSList = QtGui.QComboBox()
         self.SSList.setStatusTip("Show all sub sets")
         self.SSList.setFixedSize(QSize(mainwind_w / 100, mainwind_h / 30))
-        self.SSList.activated.connect(self.test)
+        self.SSList.activated.connect(self.showSubSet)
         hbox.addWidget(self.SSList)
 
         self.setLayout(hbox)
-        self.setMaximumSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
+        self.setFixedSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
 
-    def test(self):
-        # -- Test to print smthg when we click on an ite in the list of subset
-        print self.SSList.currentText()
+    def showSubSet(self):
+        # -- When we click on an item in the list of subset, we update current vizu and set
+        new_set = getSetByName(self.SSList.currentText())
+        set_current_set(new_set)
+        self.parent().parent().parent().parent().parent().parent().updateSet(new_set)
 
     def updateSubSetName(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
@@ -206,7 +249,6 @@ class SetButton(QtGui.QWidget):
 
     def current_set(self):
         # -- This current_set will vizualize the set and the collections inside when pressed
-        print self.vizu
         set_current_set(self.my_set)
         set_current_vizu(self.vizu)
         self.parent().parent().parent().parent().parent().parent().parent().parent().updateVizu(self.vizu)
@@ -367,7 +409,6 @@ class SetAccessBar(QtGui.QTabWidget):
             self.tab2.vbox2.addWidget(s)
             rmClusterResultSets(j)
         
-
     def update(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
         items = (self.tab1.vbox.itemAt(j).widget() for j in range(self.tab1.vbox.count()))
@@ -375,6 +416,16 @@ class SetAccessBar(QtGui.QTabWidget):
             if isinstance(i, SetButton):
                 i.updateSubSetName()
         self.parent().parent().upCollLabel()
+
+    def updateSet(self,new_set):
+        # -- Update the list of subsets shown. Usefull when a sub set is renamed
+        items = (self.tab1.vbox.itemAt(j).widget() for j in range(self.tab1.vbox.count()))
+        for i in items:
+            if isinstance(i, SetButton):
+                if i.my_set.get_name() == new_set.get_name():
+                    set_current_vizu(i.vizu)
+                    self.parent().parent().updateVizu(i.vizu)
+                    self.parent().parent().upCollLabel()
 
 class MainView(QtGui.QWidget):
     # -- ! ATTRIBUTES SHARED by EVERY class instance ! --
