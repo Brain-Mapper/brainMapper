@@ -76,7 +76,6 @@ def do_image_collection(files):
     for file in files:
         image = open_nifti(str(file))
         coll.add(image)
-
     add_coll(coll)  # We add the collection create to selected by default
     currentSet.add_collection(coll)  # We add the collection created in the current set
     return coll
@@ -88,7 +87,12 @@ def add_coll(coll):
     :param coll: ImageCollection instance
     :return: Nothing
     """
-    selected.append(coll)
+    found = False
+    for i in selected:
+        if i.name == coll.name:
+            found = True
+    if not found :
+        selected.append(coll)
 
 
 def rm_coll(coll):
@@ -97,7 +101,12 @@ def rm_coll(coll):
     :param coll: ImageCollection instance
     :return: Nothing
     """
-    selected.remove(coll)
+    found = False
+    for i in selected:
+        if i.name == coll.name:
+            found = True
+    if found :
+        selected.remove(coll)
 
 
 def get_selected():
