@@ -134,7 +134,7 @@ class CalculationView(QtGui.QWidget):
         layout = QFormLayout()
         vbox.addLayout(layout)
 
-        options = QLabel("Options")
+        options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
 
@@ -167,7 +167,7 @@ class CalculationView(QtGui.QWidget):
         layout = QFormLayout()
         vbox.addLayout(layout)
 
-        options = QLabel("Options")
+        options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
 
@@ -200,7 +200,7 @@ class CalculationView(QtGui.QWidget):
         layout = QFormLayout()
         vbox.addLayout(layout)
 
-        options = QLabel("Options")
+        options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
 
@@ -233,7 +233,7 @@ class CalculationView(QtGui.QWidget):
         layout = QFormLayout()
         vbox.addLayout(layout)
 
-        options = QLabel("Options")
+        options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
 
@@ -266,7 +266,7 @@ class CalculationView(QtGui.QWidget):
         layout = QFormLayout()
         vbox.addLayout(layout)
 
-        options = QLabel("Options")
+        options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
 
@@ -290,7 +290,7 @@ class CalculationView(QtGui.QWidget):
         layout = QFormLayout()
         vbox.addLayout(layout)
 
-        options = QLabel("Options")
+        options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
 
@@ -323,7 +323,7 @@ class CalculationView(QtGui.QWidget):
         layout = QFormLayout()
         vbox.addLayout(layout)
 
-        options = QLabel("Options")
+        options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
 
@@ -347,7 +347,7 @@ class CalculationView(QtGui.QWidget):
         layout = QFormLayout()
         vbox.addLayout(layout)
 
-        options = QLabel("Options")
+        options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
 
@@ -379,7 +379,7 @@ class CalculationView(QtGui.QWidget):
         layout = QFormLayout()
         vbox.addLayout(layout)
 
-        options = QLabel("Options")
+        options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
 
@@ -412,7 +412,7 @@ class CalculationView(QtGui.QWidget):
         layout = QFormLayout()
         vbox.addLayout(layout)
 
-        options = QLabel("Options")
+        options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
 
@@ -445,7 +445,7 @@ class CalculationView(QtGui.QWidget):
         layout = QFormLayout()
         vbox.addLayout(layout)
 
-        options = QLabel("Options")
+        options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
 
@@ -505,7 +505,8 @@ class CalculationView(QtGui.QWidget):
         
         for collection in selected:
             for nifti in collection.nifimage_dict.values():
-                nifti_selected.append(nifti.filename)
+                #COPIE nifti_selected.append(nifti.filename)
+                nifti_selected.append(nifti)
         
         if algorithm=="Mean":
             if len(nifti_selected)<2:
@@ -566,13 +567,13 @@ class CalculationView(QtGui.QWidget):
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Centroide":
-            try:
+            #try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
                 self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
-            except:
-                QtGui.QMessageBox.warning(self, "Error",
-                                          "Impossible to execute "+algorithm+" algorithm")
+            #except:
+                #QtGui.QMessageBox.warning(self, "Error",
+                   #                       "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Addition":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
@@ -582,13 +583,13 @@ class CalculationView(QtGui.QWidget):
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Entropy":
-            try:
+            #try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
                 self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
-            except:
-                QtGui.QMessageBox.warning(self, "Error",
-                                          "Impossible to execute "+algorithm+" algorithm")
+           #except:
+                #QtGui.QMessageBox.warning(self, "Error",
+                                          #"Impossible to execute "+algorithm+" algorithm")
 
 
 
