@@ -416,7 +416,7 @@ class SetAccessBar(QtGui.QTabWidget):
                 s.vizu.add(c)
                 add_coll(c)
             self.tab3.vbox3.addWidget(s)
-            rmCalculResultSets(j)
+        rmAllCalculResultSets()
     
     def update(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
