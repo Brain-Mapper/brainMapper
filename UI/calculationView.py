@@ -567,13 +567,13 @@ class CalculationView(QtGui.QWidget):
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Centroide":
-            #try:
+            try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
                 self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
-            #except:
-                #QtGui.QMessageBox.warning(self, "Error",
-                   #                       "Impossible to execute "+algorithm+" algorithm")
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Addition":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
@@ -583,13 +583,13 @@ class CalculationView(QtGui.QWidget):
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Entropy":
-            #try:
+            try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
                 self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
-           #except:
-                #QtGui.QMessageBox.warning(self, "Error",
-                                          #"Impossible to execute "+algorithm+" algorithm")
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm")
 
 
 

@@ -94,14 +94,8 @@ def addition_opperation(list_of_NifImage_obj):
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)
     file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
     for file in list_of_NifImage_obj:
-        list_voxels = extract(file)
-        #data = file.get_copy_img_data()
-        for voxels in list_voxels:
-            x = int(voxels[0])
-            y = int(voxels[1])
-            z = int(voxels[2])
-            intensity = voxels[3]
-            file_Nifti_clusterised[x][y][z] = file_Nifti_clusterised[x][y][z] + intensity
+        data = file.get_copy_img_data()
+        file_Nifti_clusterised = file_Nifti_clusterised + data
     print('Addition process is successfull !')
     output = "[Algorithm] > Addition\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         list_of_NifImage_obj) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
@@ -113,15 +107,9 @@ def mean_opperation(list_of_NifImage_obj):
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)
     file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
     for file in list_of_NifImage_obj:
-        list_voxels = extract(file)
-        #data = file.get_copy_img_data()
-        for voxels in list_voxels:
-            x = int(voxels[0])
-            y = int(voxels[1])
-            z = int(voxels[2])
-            intensity = voxels[3]
-            file_Nifti_clusterised[x][y][z] = file_Nifti_clusterised[x][y][z] + intensity / float(
-                len(list_of_NifImage_obj))
+        data = file.get_copy_img_data()
+        file_Nifti_clusterised = file_Nifti_clusterised + data
+    file_Nifti_clusterised = file_Nifti_clusterised / len(list_of_NifImage_obj)
     print('Mean process is successfull !')
     output = "[Algorithm] > Mean\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         list_of_NifImage_obj) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
