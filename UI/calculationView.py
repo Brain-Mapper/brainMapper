@@ -493,7 +493,7 @@ class CalculationView(QtGui.QWidget):
                 print "Adding in collection"
         ##############################################
         #               Pour Graziella               #
-        #    Set créé en tant que "setCalculation"   #
+        #    Set cree en tant que "setCalculation"   #
         ##############################################
         print "collection has been successfully created"
 
