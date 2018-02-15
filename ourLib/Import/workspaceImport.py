@@ -26,10 +26,13 @@ def recursive_import(folder_path, actual_set):
                 item_list = os.listdir(item_path)
                 # case for the set
                 n = 0
+                hn = 0
                 for sub_item in item_list:
                     n = n + os.path.isfile(os.path.join(item_path, sub_item))
-                # 1 because whe have one hidden file
-                if n == 1:
+                    if sub_item.startswith('.'):
+                        hn = hn + 1
+                # because whe have hn hidden file
+                if n == hn:
                     actual_set.add_empty_subset(item)
                     BrainMapper.sets.append(actual_set.subset_dict[item])
                     actual_set.subset_dict[item].setParent(actual_set)
@@ -51,20 +54,24 @@ def recursive_import_control(folder_path, sets):
                 item_list = os.listdir(item_path)
                 # case for the set
                 n = 0
+                hn = 0
                 for sub_item in item_list:
                     n = n + os.path.isfile(os.path.join(item_path, sub_item))
-                # 1 because whe have one hidden file
-                if n == 1:
+                    if sub_item.startswith('.'):
+                        hn = hn + 1
+                # because whe have hn hidden file
+                if n == hn:
                     if item in sets:
-                        return False
+
+                        return "The Set " + item + " already exist."
 
                     sets.append(item)
                     recursive_import_control(item_path, sets)
                 elif n < len(item_list):
 
-                    return False
+                    return "The file " + item + " is outside of an imageCollection."
             else:
-                return False
+                return "The file " + item + " is outside of an imageCollection."
 
 
 

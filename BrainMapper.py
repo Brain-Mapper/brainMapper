@@ -544,12 +544,15 @@ def recursive_workspace_save(folder_path, usable_set):
     name = usable_set.get_name()
     new_folder_set_path = os.path.join(folder_path, name)
 
-    os.makedirs(new_folder_set_path)
+    if not os.path.exists(new_folder_set_path):
+        os.makedirs(new_folder_set_path)
+
     for key in usable_set.collection_dict.keys():
         collection_name = usable_set.collection_dict[key].get_name()
         new_folder_collection_path = os.path.join(new_folder_set_path, collection_name)
 
-        os.makedirs(new_folder_collection_path)
+        if not os.path.exists(new_folder_collection_path):
+            os.makedirs(new_folder_collection_path)
 
         image_recreation(new_folder_collection_path,usable_set.collection_dict[key])
 

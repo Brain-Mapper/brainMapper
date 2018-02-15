@@ -271,12 +271,13 @@ class UI(QtGui.QMainWindow):
         folder_path = str(QFileDialog.getExistingDirectory())
         if (file != ""):
                 test = general_workspace_import_control(folder_path)
+                print test
                 if test is None:
                     set = general_workspace_import(folder_path)
                     for key in set.subset_dict.keys():
                         homepage.mainview.show_set(set.subset_dict[key])
                 else:
-                    err = QtGui.QMessageBox.critical(self, "Error","An error has occured. Bad workspace construction")
+                    err = QtGui.QMessageBox.critical(self, "Error","An error has occured. " + test)
 
     def workspaceSave(self):
         folder_path = str(QFileDialog.getExistingDirectory())
