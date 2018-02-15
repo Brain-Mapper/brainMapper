@@ -13,13 +13,14 @@ from PyQt4 import QtGui
 from PyQt4.Qt import *
 
 import sys
-
+from nibabel import Nifti1Image,load
 from os import path
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from BrainMapper import *
 
 import resources
+import time
 
 
 class CalculationView(QtGui.QWidget):
@@ -471,18 +472,30 @@ class CalculationView(QtGui.QWidget):
         choice.setWindowTitle('Success !') 
         l = choice.layout()
         l.setContentsMargins(20, 10, 10, 20)
-        l.addWidget(QLabel(algorithm +" algorithm has been correctly applicated on nifti(s) file(s)\n\n\n\nDo you want save the algorithm's result ?"),
+        l.addWidget(QLabel(algorithm +" algorithm has been correctly applicated on nifti(s) file(s)\n\n\n\nDo you want save the algorithm's result as Set ?"),
         l.rowCount() - 3, 0, 1, l.columnCount() - 2, Qt.AlignCenter)
         choice.setStandardButtons(QMessageBox.Cancel | QMessageBox.Save)
         wantToSave = choice.exec_()
         if wantToSave == QtGui.QMessageBox.Save:
-            for e in result:
-                ##############################################################
-                #                                                            #
-                #                           TO DO                            # 
-                #                                                            #
-                ##############################################################
-                print "remplir la collection de nifti"
+            ########## creation set
+            setCalculation = Set("calc_"+str(time.time()*1000))
+            ########## creation nifticolelction
+            coll = ImageCollection("coll_"+algorithm+"_"+str(time.time()*1000),setCalculation)
+            for matrixData in result:
+                template_mni_path = 'ressources/template_mni/mni_icbm152_t1_tal_nlin_asym_09a.nii'          
+                template_data = load(template_mni_path)
+                template_affine = template_data.affine
+                #template_shape = template_data.shape
+                #date = datetime.datetime.now()
+                recreate_image = Nifti1Image(matrixData, template_affine)
+                ni_image = NifImage("result_file_"+algorithm+"_"+str(time.time()*1000), recreate_image)
+                coll.add(ni_image)
+                print "Adding in collection"
+        ##############################################
+        #               Pour Graziella               #
+        #    Set créé en tant que "setCalculation"   #
+        ##############################################
+        print "collection has been successfully created"
 
     # --------------------- Action for CALCULATE button -------------------
     def runCalculation(self):
@@ -531,6 +544,9 @@ class CalculationView(QtGui.QWidget):
                                           "Impossible to execute "+algorithm+" algorithm. Please check if you have correctly entering the coefficent list")
                                           
         if algorithm=="Boolean Intersection":
+            algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+            self.console.setText(">>> \n"+output)                
+            self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
