@@ -214,16 +214,22 @@ class UI(QtGui.QMainWindow):
         niftiAction.setShortcut('Ctrl+N')
         niftiAction.triggered.connect(self.fromNiFile)
 
-        workspaceAction = QtGui.QAction('&Import workspace', self)
-        workspaceAction.setStatusTip('Import Set and ImageCollection from a workspace and add its to the current set')
-        workspaceAction.triggered.connect(self.fromWorkspace)
+        workspaceImportAction = QtGui.QAction('&Import workspace', self)
+        workspaceImportAction.setStatusTip('Import Set and ImageCollection from a workspace and add its to the current set')
+        workspaceImportAction.triggered.connect(self.fromWorkspace)
+
+        workspaceSaveAction = QtGui.QAction('&Save workspace', self)
+        workspaceSaveAction.setStatusTip('Save the current worksapce')
+        workspaceSaveAction.triggered.connect(self.workspaceSave)
+
 
         # ADDING ACTIONS TO MENUS
         fileMenu = menubar.addMenu('&Program')
         fileMenu.addAction(saveAction)
         fileMenu.addAction(exitAction)
         workspaceMenu = menubar.addMenu('&Workspace')
-        workspaceMenu.addAction(workspaceAction)
+        workspaceMenu.addAction(workspaceImportAction)
+        workspaceMenu.addAction(workspaceSaveAction)
         SetMenu = menubar.addMenu('&New Set')
         SetMenu.addAction(setAction)
         CollecMenu = menubar.addMenu('&New Collection')
@@ -263,18 +269,23 @@ class UI(QtGui.QMainWindow):
 
     def fromWorkspace(self):
         folder_path = str(QFileDialog.getExistingDirectory())
-        test = general_worspace_import_control(folder_path)
-        if test is None:
-            set = general_workspace_import(folder_path)
-            for key in set.subset_dict.keys():
-                homepage.mainview.show_set(set.subset_dict[key])
-        else:
-            err = QtGui.QMessageBox.critical(self, "Error",
-                                             "An error has occured. Bad workspace construction")
+        if (file != ""):
+                test = general_workspace_import_control(folder_path)
+                if test is None:
+                    set = general_workspace_import(folder_path)
+                    for key in set.subset_dict.keys():
+                        homepage.mainview.show_set(set.subset_dict[key])
+                else:
+                    err = QtGui.QMessageBox.critical(self, "Error","An error has occured. Bad workspace construction")
+
+    def workspaceSave(self):
+        folder_path = str(QFileDialog.getExistingDirectory())
+        general_workspace_save(folder_path)
 
         
     def showHelp(self):
         self.w = Help()
+
 
     def createSet(self):
 # -- We create a set with the name given by the user (if its free) and give it to the mainpage

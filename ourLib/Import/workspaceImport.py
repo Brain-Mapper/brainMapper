@@ -9,11 +9,13 @@
 # HISTORY
 #
 # 12 feb 2018 - Initial coding. (@yoshcraft, Raphael A.)
+# 14 feb 2018 - Add recursive_import_control function (@yoshcraft, Raphael A.)
 
 
 from ourLib.niftiHandlers.nifimage import NifImage
 import BrainMapper
 import os
+
 
 def recursive_import(folder_path, actual_set):
     list = os.listdir(folder_path)
@@ -30,6 +32,7 @@ def recursive_import(folder_path, actual_set):
                 if n == 1:
                     actual_set.add_empty_subset(item)
                     BrainMapper.sets.append(actual_set.subset_dict[item])
+                    actual_set.subset_dict[item].setParent(actual_set)
                     recursive_import(item_path, actual_set.subset_dict[item])
                 # case for the imageCollection
                 elif n == len(item_list):
@@ -37,6 +40,7 @@ def recursive_import(folder_path, actual_set):
                     for sub_item in item_list:
                         if not sub_item.startswith('.'):
                             actual_set.collection_dict[item].add(NifImage.from_file(os.path.join(item_path, sub_item)))
+
 
 def recursive_import_control(folder_path, sets):
     list = os.listdir(folder_path)
@@ -61,8 +65,6 @@ def recursive_import_control(folder_path, sets):
                     return False
             else:
                 return False
-
-# def import_workspace_control(folder_path,sets, validity):
 
 
 

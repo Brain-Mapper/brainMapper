@@ -103,6 +103,9 @@ class NifImage(object):
     def get_img_class(self):
         return self.nib_image.__class__
 
+    def get_nib_image(self):
+        return self.nib_image
+
     def get_copy_img_data(self, finite_values=False):
         """
         Get the image data safely by using copy.deepcopy() so that if we modify
@@ -138,6 +141,8 @@ class NifImage(object):
     def save_to_file(self, folder_path):
         self.nib_image.to_filename(os.path.join(folder_path, self.filename))
 
+    def get_name(self):
+        return self.filename
 
     def get_img_data(self):
         data = self.nib_image.get_data()

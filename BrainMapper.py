@@ -18,6 +18,7 @@ from ourLib.niftiHandlers.set import Set
 
 from ourLib.dataExtraction import extractor as xt
 from ourLib.dataExtraction.usable_data import UsableDataSet as uds
+from ourLib.dataExtraction.image_recreation import image_recreation
 from ourLib import clustering as clust
 from ourLib import calculations as calcul
 from ourLib.Import import excelImport as imp
@@ -515,13 +516,16 @@ def rmClusterResultSets(s):
 def simple_import(csv_file_path, template_mni_path):
     coll = imp.simple_import(csv_file_path, template_mni_path, currentSet)
     add_coll(coll)
+    currentSet.add_collection(coll)
     return coll
+
 
 def general_workspace_import(folder_path):
     ws.recursive_import(folder_path, currentSet)
     return currentSet
 
-def general_worspace_import_control(folder_path):
+
+def general_workspace_import_control(folder_path):
 
     sets_name = []
     for set in sets:
@@ -529,11 +533,28 @@ def general_worspace_import_control(folder_path):
     test = ws.recursive_import_control(folder_path, sets_name)
     return test
 
-def workspace_save(folder_path):
-    set_no_add = sets
-    set_already_add = []
 
-    #TODO set creation
+def general_workspace_save(folder_path):
+    for set in sets:
+        if set.getParent() is None:
+            recursive_workspace_save(folder_path, set)
+
+
+def recursive_workspace_save(folder_path, usable_set):
+    name = usable_set.get_name()
+    new_folder_set_path = os.path.join(folder_path, name)
+
+    os.makedirs(new_folder_set_path)
+    for key in usable_set.collection_dict.keys():
+        collection_name = usable_set.collection_dict[key].get_name()
+        new_folder_collection_path = os.path.join(new_folder_set_path, collection_name)
+
+        os.makedirs(new_folder_collection_path)
+
+        image_recreation(new_folder_collection_path,usable_set.collection_dict[key])
+
+    for key in usable_set.subset_dict.keys():
+        recursive_workspace_save(new_folder_set_path, usable_set.subset_dict[key])
 
 
 
