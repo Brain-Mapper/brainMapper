@@ -36,6 +36,7 @@ currentUsableDataset = None
 
 sets = []  # List of all sets (and sub sets) created (usefull to know if a name is already used)
 clusteringsets = []  # List of sets created as a result for clustering, permit to remember wich one to create
+calculsets = []  # List of sets created as a result for calculation, permit to remember wich one to create
 currentSet = None  # The current set shown in main view
 currentVizu = None  # The current collections shown in main view
 
@@ -541,3 +542,22 @@ def simple_import(csv_file_path, template_mni_path):
 
 def makePoints(clustering_usable_dataset, label):
     return uds.extract_points(clustering_usable_dataset, label)
+
+def makeCalculResultSet(res_set):
+    add_set(res_set)
+    calculsets.append(res_set)
+
+def getCalculResultSets():
+    """
+    :return: Global variable calculation sets, containing the calculation results as a set
+    """
+    return calculsets
+
+
+def rmCalculResultSets(s):
+    """
+    Remove a set from calculation results set
+    :param s: The set to remove
+    :return: Nothing
+    """
+    calculsets.remove(s)

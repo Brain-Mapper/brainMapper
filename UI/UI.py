@@ -136,6 +136,7 @@ class HomePage(QWidget):
         self.mainview.showCalcul.connect(partial(self.stack.setCurrentWidget, self.calculation))
         # -- when calculation widget emits signal showMain, change current Widget in stack to main view widget
         self.calculation.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
+        self.calculation.showMain.connect(self.updateMainCalcul)
 
         # Set current widget to main view by default
         self.stack.setCurrentWidget(self.mainview)
@@ -153,6 +154,9 @@ class HomePage(QWidget):
 
     def updateMainCluster(self):
         self.mainview.updateClusterRes()
+
+    def updateMainCalcul(self):
+        self.mainview.updateCalculRes()
 
     def updateExportView(self):
         self.export.set_usable_data_set(get_current_usableDataset())

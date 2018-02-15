@@ -490,12 +490,8 @@ class CalculationView(QtGui.QWidget):
                 recreate_image = Nifti1Image(matrixData, template_affine)
                 ni_image = NifImage("result_file_"+algorithm+"_"+str(time.time()*1000), recreate_image)
                 coll.add(ni_image)
-                print "Adding in collection"
-        ##############################################
-        #               Pour Graziella               #
-        #    Set cree en tant que "setCalculation"   #
-        ##############################################
-        print "collection has been successfully created"
+            setCalculation.add_collection(coll)
+            makeCalculResultSet(setCalculation)
 
     # --------------------- Action for CALCULATE button -------------------
     def runCalculation(self):

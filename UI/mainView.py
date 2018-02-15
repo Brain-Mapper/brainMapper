@@ -408,7 +408,16 @@ class SetAccessBar(QtGui.QTabWidget):
                 add_coll(c)
             self.tab2.vbox2.addWidget(s)
             rmClusterResultSets(j)
-        
+
+    def add3(self):
+        for j in getCalculResultSets():
+            s = SetButton(j,self)
+            for c in j.get_all_nifti_set():
+                s.vizu.add(c)
+                add_coll(c)
+            self.tab3.vbox3.addWidget(s)
+            rmCalculResultSets(j)
+    
     def update(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
         items = (self.tab1.vbox.itemAt(j).widget() for j in range(self.tab1.vbox.count()))
@@ -645,4 +654,7 @@ class MainView(QtGui.QWidget):
 
     def updateClusterRes(self):
         self.setAccessBox.add2()
+
+    def updateCalculRes(self):
+        self.setAccessBox.add3()
 
