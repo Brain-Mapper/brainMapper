@@ -561,3 +561,14 @@ def rmCalculResultSets(s):
     :return: Nothing
     """
     calculsets.remove(s)
+
+
+def rmAllCalculResultSets():
+    """
+    Remove all sets from calculation results set
+    :return: Nothing
+    """
+    for i in getCalculResultSets():
+        calculsets.remove(i)
+    for i in getCalculResultSets():
+        calculsets.remove(i)
