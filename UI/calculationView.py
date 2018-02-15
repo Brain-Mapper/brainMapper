@@ -477,24 +477,19 @@ class CalculationView(QtGui.QWidget):
         choice.setStandardButtons(QMessageBox.Cancel | QMessageBox.Save)
         wantToSave = choice.exec_()
         if wantToSave == QtGui.QMessageBox.Save:
-            ########## creation set
-            setCalculation = Set("calc_"+str(time.time()*1000))
-            ########## creation nifticolelction
-            coll = ImageCollection("coll_"+algorithm+"_"+str(time.time()*1000),setCalculation)
+            setCalculation = Set("calc_")
+            setCalculation.set_name("calc_"+str(id(setCalculation)))
+            coll = ImageCollection("coll_",setCalculation)
+            coll.set_name("coll_"+str(id(coll)))
             for matrixData in result:
                 template_mni_path = 'ressources/template_mni/mni_icbm152_t1_tal_nlin_asym_09a.nii'          
                 template_data = load(template_mni_path)
                 template_affine = template_data.affine
-                #template_shape = template_data.shape
-                #date = datetime.datetime.now()
                 recreate_image = Nifti1Image(matrixData, template_affine)
-                ni_image = NifImage("result_file_"+algorithm+"_"+str(time.time()*1000), recreate_image)
+                ni_image = NifImage(""+str(time.time()*1000), recreate_image)
+                ni_image.set_filename("file_"+algorithm+"_"+str(id(ni_image)))             
                 coll.add(ni_image)
                 print "Adding in collection"
-        ##############################################
-        #               Pour Graziella               #
-        #    Set cree en tant que "setCalculation"   #
-        ##############################################
         print "collection has been successfully created"
 
     # --------------------- Action for CALCULATE button -------------------
