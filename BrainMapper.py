@@ -63,7 +63,7 @@ def open_nifti(path):
 
 def do_image_collection(files):
     """
-    Create an image collection from a lits of file path
+    Create an image collection from a list of file paths
     :param files: list of strings (file paths)
     :return: ImageCollection instance
     """
@@ -74,7 +74,10 @@ def do_image_collection(files):
     name = name[1]
     coll.set_name(name[:-1])
     for file in files:
-        filename = unicode(file)
+
+        # For french language, encode to latin1 -> to be able to take files with special characters of french in their file path
+        filename = file.toLatin1().data()
+        
         image = open_nifti(filename)
         coll.add(image)
     add_coll(coll)  # We add the collection create to selected by default

@@ -37,8 +37,9 @@ def simple_import(csv_file_path, template_mni_path, currentSet):
     :param template_affine:
     :return: imageCollection
     """
-    
-    filename = unicode(csv_file_path)
+
+    # For french language, encode to latin1 -> to be able to take files with special characters of french in their file path
+    filename = csv_file_path.toLatin1().data()
     file = open(filename, "rb")
     print(1)
 
