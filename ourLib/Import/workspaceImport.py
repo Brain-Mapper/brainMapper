@@ -13,11 +13,12 @@
 
 
 from ourLib.niftiHandlers.nifimage import NifImage
+from ourLib.niftiHandlers.set import Set
 import BrainMapper
 import os
 
 
-def recursive_import(folder_path, actual_set):
+def recursive_import(folder_path, actual_set, depth):
     list = os.listdir(folder_path)
     for item in list:
         if not item.startswith('.'):
@@ -33,10 +34,16 @@ def recursive_import(folder_path, actual_set):
                         hn = hn + 1
                 # because whe have hn hidden file
                 if n == hn:
-                    actual_set.add_empty_subset(item)
-                    BrainMapper.sets.append(actual_set.subset_dict[item])
-                    actual_set.subset_dict[item].setParent(actual_set)
-                    recursive_import(item_path, actual_set.subset_dict[item])
+                    # root place, no need to have parent
+                    if depth != 0:
+                        actual_set.add_empty_subset(item)
+                        BrainMapper.sets.append(actual_set.subset_dict[item])
+                        actual_set.subset_dict[item].setParent(actual_set)
+                        recursive_import(item_path, actual_set.subset_dict[item], depth + 1)
+                    else:
+                        new_set = Set(item)
+                        BrainMapper.sets.append(new_set)
+                        recursive_import(item_path, new_set, depth + 1)
                 # case for the imageCollection
                 elif n == len(item_list):
                     actual_set.add_empty_collection(item, actual_set)

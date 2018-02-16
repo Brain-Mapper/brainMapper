@@ -521,7 +521,7 @@ def simple_import(csv_file_path, template_mni_path):
 
 
 def general_workspace_import(folder_path):
-    ws.recursive_import(folder_path, currentSet)
+    ws.recursive_import(folder_path, currentSet, 0)
     return currentSet
 
 
@@ -536,7 +536,7 @@ def general_workspace_import_control(folder_path):
 
 def general_workspace_save(folder_path):
     for set in sets:
-        if set.getParent() is None:
+        if set.getParent() is None :
             recursive_workspace_save(folder_path, set)
 
 

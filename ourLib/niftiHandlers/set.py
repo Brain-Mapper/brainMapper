@@ -218,6 +218,9 @@ class Set(object):
     def setParent(self, parent):
         self.parent = parent
 
+    def getParentName(self):
+        return self.parent.get_name()
+
     def getParent(self):
         return self.parent
 
