@@ -40,8 +40,7 @@ def simple_import(csv_file_path, template_mni_path, currentSet):
 
     # For french language, encode to latin1 -> to be able to take files with special characters of french in their file path
     filename = csv_file_path.toLatin1().data()
-    file = open(filename, "rb")
-    print(1)
+    file = open(filename, "rb", encoding='ISO-8859-1')
 
     simple_header = [
         u'File_Name_Nifti',
