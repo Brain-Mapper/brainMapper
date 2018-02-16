@@ -247,7 +247,6 @@ class UI(QtGui.QMainWindow):
 
 # -- We create a collection with the list of images the user selected and give it to the main view and the edit view
 
-
     def fromExcel(self):
         file = QFileDialog.getOpenFileName()
         if (file != ""):
