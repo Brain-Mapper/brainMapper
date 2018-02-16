@@ -11,7 +11,6 @@
 # 28 november 2017 - Initial design and coding. (@Graziella-Husson, Graziella Husson)
 # 12 february 2018 - Added documentation (@vz-chameleon, Valentina Zelaya)
 
-
 from ourLib.niftiHandlers.nifimage import NifImage
 from ourLib.niftiHandlers.imagecollection import ImageCollection
 from ourLib.niftiHandlers.set import Set
@@ -75,7 +74,8 @@ def do_image_collection(files):
     name = name[1]
     coll.set_name(name[:-1])
     for file in files:
-        image = open_nifti(str(file))
+        filename = unicode(file)
+        image = open_nifti(filename)
         coll.add(image)
     add_coll(coll)  # We add the collection create to selected by default
     currentSet.add_collection(coll)  # We add the collection created in the current set
