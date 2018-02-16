@@ -9,7 +9,11 @@
 # HISTORY
 #
 # 12 feb 2018 - Initial coding. (@yoshcraft, Raphael A.)
+# encoding=utf8  
+import sys  
 
+reload(sys)  
+sys.setdefaultencoding('utf8')
 from nibabel import Nifti1Image,load
 from numpy import zeros
 from csv import reader as csv_reader
@@ -33,8 +37,10 @@ def simple_import(csv_file_path, template_mni_path, currentSet):
     :param template_affine:
     :return: imageCollection
     """
-    file = open(csv_file_path, "rb")
-    print(1)
+
+    # For french language, encode to latin1 -> to be able to take files with special characters of french in their file path
+    filename = csv_file_path.toLatin1().data()
+    file = open(filename, "rb", encoding='ISO-8859-1')
 
     simple_header = [
         u'File_Name_Nifti',
@@ -92,7 +98,6 @@ def simple_import(csv_file_path, template_mni_path, currentSet):
 
             # recreate nifti image from this points
             for key in point_dict.keys():
-
                 recreate_affine = template_affine
                 recreate_data = zeros(template_shape)
 
@@ -100,7 +105,7 @@ def simple_import(csv_file_path, template_mni_path, currentSet):
                     recreate_data[point[0], point[1], point[2]] = point[3]
 
                 recreate_image = Nifti1Image(recreate_data, recreate_affine)
-                ni_image = NifImage(key + ".csv", recreate_image)
+                ni_image = NifImage(unicode(str(key)) + ".csv", recreate_image)
 
                 # put nifti images into a imageCollection
                 coll.add(ni_image)

@@ -11,7 +11,6 @@
 # 28 november 2017 - Initial design and coding. (@Graziella-Husson, Graziella Husson)
 # 12 february 2018 - Added documentation (@vz-chameleon, Valentina Zelaya)
 
-
 from ourLib.niftiHandlers.nifimage import NifImage
 from ourLib.niftiHandlers.imagecollection import ImageCollection
 from ourLib.niftiHandlers.set import Set
@@ -68,7 +67,7 @@ def open_nifti(path):
 
 def do_image_collection(files):
     """
-    Create an image collection from a lits of file path
+    Create an image collection from a list of file paths
     :param files: list of strings (file paths)
     :return: ImageCollection instance
     """
@@ -79,7 +78,11 @@ def do_image_collection(files):
     name = name[1]
     coll.set_name(name[:-1])
     for file in files:
-        image = open_nifti(str(file))
+
+        # For french language, encode to latin1 -> to be able to take files with special characters of french in their file path
+        filename = file.toLatin1().data()
+        
+        image = open_nifti(filename)
         coll.add(image)
     add_coll(coll)  # We add the collection create to selected by default
     currentSet.add_collection(coll)  # We add the collection created in the current set
