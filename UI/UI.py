@@ -218,10 +218,22 @@ class UI(QtGui.QMainWindow):
         niftiAction.setShortcut('Ctrl+N')
         niftiAction.triggered.connect(self.fromNiFile)
 
+        workspaceImportAction = QtGui.QAction('&Import workspace', self)
+        workspaceImportAction.setStatusTip('Import Set and ImageCollection from a workspace and add its to the current set')
+        workspaceImportAction.triggered.connect(self.fromWorkspace)
+
+        workspaceSaveAction = QtGui.QAction('&Save workspace', self)
+        workspaceSaveAction.setStatusTip('Save the current worksapce')
+        workspaceSaveAction.triggered.connect(self.workspaceSave)
+
+
         # ADDING ACTIONS TO MENUS
         fileMenu = menubar.addMenu('&Program')
         fileMenu.addAction(saveAction)
         fileMenu.addAction(exitAction)
+        workspaceMenu = menubar.addMenu('&Workspace')
+        workspaceMenu.addAction(workspaceImportAction)
+        workspaceMenu.addAction(workspaceSaveAction)
         SetMenu = menubar.addMenu('&New Set')
         SetMenu.addAction(setAction)
         CollecMenu = menubar.addMenu('&New Collection')
@@ -258,9 +270,37 @@ class UI(QtGui.QMainWindow):
             except:
                 err = QtGui.QMessageBox.critical(self, "Error",
                                                  "An error has occured. Maybe you tried to open a non-CSV file")
+
+    def fromWorkspace(self):
+        folder_path = str(QFileDialog.getExistingDirectory())
+        if (file != ""):
+                test = general_workspace_import_control(folder_path)
+                print test
+                if test is None:
+                    general_workspace_import(folder_path)
+                    for key in get_workspace_set():
+                        homepage.mainview.show_set(key)
+                        rm_workspace_set(key)
+                    # Problem to fix : the list is not properly clean, if we don't do rm all, smthg is left in the list...
+##                    print "list before rm all"
+##                    for i in get_workspace_set():
+##                        print i
+                    rm_all_workspace_set()
+##                    print "list"
+##                    for i in get_workspace_set():
+##                        print i
+                        
+                else:
+                    err = QtGui.QMessageBox.critical(self, "Error","An error has occured. " + test)
+
+    def workspaceSave(self):
+        folder_path = str(QFileDialog.getExistingDirectory())
+        general_workspace_save(folder_path)
+
         
     def showHelp(self):
         self.w = Help()
+
 
     def createSet(self):
 # -- We create a set with the name given by the user (if its free) and give it to the mainpage

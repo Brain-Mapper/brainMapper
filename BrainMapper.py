@@ -18,9 +18,11 @@ from ourLib.niftiHandlers.set import Set
 
 from ourLib.dataExtraction import extractor as xt
 from ourLib.dataExtraction.usable_data import UsableDataSet as uds
+from ourLib.dataExtraction.image_recreation import image_recreation
 from ourLib import clustering as clust
 from ourLib import calculations as calcul
-from ourLib.excelImport import excelImport as imp
+from ourLib.Import import excelImport as imp
+from ourLib.Import import workspaceImport as ws
 
 import os
 import platform
@@ -35,6 +37,7 @@ toRM = []  # Contains all images to remove in edit view (can be used somewhere e
 currentUsableDataset = None
 
 sets = []  # List of all sets (and sub sets) created (usefull to know if a name is already used)
+workspace_sets = []  # List of all sets (and sub sets) created by workspace import
 clusteringsets = []  # List of sets created as a result for clustering, permit to remember wich one to create
 calculsets = []  # List of sets created as a result for calculation, permit to remember wich one to create
 currentSet = None  # The current set shown in main view
@@ -47,6 +50,7 @@ with open('ressources/clustering_data/clustering_algorithms_available.json', 'r'
 
 # Global variable for currently selected clustering method
 currentClusteringMethod = None
+
 
 # Global variables for calculation results
 # currentCalculationResult = None
@@ -92,7 +96,7 @@ def add_coll(coll):
     for i in selected:
         if i.name == coll.name:
             found = True
-    if not found :
+    if not found:
         selected.append(coll)
 
 
@@ -106,7 +110,7 @@ def rm_coll(coll):
     for i in selected:
         if i.name == coll.name:
             found = True
-    if found :
+    if found:
         selected.remove(coll)
 
 
@@ -212,7 +216,7 @@ def run_calculation(selectedAlgorithm, nifti_collection, arguments):
     if selectedAlgorithm == "Entropy":
         file_result, output = calcul.entropie_opperation(nifti_collection)
     if selectedAlgorithm == "Erosion":
-        file_result, output = calcul.erosion_opperation(nifti_collection,arguments)
+        file_result, output = calcul.erosion_opperation(nifti_collection, arguments)
     return file_result, output
 
 
@@ -462,15 +466,16 @@ def get_all_sets():
     """
     return sets
 
+
 def getSetByName(name):
     """
     :return: the set that have the name 'name' in sets list. If it doesn't exist, return None
     """
     for i in sets:
-        if i.get_name() == name :
+        if i.get_name() == name:
             return i
     return None
-    
+
 
 def setColNameInSet(name):
     """
@@ -536,18 +541,25 @@ def rmClusterResultSets(s):
     """
     clusteringsets.remove(s)
 
+
 # ---- IMPORT ----
+
+
 def simple_import(csv_file_path, template_mni_path):
     coll = imp.simple_import(csv_file_path, template_mni_path, currentSet)
     add_coll(coll)
+    currentSet.add_collection(coll)
     return coll
+
 
 def makePoints(clustering_usable_dataset, label):
     return uds.extract_points(clustering_usable_dataset, label)
 
+
 def makeCalculResultSet(res_set):
     add_set(res_set)
     calculsets.append(res_set)
+
 
 def getCalculResultSets():
     """
@@ -574,3 +586,73 @@ def rmAllCalculResultSets():
         calculsets.remove(i)
     for i in getCalculResultSets():
         calculsets.remove(i)
+
+
+def general_workspace_import(folder_path):
+    ws.recursive_import(folder_path, currentSet, 0)
+
+
+def general_workspace_import_control(folder_path):
+    sets_name = []
+    for set in sets:
+        sets_name.append(set.get_name())
+    test = ws.recursive_import_control(folder_path, sets_name)
+    return test
+
+
+def general_workspace_save(folder_path):
+    for set in sets:
+        if set.getParent() is None:
+            recursive_workspace_save(folder_path, set)
+
+
+def recursive_workspace_save(folder_path, usable_set):
+    name = usable_set.get_name()
+    new_folder_set_path = os.path.join(folder_path, name)
+
+    if not os.path.exists(new_folder_set_path):
+        os.makedirs(new_folder_set_path)
+
+    for key in usable_set.collection_dict.keys():
+        collection_name = usable_set.collection_dict[key].get_name()
+        new_folder_collection_path = os.path.join(new_folder_set_path, collection_name)
+
+        if not os.path.exists(new_folder_collection_path):
+            os.makedirs(new_folder_collection_path)
+
+        image_recreation(new_folder_collection_path, usable_set.collection_dict[key])
+
+    for key in usable_set.subset_dict.keys():
+        recursive_workspace_save(new_folder_set_path, usable_set.subset_dict[key])
+
+
+def add_workspace_set(my_set):
+    """
+    Add my_set to the workspace sets list
+    :param my_set: Set Instance to add
+    :return: Nothing
+    """
+    workspace_sets.append(my_set)
+
+
+def rm_all_workspace_set():
+    """
+    Remove all sets from the workspace sets list
+    :return: Nothing
+    """
+    global workspace_sets
+    workspace_sets = []
+
+
+def rm_workspace_set(my_set):
+    """
+    Remove all sets from the workspace sets list
+    :param my_set: Set Instance to remove
+    :return: Nothing
+    """
+    global workspace_sets
+    workspace_sets.remove(my_set)
+
+
+def get_workspace_set():
+    return workspace_sets
