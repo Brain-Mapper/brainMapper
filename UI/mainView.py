@@ -29,6 +29,7 @@ from BrainMapper import *
 import resources
 import ourLib.ExcelExport.excelExport as ee
 import time
+from ourLib.dataExtraction.image_recreation import *
 
 
 class CollButton(QtGui.QCheckBox):
@@ -499,6 +500,10 @@ class MainView(QtGui.QWidget):
             if ret == QtGui.QMessageBox.Apply:
 
                 if nifti_opt.isChecked():
+
+                    folder_path = str(QFileDialog.getExistingDirectory())
+                    image_recreation_from_list(folder_path, selected)
+
                     export_nifti()
 
                 elif excel_opt.isChecked():
