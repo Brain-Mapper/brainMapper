@@ -326,7 +326,10 @@ class CalculationView(QtGui.QWidget):
         options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
-
+        layout.addWidget(QLabel("Number of Iteration :"))
+        self.paramErosion = QLineEdit("1")
+        layout.addWidget(self.paramErosion)
+        
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(descrip)
@@ -540,9 +543,6 @@ class CalculationView(QtGui.QWidget):
                                           "Impossible to execute "+algorithm+" algorithm. Please check if you have correctly entering the coefficent list")
                                           
         if algorithm=="Boolean Intersection":
-            algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
-            self.console.setText(">>> \n"+output)                
-            self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
@@ -585,6 +585,14 @@ class CalculationView(QtGui.QWidget):
         if algorithm=="Entropy":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
+                self.console.setText(">>> \n"+output)                
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm")
+        if algorithm=="Erosion":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, self.paramErosion.text() )
                 self.console.setText(">>> \n"+output)                
                 self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:

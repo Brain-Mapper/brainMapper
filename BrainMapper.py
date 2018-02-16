@@ -211,6 +211,8 @@ def run_calculation(selectedAlgorithm, nifti_collection, arguments):
         file_result, output = calcul.normalization_opperation(nifti_collection)
     if selectedAlgorithm == "Entropy":
         file_result, output = calcul.entropie_opperation(nifti_collection)
+    if selectedAlgorithm == "Erosion":
+        file_result, output = calcul.erosion_opperation(nifti_collection,arguments)
     return file_result, output
 
 

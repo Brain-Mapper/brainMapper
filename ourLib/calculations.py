@@ -15,6 +15,7 @@
 import numpy as np
 import nibabel as nib
 from os import path
+from scipy import ndimage
 
 from dataExtraction.extractor import extract
 
@@ -115,7 +116,21 @@ def mean_opperation(list_of_NifImage_obj):
         list_of_NifImage_obj) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
     return ([file_Nifti_clusterised], output)
-
+    
+    
+def erosion_opperation(list_of_NifImage_obj,argument):#,nbIteration):
+    (lx, ly, lz) = max_shape(list_of_NifImage_obj)  
+    result=[]
+    for file in list_of_NifImage_obj:
+        file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
+        data = file.get_copy_img_data()
+        file_Nifti_clusterised = ndimage.binary_erosion(data, iterations=int(argument))
+        result.append(file_Nifti_clusterised.astype(dtype='f'))
+    print('Erosion process is successfull !')
+    output = "[Algorithm] > Addition\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
+        list_of_NifImage_obj) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
+        lx) + ", " + str(ly) + ", " + str(lz) + "}"
+    return (result, output) 
 
 
 def or_opperation(list_of_NifImage_obj):
@@ -324,3 +339,5 @@ def entropie_opperation(Nifti_file_collection):
     print('Entropy process is successfull !')
 
     return (None, output)
+    
+    
