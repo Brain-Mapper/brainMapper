@@ -37,6 +37,7 @@ toRM = []  # Contains all images to remove in edit view (can be used somewhere e
 currentUsableDataset = None
 
 sets = []  # List of all sets (and sub sets) created (usefull to know if a name is already used)
+workspace_sets = []  # List of all sets (and sub sets) created by workspace import
 clusteringsets = []  # List of sets created as a result for clustering, permit to remember wich one to create
 currentSet = None  # The current set shown in main view
 currentVizu = None  # The current collections shown in main view
@@ -522,8 +523,6 @@ def simple_import(csv_file_path, template_mni_path):
 
 def general_workspace_import(folder_path):
     ws.recursive_import(folder_path, currentSet, 0)
-    return currentSet
-
 
 def general_workspace_import_control(folder_path):
 
@@ -559,7 +558,32 @@ def recursive_workspace_save(folder_path, usable_set):
     for key in usable_set.subset_dict.keys():
         recursive_workspace_save(new_folder_set_path, usable_set.subset_dict[key])
 
+def add_workspace_set(my_set):
+    """
+    Add my_set to the workspace sets list
+    :param my_set: Set Instance to add
+    :return: Nothing
+    """
+    workspace_sets.append(my_set)
 
 
+def rm_all_workspace_set():
+    """
+    Remove all sets from the workspace sets list
+    :return: Nothing
+    """
+    global workspace_sets
+    workspace_sets = []
 
+def rm_workspace_set(my_set):
+    """
+    Remove all sets from the workspace sets list
+    :param my_set: Set Instance to remove
+    :return: Nothing
+    """
+    global workspace_sets
+    workspace_sets.remove(my_set)
+
+def get_workspace_set():
+    return workspace_sets
 
