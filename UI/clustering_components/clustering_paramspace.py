@@ -49,7 +49,10 @@ class ParametersBox(QtGui.QGroupBox):
 
     def get_user_params(self):
         self.save_user_params()
-        return self.user_params
+        if self.user_params is not None :
+            return self.user_params
+        else:
+            return None
 
 
 class ParameterNameAndValue(QtGui.QGroupBox):
@@ -214,7 +217,9 @@ class ClusteringParameters(QtGui.QWidget):
             self.container_box.addWidget(self.param_box)
 
     def export_user_params(self):
-        return self.param_box.get_user_params()
+        if self.param_box is not None:
+            return self.param_box.get_user_params()
+        else: return None
 
 
 # A custom widget to stack the ClusteringParameters Widget and the ScripEnvironnement Widget
