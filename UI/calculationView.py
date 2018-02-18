@@ -40,13 +40,17 @@ class CalculationView(QtGui.QWidget):
         self.leftlist.insertItem(1, 'Boolean Intersection')
         self.leftlist.insertItem(2, 'Boolean Union')
         self.leftlist.insertItem(3, 'Centroide')
-        self.leftlist.insertItem(4, 'Dilation')
-        self.leftlist.insertItem(5, 'Entropy')
-        self.leftlist.insertItem(6, 'Erosion')
-        self.leftlist.insertItem(7, 'Linear combination')
-        self.leftlist.insertItem(8, 'Mask')
-        self.leftlist.insertItem(9, 'Mean')
-        self.leftlist.insertItem(10, 'Normalization')
+        self.leftlist.insertItem(4, 'Closing')
+        self.leftlist.insertItem(5, 'Dilation')
+        self.leftlist.insertItem(6, 'Entropy')
+        self.leftlist.insertItem(7, 'Erosion')
+        self.leftlist.insertItem(8, 'Linear combination')
+        self.leftlist.insertItem(9, 'Mask')
+        self.leftlist.insertItem(10, 'Mean')
+        self.leftlist.insertItem(11, 'Normalization')
+        self.leftlist.insertItem(12, 'Opening')
+        self.leftlist.insertItem(13, 'Threshold')
+        
 
         self.stack1 = QWidget()
         self.stack2 = QWidget()
@@ -59,6 +63,9 @@ class CalculationView(QtGui.QWidget):
         self.stack9 = QWidget()
         self.stack10 = QWidget()
         self.stack11 = QWidget()
+        self.stack12 = QWidget()
+        self.stack13 = QWidget()
+        self.stack14 = QWidget()
 
         self.stack1UI()
         self.stack2UI()
@@ -71,6 +78,9 @@ class CalculationView(QtGui.QWidget):
         self.stack9UI()
         self.stack10UI()
         self.stack11UI()
+        self.stack12UI()
+        self.stack13UI()
+        self.stack14UI()
         
         self.Stack = QStackedWidget(self)
         self.Stack.addWidget(self.stack1)
@@ -84,6 +94,9 @@ class CalculationView(QtGui.QWidget):
         self.Stack.addWidget(self.stack9)
         self.Stack.addWidget(self.stack10)
         self.Stack.addWidget(self.stack11)
+        self.Stack.addWidget(self.stack12)
+        self.Stack.addWidget(self.stack13)
+        self.Stack.addWidget(self.stack14)
 
         self.goHomeButton = QtGui.QPushButton('Go back')
         self.goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
@@ -259,8 +272,8 @@ class CalculationView(QtGui.QWidget):
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
         self.stack4.setLayout(vbox)
-
-    # ----- Dilatation ---------------------------
+    
+    # ----- Closing ------------------------------------
     def stack5UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
@@ -269,10 +282,50 @@ class CalculationView(QtGui.QWidget):
         options = QLabel("Arguments")
         options.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(options)
-
+        layout.addWidget(QLabel("Number of Iteration :"))
+        self.paramClosing = QLineEdit("1")
+        layout.addWidget(self.paramClosing)
+        
         descrip = QLabel("Description")
         descrip.setStyleSheet("background-color: #FFCC33;")
         layout.addRow(descrip)
+
+        descbox = QtGui.QVBoxLayout()
+        description = QTextEdit("TO WRITE")
+        description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        description.setReadOnly(True)
+        
+        descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("Opening(n) = Erosion(Dilation(n))")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
+        description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
+        vbox.addLayout(descbox)
+        self.stack5.setLayout(vbox)
+
+    # ----- Dilatation ---------------------------
+    def stack6UI(self):
+        vbox = QVBoxLayout(self)
+        layout = QFormLayout()
+        vbox.addLayout(layout)
+
+        options = QLabel("Arguments")
+        options.setStyleSheet("background-color: #FFCC33;")
+        layout.addRow(options)
+        layout.addWidget(QLabel("Number of Iteration :"))
+        self.paramDilation = QLineEdit("1")
+        layout.addWidget(self.paramDilation)
+        
+        descrip = QLabel("Description")
+        descrip.setStyleSheet("background-color: #FFCC33;")
+        layout.addRow(descrip)
+        
 
         descbox = QtGui.QVBoxLayout()
         description = QTextEdit("NO IMPLEMENTED")
@@ -282,10 +335,10 @@ class CalculationView(QtGui.QWidget):
         descbox.addWidget(description)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
-        self.stack5.setLayout(vbox)
+        self.stack6.setLayout(vbox)
 
     # ----- Entropy -----------------------------
-    def stack6UI(self):
+    def stack7UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
         vbox.addLayout(layout)
@@ -315,10 +368,10 @@ class CalculationView(QtGui.QWidget):
         descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
-        self.stack6.setLayout(vbox)
+        self.stack7.setLayout(vbox)
 
     # ----- Erosion ------------------------------
-    def stack7UI(self):
+    def stack8UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
         vbox.addLayout(layout)
@@ -342,10 +395,10 @@ class CalculationView(QtGui.QWidget):
         descbox.addWidget(description)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
-        self.stack7.setLayout(vbox)
+        self.stack8.setLayout(vbox)
 
     # ----- Linear combination ---------------------------
-    def stack8UI(self):
+    def stack9UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
         vbox.addLayout(layout)
@@ -375,9 +428,9 @@ class CalculationView(QtGui.QWidget):
         descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
-        self.stack8.setLayout(vbox)
+        self.stack9.setLayout(vbox)
     # ----- Mask ---------------------------------
-    def stack9UI(self):
+    def stack10UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
         vbox.addLayout(layout)
@@ -407,10 +460,10 @@ class CalculationView(QtGui.QWidget):
         descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
-        self.stack9.setLayout(vbox)
+        self.stack10.setLayout(vbox)
         
     # ----- Mean ---------------------------------
-    def stack10UI(self):
+    def stack11UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
         vbox.addLayout(layout)
@@ -440,10 +493,10 @@ class CalculationView(QtGui.QWidget):
         descbox.addWidget(calcul)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
-        self.stack10.setLayout(vbox)
+        self.stack11.setLayout(vbox)
 
     # ----- Normalization ------------------------------------
-    def stack11UI(self):
+    def stack12UI(self):
         vbox = QVBoxLayout(self)
         layout = QFormLayout()
         vbox.addLayout(layout)
@@ -464,9 +517,84 @@ class CalculationView(QtGui.QWidget):
         descbox.addWidget(description)
         description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
         vbox.addLayout(descbox)
-        self.stack11.setLayout(vbox)
+        self.stack12.setLayout(vbox)
 
+    # ----- Opening ------------------------------------
+    def stack13UI(self):
+        vbox = QVBoxLayout(self)
+        layout = QFormLayout()
+        vbox.addLayout(layout)
 
+        options = QLabel("Arguments")
+        options.setStyleSheet("background-color: #FFCC33;")
+        layout.addRow(options)
+        layout.addWidget(QLabel("Number of Iteration :"))
+        self.paramOpening = QLineEdit("1")
+        layout.addWidget(self.paramOpening)
+        
+        descrip = QLabel("Description")
+        descrip.setStyleSheet("background-color: #FFCC33;")
+        layout.addRow(descrip)
+
+        descbox = QtGui.QVBoxLayout()
+        description = QTextEdit("TO WRITE")
+        description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        description.setReadOnly(True)
+        
+        descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("Opening(n) = Dilation(Erosion(n))")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
+        description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
+        vbox.addLayout(descbox)
+        self.stack13.setLayout(vbox)    
+    
+    # ----- Threshold ------------------------------------
+    def stack14UI(self):
+        vbox = QVBoxLayout(self)
+        layout = QFormLayout()
+        vbox.addLayout(layout)
+
+        options = QLabel("Arguments")
+        options.setStyleSheet("background-color: #FFCC33;")
+        layout.addRow(options)
+        layout.addWidget(QLabel("Min :"))
+        self.thresholdMin = QLineEdit("")
+        layout.addWidget(self.thresholdMin)
+        
+        layout.addWidget(QLabel("Max :"))
+        self.thresholdMax = QLineEdit("")
+        layout.addWidget(self.thresholdMax)
+        
+        descrip = QLabel("Description")
+        descrip.setStyleSheet("background-color: #FFCC33;")
+        layout.addRow(descrip)
+
+        descbox = QtGui.QVBoxLayout()
+        description = QTextEdit("TO WRITE")
+        description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        description.setReadOnly(True)
+        
+        descbox.addWidget(description)
+        algorithm = QLabel("Example")
+        algorithm.setStyleSheet("background-color: #FFCC33;")
+        
+        calcul = QTextEdit("")
+        calcul.setText("TO WRITE")
+        calcul.setReadOnly(True)
+        calcul.setFixedHeight(70)
+        descbox.addWidget(algorithm)
+        descbox.addWidget(calcul)
+        description.setStyleSheet("background-color: #e2dfdd; padding:5px; border-radius:7px; border: solid #bdbbb6; ")
+        vbox.addLayout(descbox)
+        self.stack14.setLayout(vbox)    
+    
     def display(self, i):
         self.Stack.setCurrentIndex(i)
         
@@ -593,6 +721,38 @@ class CalculationView(QtGui.QWidget):
         if algorithm=="Erosion":
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, self.paramErosion.text() )
+                self.console.setText(">>> \n"+output)                
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm")
+        if algorithm=="Dilation":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, self.paramDilation.text() )
+                self.console.setText(">>> \n"+output)                
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm")
+        if algorithm=="Opening":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, self.paramOpening.text() )
+                self.console.setText(">>> \n"+output)                
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm")
+        if algorithm=="Closing":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, self.paramClosing.text() )
+                self.console.setText(">>> \n"+output)                
+                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
+            except:
+                QtGui.QMessageBox.warning(self, "Error",
+                                          "Impossible to execute "+algorithm+" algorithm")
+        if algorithm=="Threshold":
+            try:
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, [self.thresholdMin.text(), self.thresholdMax.text()] )
                 self.console.setText(">>> \n"+output)                
                 self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:

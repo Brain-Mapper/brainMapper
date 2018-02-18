@@ -118,7 +118,7 @@ def mean_opperation(list_of_NifImage_obj):
     return ([file_Nifti_clusterised], output)
     
     
-def erosion_opperation(list_of_NifImage_obj,argument):#,nbIteration):
+def erosion_opperation(list_of_NifImage_obj,argument):
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)  
     result=[]
     for file in list_of_NifImage_obj:
@@ -127,8 +127,50 @@ def erosion_opperation(list_of_NifImage_obj,argument):#,nbIteration):
         file_Nifti_clusterised = ndimage.binary_erosion(data, iterations=int(argument))
         result.append(file_Nifti_clusterised.astype(dtype='f'))
     print('Erosion process is successfull !')
-    output = "[Algorithm] > Addition\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
-        list_of_NifImage_obj) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
+    output = "[Algorithm] > Erosion\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
+        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = "+argument+"\n[Output] > One Nifti file with dimensions : {" + str(
+        lx) + ", " + str(ly) + ", " + str(lz) + "}"
+    return (result, output) 
+    
+def dilation_opperation(list_of_NifImage_obj,argument):
+    (lx, ly, lz) = max_shape(list_of_NifImage_obj)  
+    result=[]
+    for file in list_of_NifImage_obj:
+        file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
+        data = file.get_copy_img_data()
+        file_Nifti_clusterised = ndimage.binary_dilation(data, iterations=int(argument))
+        result.append(file_Nifti_clusterised.astype(dtype='f'))
+    print('Dilation process is successfull !')
+    output = "[Algorithm] > Dilation\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
+        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = "+argument+"\n[Output] > One Nifti file with dimensions : {" + str(
+        lx) + ", " + str(ly) + ", " + str(lz) + "}"
+    return (result, output) 
+    
+def opening_opperation(list_of_NifImage_obj,argument):
+    (lx, ly, lz) = max_shape(list_of_NifImage_obj)  
+    result=[]
+    for file in list_of_NifImage_obj:
+        file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
+        data = file.get_copy_img_data()
+        file_Nifti_clusterised = ndimage.binary_opening(data, iterations=int(argument))
+        result.append(file_Nifti_clusterised.astype(dtype='f'))
+    print('Opening process is successfull !')
+    output = "[Algorithm] > Opening\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
+        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = "+argument+"\n[Output] > One Nifti file with dimensions : {" + str(
+        lx) + ", " + str(ly) + ", " + str(lz) + "}"
+    return (result, output) 
+
+def closing_opperation(list_of_NifImage_obj,argument):
+    (lx, ly, lz) = max_shape(list_of_NifImage_obj)  
+    result=[]
+    for file in list_of_NifImage_obj:
+        file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
+        data = file.get_copy_img_data()
+        file_Nifti_clusterised = ndimage.binary_closing(data, iterations=int(argument))
+        result.append(file_Nifti_clusterised.astype(dtype='f'))
+    print('Closing process is successfull !')
+    output = "[Algorithm] > Closing\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
+        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = "+argument+"\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
     return (result, output) 
 
@@ -340,4 +382,22 @@ def entropie_opperation(Nifti_file_collection):
 
     return (None, output)
     
+def threshold_opperation(Nifti_file_collection,min=-100000,max=100000):
+    for file in Nifti_file_collection:
+
+        file_Nifti_clusterised = np.zeros(file.nib_image.shape, dtype='f')
+        list_voxels = extract(file)
+        for voxels in list_voxels:
+            x = int(voxels[0])
+            y = int(voxels[1])
+            z = int(voxels[2])
+            intensity = voxels[3]
+            if(intensity<float(min) or intensity>float(max)):
+                file_Nifti_clusterised[x][y][z] = 0
+            else:
+                file_Nifti_clusterised[x][y][z] = intensity
+    print('Threshold process is successfull !')
+    output = "[Algorithm] > Normalization\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
+        Nifti_file_collection) + "\n[Arguments] > None\n[Output] > One Nifti file for each input file"
+    return ([file_Nifti_clusterised], output) 
     

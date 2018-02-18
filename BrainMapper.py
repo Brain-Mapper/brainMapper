@@ -213,6 +213,20 @@ def run_calculation(selectedAlgorithm, nifti_collection, arguments):
         file_result, output = calcul.entropie_opperation(nifti_collection)
     if selectedAlgorithm == "Erosion":
         file_result, output = calcul.erosion_opperation(nifti_collection,arguments)
+    if selectedAlgorithm == "Dilation":
+        file_result, output = calcul.dilation_opperation(nifti_collection,arguments)
+    if selectedAlgorithm == "Opening":
+        file_result, output = calcul.opening_opperation(nifti_collection,arguments)
+    if selectedAlgorithm == "Closing":
+        file_result, output = calcul.closing_opperation(nifti_collection,arguments)
+    if selectedAlgorithm == "Threshold":
+        min = arguments[0]
+        max = arguments[1]
+        if min == "":
+            min = "-100000.0"
+        if max == "":
+            max = "100000.0"
+        file_result, output = calcul.threshold_opperation(nifti_collection,min,max)
     return file_result, output
 
 
