@@ -82,13 +82,3 @@ class ClusteringChooser(QtGui.QToolButton):
     def get_selected_method_name(self):
         return self.currently_selected
 
-
-class ClusteringResultsPopUp(QtGui.QWidget):
-    """
-    A custom popup window to display more details on clustering results
-    """
-
-    #CONSTRUCTOR
-    def __init__(self):
-        super(ClusteringResultsPopUp, self).__init__()
-        self.setWindowTitle("Clustering Results")

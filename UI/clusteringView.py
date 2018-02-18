@@ -25,7 +25,7 @@ import numpy as np
 import pyqtgraph.opengl as gl
 
 # View components' import
-from clustering_components.clustering_results import ClusteringDataTable, ClusteringGraphs
+from clustering_components.clustering_results import ClusteringDataTable, ClusteringGraphs, ClusteringResultsPopUp
 from clustering_components.clustering_paramspace import ParameterAndScriptStack
 from clustering_components.clustering_topbar import *
 
@@ -52,8 +52,8 @@ class ClusteringView(QtGui.QWidget):
         super(ClusteringView, self).__init__()
         self.clust_chooser = None
         self.table_displayer = None
-        self.param_script_stack = None
-        self.results_popup = None
+
+        self.results_popup = ClusteringResultsPopUp(':ressources/logo.png', ':ressources/app_icons_png/file-1.png')
 
         self.label = None
 
@@ -69,6 +69,9 @@ class ClusteringView(QtGui.QWidget):
         selectedMBox.addWidget(label)
         selectedMBox.addWidget(self.clust_chooser)
 
+        # --- Param/Script Env Stack ------
+        self.param_script_stack = ParameterAndScriptStack(title_style, self.clust_chooser)
+
         # - Horizontal box for go back home button
         buttonsBox= QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
@@ -82,7 +85,8 @@ class ClusteringView(QtGui.QWidget):
         detailsButton = QtGui.QPushButton('Results Details')
         detailsButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/powerpoint.png'))
         detailsButton.setStatusTip("Show more details on clustering results")
-        detailsButton.clicked.connect(self.popup_results_details)
+        detailsButton.clicked.connect(lambda: self.popup_results_details(self.clust_chooser.get_selected_method_name(),
+                                                                         self.param_script_stack.get_user_params()))
 
         goHomeButton = QtGui.QPushButton('Go back')
         goHomeButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/home-2.png'))
@@ -109,9 +113,6 @@ class ClusteringView(QtGui.QWidget):
         topBox.addLayout(selectedMBox)
         topBox.addLayout(buttonsBox)
 
-        # --- Param/Script Env Stack ------
-
-        self.param_script_stack = ParameterAndScriptStack(title_style, self.clust_chooser)
 
         # -------------- Clustering Widget -----------------------
         clustWidget = QtGui.QWidget()
@@ -227,7 +228,10 @@ class ClusteringView(QtGui.QWidget):
         self.resultsGraphs.grid.addWidget(self.resultsGraphs.graph2, 1, 1)
         self.showMain.emit()
 
-    def popup_results_details(self):
-        self.results_popup = ClusteringResultsPopUp()
-        self.results_popup.setGeometry(QRect(100, 100, 400, 200))
+    def popup_results_details(self, method_name, user_params):
+        self.results_popup.setGeometry(QRect(100, 100, 500, 300))
+
+        if self.label is not None:
+            self.results_popup.update_details(method_name, user_params, clustering_validation_indexes(self.label))
+
         self.results_popup.show()

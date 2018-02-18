@@ -30,6 +30,7 @@ class ClusteringDataTable(QtGui.QTableWidget):
 
         # The usable dataset we are displaying
         self.clustering_usable_dataset = None
+        self.assigned_cluster_labels = None
         self.setRowCount(20)
         self.setColumnCount(7)
         self.setHorizontalHeaderLabels(["Image Coll ID", "Origin filename", "X", "Y", "Z", "Intensity", "Assigned cluster"])
@@ -123,3 +124,55 @@ class ClusteringGraphs(QtGui.QWidget):
 
     def clear_graph1(self):
         self.graph1.clear()
+
+
+class ClusteringResultsPopUp(QtGui.QWidget):
+    """
+    A custom popup window to display more details on clustering results
+    """
+
+    #CONSTRUCTOR
+    def __init__(self, app_logo_path, save_icon_path):
+        super(ClusteringResultsPopUp, self).__init__()
+        self.setWindowTitle("Clustering Results")
+        self.setWindowIcon(QtGui.QIcon(app_logo_path))
+
+        vbox = QtGui.QVBoxLayout()
+        savebox = QtGui.QHBoxLayout()
+        infobox = QtGui.QHBoxLayout()
+
+        self.save_button = QtGui.QPushButton('Save to text file')
+        self.save_button.setIcon(QtGui.QIcon(save_icon_path))
+        self.save_button.setToolTip('Export validation indexes to text file')
+
+        savebox.addStretch(1)
+        savebox.addWidget(self.save_button)
+
+        self.info_panel = QtGui.QTextEdit()
+        self.info_panel.setReadOnly(True)
+
+        self.info_panel.setText("======= CLUSTERING VALIDATION INDEXES =======\n\n"
+                                "No algorithm has been applied, no indexes were computed ...")
+
+        infobox.addWidget(self.info_panel)
+        vbox.addLayout(savebox)
+        vbox.addLayout(infobox)
+
+        self.setLayout(vbox)
+
+    def update_details(self, clustering_method, user_values, validation_values):
+        self.info_panel.setText("")
+
+        self.info_panel.insertPlainText(clustering_method+"\n-----------------------------------------------------------------------------\n")
+
+        for param_name in user_values.keys():
+            self.info_panel.insertPlainText(param_name+"\t\t\t "+user_values[param_name]+"\n")
+
+        self.info_panel.insertPlainText("-----------------------------------------------------------------------------\n\n")
+        self.info_panel.insertPlainText("Validation Indexes\n-----------------------------------------------------------------------------\n")
+
+        self.info_panel.insertPlainText("Mean Silhouette : \t\t "+str(validation_values[0])+"\n\n")
+        self.info_panel.insertPlainText("Calzinski-Habaraz score: \t\t" + str(validation_values[1]) + "\n\n")
+
+
+

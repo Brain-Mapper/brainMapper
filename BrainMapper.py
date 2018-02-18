@@ -194,6 +194,19 @@ def run_clustering(selectedClusteringMethod, params_dict):
     return labels
 
 
+def clustering_validation_indexes(labels):
+    clustering_datamatrix = currentUsableDataset.export_as_clusterizable()
+
+    validation_indexes = []
+
+    # Mean silhouette
+    validation_indexes.append(clust.compute_mean_silhouette(X=clustering_datamatrix, predicted_labels=labels))
+    # Calinski-Habaraz index
+    validation_indexes.append(clust.compute_calinski_habaraz(X=clustering_datamatrix, predicted_labels=labels))
+
+    return validation_indexes
+
+
 def run_calculation(selectedAlgorithm, nifti_collection, arguments):
     if selectedAlgorithm == "Addition":
         file_result, output = calcul.addition_opperation(nifti_collection)
@@ -656,3 +669,5 @@ def rm_workspace_set(my_set):
 
 def get_workspace_set():
     return workspace_sets
+
+

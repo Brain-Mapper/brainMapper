@@ -118,6 +118,10 @@ class UsableDataSet(object):
         return self.rownum
 
     def export_as_clusterizable(self):
+        """
+        Export this data structure as an array that can be used in scikit-learn clustering algorithms
+        :return: a list of n_features-dimensional data (each row corresponds to a single data point)
+        """
         clusterizable = np.zeros(shape=(1, 4))  # An empty line of zeros to start with
 
         for udcoll in self.usable_data_list:
