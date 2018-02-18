@@ -18,5 +18,6 @@
     <file>ressources/app_icons_png/curve-arrow.png</file>
     <file>ressources/app_icons_png/up-arrow.png</file>
     <file>ressources/app_icons_png/circle.png</file>
+    <file>ressources/app_icons_png/powerpoint.png</file>
   </qresource>
 </RCC>

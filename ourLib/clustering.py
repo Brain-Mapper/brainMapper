@@ -34,17 +34,12 @@ def perform_agglomerative_clustering(param_dict, X) :
 
 def perform_DBSCAN(param_dict, X):
     dbscan = DBSCAN(eps=float(param_dict["eps"]), min_samples=int(param_dict["min_samples"]), metric=param_dict["metric"]).fit(X)
-    print dbscan.labels_
     return dbscan.labels_
 
 
 def perform_kmedoids(param_dict, X):
     distances_matrix_pairwise = compute_distances(X, param_dict['metric'])
-
-    print distances_matrix_pairwise
     medoids_result = kmedoids_cluster(X, distances_matrix_pairwise, int(param_dict["n_clusters"]))
-    print ("Results[0] : "+str(medoids_result[0]))
-    print ("Results[1] : " + str(medoids_result[1]))
     return medoids_result[0]
 
 
@@ -73,7 +68,6 @@ def kmedoids_cluster(data_matrix, distances, k=3):
     :return: array of cluster labels and latest medoids
     """
     m = distances.shape[0]  # number of points
-    print ("number of points :"+str(m))
 
     # Pick k random medoids and keep their indexes in data_matrix
     curr_medoids_index = np.array([-1] * k)
@@ -86,7 +80,6 @@ def kmedoids_cluster(data_matrix, distances, k=3):
     for index in curr_medoids_index:
         curr_medoids[c] = np.array(data_matrix[index])
         c = c+1
-    print ("current medoids init: "+str(curr_medoids))
 
     old_medoids_index = np.array([-1] * k)
     new_medoids_index = np.array([-1] * k)
@@ -96,12 +89,9 @@ def kmedoids_cluster(data_matrix, distances, k=3):
         # Assign each point to cluster with closest medoid.
         clusters = assign_points_to_clusters(curr_medoids_index, distances)
 
-        print ("clusters :" + str(clusters))
-
         # Update cluster medoids to be lowest cost point.
         for curr_medoid in curr_medoids_index:
             cluster = np.where(clusters == curr_medoid)[0]
-            print("cluster : "+str(cluster))
             new_medoids_index[curr_medoids_index == curr_medoid] = compute_new_medoid(cluster, distances)
 
         old_medoids_index[:] = curr_medoids_index[:]
@@ -111,7 +101,6 @@ def kmedoids_cluster(data_matrix, distances, k=3):
     c = 0
     for cluster_index in clusters:
         clust_i, = np.where(curr_medoids_index == cluster_index)
-        print int(clust_i)
         clusters_labels.append(int(clust_i))
         c = c+1
 

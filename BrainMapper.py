@@ -141,8 +141,6 @@ def extract_data_from_selected():
     Put this data in the global variable 'currentUsableDataSet'
     :return: Nothing. Global var 'currentUsableDataset' is modified
     """
-    for x in selected:
-        print(type(x))
     global currentUsableDataset
     currentUsableDataset = xt.extract_from_collection_list(selected)
 
@@ -403,7 +401,6 @@ def creation_date(path_to_file):
     """
     filename, file_extension = os.path.splitext(path_to_file)
     if file_extension == ".csv":
-        print(time.time())
         return time.time()
     else:
         if platform.system() == 'Windows':

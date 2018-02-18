@@ -14,7 +14,6 @@
 # 30 january 2018 - Added tabs to interface for results of calculation and clustering (@Graziella-Husson)
 # 13 february 2018 - Change of the way of exporting a to CSV (@yoshcraft, Raphael A.)
 
-import os
 from PyQt4 import QtGui
 from PyQt4.Qt import *
 from PyQt4.QtCore import pyqtSignal
@@ -53,8 +52,8 @@ class CollButton(QtGui.QCheckBox):
             d = datetime.fromtimestamp(int(round(time.time()))).strftime('%Y-%m-%d')
         label = "Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
         self.setText(label)
-        self.setStyleSheet("CollButton {spacing: 5px;border: 1px solid #cccccc;border-radius: 8px;padding: 1px 18px 1px 3px;max-width: 225%;}; CollButton::indicator {width: 13px; height: 13px;};")
-                           
+        self.setStyleSheet("CollButton {background-color : #eee; spacing: 5px;border: 2px solid #99cccc;border-radius: 8px;padding: 1px 18px 1px 3px;max-width: 225%;}; CollButton::indicator {width: 13px; height: 13px;};")
+
     def selectColl(self):
         # -- This selectColl will add or delete the collection from the selected ones
         if (self.isChecked()):
@@ -76,7 +75,7 @@ class CollButton(QtGui.QCheckBox):
                 d = datetime.fromtimestamp(int(round(time.time()))).strftime('%Y-%m-%d')
         except:
             d = datetime.fromtimestamp(int(round(time.time()))).strftime('%Y-%m-%d')
-        self.setText("Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d))        
+        self.setText("Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d))
 
 
 class CollectionsView(QtGui.QWidget):
@@ -87,14 +86,16 @@ class CollectionsView(QtGui.QWidget):
         self.j = 1
         super(CollectionsView, self).__init__()
 
-        
+
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height() / 1.4
         mainwind_w = rec.width() / 1.5
         self.setMinimumSize(QSize(mainwind_w / 1.35, mainwind_h * 0.9))
         self.max = int((mainwind_w / 1.35)/150)
         print self.max
-        
+
+        self.setStyleSheet("background-color: white;")
+
         self.name = label
         set_current_vizu(self)
 
@@ -108,7 +109,7 @@ class CollectionsView(QtGui.QWidget):
 
         buttonsBox = QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
-        
+
         deselectButton = QtGui.QPushButton("Deselect all")
         deselectButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/circle.png'))
         deselectButton.clicked.connect(self.deselectAll)
@@ -122,10 +123,10 @@ class CollectionsView(QtGui.QWidget):
         selectButton.setStatusTip("Select all Image Collections in this set")
         selectButton.setFixedSize(QSize(mainwind_w / 8, mainwind_h / 20))
         buttonsBox.addWidget(selectButton,0, Qt.AlignRight)
-        
+
         self.vbox = QtGui.QGridLayout()
         self.vbox.setAlignment(QtCore.Qt.AlignTop)
-        
+
         group = QtGui.QGroupBox()
         group.setLayout(self.vbox)
 
@@ -140,7 +141,7 @@ class CollectionsView(QtGui.QWidget):
         hbox.addWidget(scroll)
 
         self.setLayout(hbox)
-        
+
 
     def add(self, my_coll):
         # -- This add will add a collection to vizualize according to the grid 3 x X where X is unlimited thanks to the scroll bar
