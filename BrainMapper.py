@@ -141,8 +141,6 @@ def extract_data_from_selected():
     Put this data in the global variable 'currentUsableDataSet'
     :return: Nothing. Global var 'currentUsableDataset' is modified
     """
-    for x in selected:
-        print(type(x))
     global currentUsableDataset
     currentUsableDataset = xt.extract_from_collection_list(selected)
 
@@ -194,6 +192,19 @@ def run_clustering(selectedClusteringMethod, params_dict):
     # gc.collect()  # Call the garbage collector
 
     return labels
+
+
+def clustering_validation_indexes(labels):
+    clustering_datamatrix = currentUsableDataset.export_as_clusterizable()
+
+    validation_indexes = []
+
+    # Mean silhouette
+    validation_indexes.append(clust.compute_mean_silhouette(X=clustering_datamatrix, predicted_labels=labels))
+    # Calinski-Habaraz index
+    validation_indexes.append(clust.compute_calinski_habaraz(X=clustering_datamatrix, predicted_labels=labels))
+
+    return validation_indexes
 
 
 def run_calculation(selectedAlgorithm, nifti_collection, arguments):
@@ -419,7 +430,6 @@ def creation_date(path_to_file):
     """
     filename, file_extension = os.path.splitext(path_to_file)
     if file_extension == ".csv":
-        print(time.time())
         return time.time()
     else:
         if platform.system() == 'Windows':
@@ -675,3 +685,5 @@ def rm_workspace_set(my_set):
 
 def get_workspace_set():
     return workspace_sets
+
+

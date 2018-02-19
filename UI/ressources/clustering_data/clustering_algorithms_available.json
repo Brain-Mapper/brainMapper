@@ -4,7 +4,7 @@
       "param_list" : {
         "init": {
           "param_info" : "A way to initialise the centers : randomly or kmeans++ (see scikit-learn documentation on kmeans)",
-          "type" : ["random","kmeans++"],
+          "type" : ["random","k-means++"],
           "default" : "random"
         },
         "n_clusters" : {

@@ -11,10 +11,12 @@
 # 6 january 2018 - Initial design and coding. (@vz-chameleon, Valentina Z.)
 # 16 january 2018 - Added functions for k-medoids clustering (@vz-chameleon, Valentina Z.)
 # 12 february 2018 - Finished K-Medoids and added DBSCAN (@vz-chameleon, Valentina Z.)
+# 18 february 2018 - Added silhouette and Calinski-Habaraz score (@vz-chameleon, Valentina Z.)
 
 
 from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
 from sklearn.neighbors import DistanceMetric
+from sklearn.metrics import silhouette_score, silhouette_samples, calinski_harabaz_score, v_measure_score
 import numpy as np
 import random
 
@@ -34,21 +36,17 @@ def perform_agglomerative_clustering(param_dict, X) :
 
 def perform_DBSCAN(param_dict, X):
     dbscan = DBSCAN(eps=float(param_dict["eps"]), min_samples=int(param_dict["min_samples"]), metric=param_dict["metric"]).fit(X)
-    print dbscan.labels_
     return dbscan.labels_
 
 
 def perform_kmedoids(param_dict, X):
     distances_matrix_pairwise = compute_distances(X, param_dict['metric'])
-
-    print distances_matrix_pairwise
     medoids_result = kmedoids_cluster(X, distances_matrix_pairwise, int(param_dict["n_clusters"]))
-    print ("Results[0] : "+str(medoids_result[0]))
-    print ("Results[1] : " + str(medoids_result[1]))
+
     return medoids_result[0]
 
 
-# ------------------ K Medoids implementation ------------------
+# ------------------------------------- K Medoids implementation ------------------------------------------
 
 def compute_distances(data_matrix, distance, normalize=False):
     """
@@ -73,7 +71,6 @@ def kmedoids_cluster(data_matrix, distances, k=3):
     :return: array of cluster labels and latest medoids
     """
     m = distances.shape[0]  # number of points
-    print ("number of points :"+str(m))
 
     # Pick k random medoids and keep their indexes in data_matrix
     curr_medoids_index = np.array([-1] * k)
@@ -86,7 +83,6 @@ def kmedoids_cluster(data_matrix, distances, k=3):
     for index in curr_medoids_index:
         curr_medoids[c] = np.array(data_matrix[index])
         c = c+1
-    print ("current medoids init: "+str(curr_medoids))
 
     old_medoids_index = np.array([-1] * k)
     new_medoids_index = np.array([-1] * k)
@@ -96,12 +92,9 @@ def kmedoids_cluster(data_matrix, distances, k=3):
         # Assign each point to cluster with closest medoid.
         clusters = assign_points_to_clusters(curr_medoids_index, distances)
 
-        print ("clusters :" + str(clusters))
-
         # Update cluster medoids to be lowest cost point.
         for curr_medoid in curr_medoids_index:
             cluster = np.where(clusters == curr_medoid)[0]
-            print("cluster : "+str(cluster))
             new_medoids_index[curr_medoids_index == curr_medoid] = compute_new_medoid(cluster, distances)
 
         old_medoids_index[:] = curr_medoids_index[:]
@@ -111,7 +104,6 @@ def kmedoids_cluster(data_matrix, distances, k=3):
     c = 0
     for cluster_index in clusters:
         clust_i, = np.where(curr_medoids_index == cluster_index)
-        print int(clust_i)
         clusters_labels.append(int(clust_i))
         c = c+1
 
@@ -143,6 +135,45 @@ def compute_new_medoid(cluster, distances):
     cluster_distances = np.ma.masked_array(data=distances, mask=mask, fill_value=10e9)
     costs = cluster_distances.sum(axis=1)
     return costs.argmin(axis=0, fill_value=10e9)
+
+# --------------------------------------------------------------------------------------------------------
+
+
+# -------------------------------- Clustering validation indexes ---------------------------------------
+def compute_mean_silhouette(X, predicted_labels, metric='euclidean'):
+    """
+    Return the mean of samples' silhouette score on data according to assigned cluster labels
+    :param X: The data matrix (n_samples x n_features)
+    :param predicted_labels: the assigned cluster labels
+    :param metric: metric used, euclidean distance by default
+    :return: float between -1 and +1
+    """
+    return silhouette_score(X, labels=predicted_labels, metric=metric)
+
+
+def compute_samples_silhouette(X, predicted_labels, metric='euclidean'):
+    """
+    Return an array of size n_samples containing the silhouette scores for all data entries
+    :param X: The data matrix (n_samples x n_features)
+    :param predicted_labels: the assigned cluster labels
+    :param metric: metric used, euclidean by default
+    :return: an array (size n_samples) of floats between -1 and +1
+    """
+    return silhouette_samples(X, labels=predicted_labels, metric=metric)
+
+
+def compute_calinski_habaraz(X, predicted_labels):
+    """
+    Return the Calinski-Habaraz score for the predicted labels
+    :param X: The data matrix : a list of n_features-dimensional data (each row corresponds to a single data point)
+    :param predicted_labels:
+    :return:
+    """
+    return calinski_harabaz_score(X, labels=predicted_labels)
+
+
+
+
 
 
 
