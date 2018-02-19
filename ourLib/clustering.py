@@ -16,22 +16,24 @@
 
 from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
 from sklearn.neighbors import DistanceMetric
-from sklearn.metrics import silhouette_score, silhouette_samples, calinski_harabaz_score, v_measure_score
+from sklearn.metrics import silhouette_score, silhouette_samples, calinski_harabaz_score
+from scipy.spatial import distance
 import numpy as np
 import random
+import math
 
 
 def perform_kmeans(param_dict, X):
     kmeans = KMeans(n_clusters=int(param_dict["n_clusters"]), random_state=int(param_dict["random_state"]),
                     init=param_dict["init"],
                     n_init=int(param_dict["n_init"]), max_iter=int(param_dict["max_iter"])).fit(X)
-    return kmeans.labels_
+    return kmeans.labels_, kmeans.cluster_centers_
 
 
 def perform_agglomerative_clustering(param_dict, X) :
     agglo_clust = AgglomerativeClustering(n_clusters=int(param_dict["n_clusters"]), affinity=param_dict["affinity"],
                                           linkage=param_dict["linkage"]).fit(X)
-    return agglo_clust.labels_
+    return agglo_clust.labels_, "No labels"
 
 
 def perform_DBSCAN(param_dict, X):
@@ -43,7 +45,7 @@ def perform_kmedoids(param_dict, X):
     distances_matrix_pairwise = compute_distances(X, param_dict['metric'])
     medoids_result = kmedoids_cluster(X, distances_matrix_pairwise, int(param_dict["n_clusters"]))
 
-    return medoids_result[0]
+    return medoids_result
 
 
 # ------------------------------------- K Medoids implementation ------------------------------------------
@@ -170,6 +172,49 @@ def compute_calinski_habaraz(X, predicted_labels):
     :return:
     """
     return calinski_harabaz_score(X, labels=predicted_labels)
+
+
+def compute_db(X, centroids, labels, cluster_number):
+    """
+    Compute the Davies-Bouldin index for a given clustering result
+    :param x: The data matrix
+    :param centroids: The list of centroids
+    :param labels: The list of assigned cluster labels
+    :param cluster_number: The number of clusters
+    :return:
+    """
+    sum1 = 0.0
+    for i in range(cluster_number):
+        sum1 += compute_R(i, X, centroids, labels, cluster_number)
+    DB = float(sum1) / float(cluster_number)
+    return DB
+
+
+def compute_s(i, x, centroids, labels, cluster_number):
+    norm = math.sqrt(cluster_number)
+    s = 0
+    for x in centroids:
+        s += distance.euclidean(x, centroids[i])
+    s = s / norm
+    return s
+
+
+def compute_Rij(i, j, x, centroids, labels, cluster_number):
+    dist = distance.euclidean(centroids[i], centroids[j])
+    Rij = (compute_s(i, x, centroids, labels, cluster_number) + compute_s(j, x, centroids, labels, cluster_number)) / dist
+    return Rij
+
+
+def compute_R(i, x, centroids, labels, cluster_number):
+    list_R = []
+    for i in range(cluster_number):
+        for j in range(cluster_number):
+            if i != j:
+                Ri = compute_Rij(i, j, x, centroids, labels, cluster_number)
+                list_R.append(Ri)
+    return max(list_R)
+
+
 
 
 

@@ -173,6 +173,7 @@ class ClusteringResultsPopUp(QtGui.QWidget):
 
         self.info_panel.insertPlainText("Mean Silhouette : \t\t "+str(validation_values[0])+"\n\n")
         self.info_panel.insertPlainText("Calzinski-Habaraz score: \t " + str(validation_values[1]) + "\n\n")
+        self.info_panel.insertPlainText("Davies-Bouldin index: \t\t " + str(validation_values[2]) + "\n\n")
 
 
 

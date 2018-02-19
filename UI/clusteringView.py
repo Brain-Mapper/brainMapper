@@ -56,6 +56,7 @@ class ClusteringView(QtGui.QWidget):
         self.results_popup = ClusteringResultsPopUp(':ressources/logo.png', ':ressources/app_icons_png/file-1.png')
 
         self.label = None
+        self.centroids = None
 
         title_style = "QLabel { background-color : #ffcc33 ; color : black;  font-style : bold; font-size : 14px;}"
         # ---------- Box Layout Set up ---------
@@ -166,7 +167,9 @@ class ClusteringView(QtGui.QWidget):
         self.table_displayer.fill_with_extracted_data(usable_dataset_instance)
 
     def runSelectedClust(self, selectedMethod, param_dict):
-        self.label = run_clustering(selectedMethod, param_dict)
+        clustering_results = run_clustering(selectedMethod, param_dict)
+        self.label = clustering_results[0]
+        self.centroids = clustering_results[1]
         self.table_displayer.fill_clust_labels(self.label)
         self.add_hist(param_dict, self.label)
         self.add_3D(self.table_displayer.clustering_usable_dataset, self.label)
@@ -232,6 +235,8 @@ class ClusteringView(QtGui.QWidget):
         self.results_popup.setGeometry(QRect(100, 100, 500, 300))
 
         if self.label is not None:
-            self.results_popup.update_details(method_name, user_params, clustering_validation_indexes(self.label))
+            self.results_popup.update_details(method_name, user_params, clustering_validation_indexes(self.label,
+                                                                                                      self.centroids,
+                                                                                                      int(user_params["n_clusters"])))
 
         self.results_popup.show()

@@ -174,27 +174,27 @@ def run_clustering(selectedClusteringMethod, params_dict):
     clusterizable_dataset = currentUsableDataset.export_as_clusterizable()
 
     if selectedClusteringMethod == 'KMeans':
-        labels = clust.perform_kmeans(params_dict, clusterizable_dataset)
+        results = clust.perform_kmeans(params_dict, clusterizable_dataset)
 
     elif selectedClusteringMethod == 'KMedoids':
-        labels = clust.perform_kmedoids(params_dict, clusterizable_dataset)
+        results = clust.perform_kmedoids(params_dict, clusterizable_dataset)
 
     elif selectedClusteringMethod == 'AgglomerativeClustering':
-        labels = clust.perform_agglomerative_clustering(params_dict, clusterizable_dataset)
+        results = clust.perform_agglomerative_clustering(params_dict, clusterizable_dataset)
 
     elif selectedClusteringMethod == 'DBSCAN':
-        labels = clust.perform_DBSCAN(params_dict, clusterizable_dataset)
+        results = clust.perform_DBSCAN(params_dict, clusterizable_dataset)
     else:
         print('clustering method not recognised')
-        labels = ['']
+        results = ['']
 
     del clusterizable_dataset  # Deleting exported data : saves memory !!
     # gc.collect()  # Call the garbage collector
 
-    return labels
+    return results
 
 
-def clustering_validation_indexes(labels):
+def clustering_validation_indexes(labels, centroids, cluster_num):
     clustering_datamatrix = currentUsableDataset.export_as_clusterizable()
 
     validation_indexes = []
@@ -203,6 +203,8 @@ def clustering_validation_indexes(labels):
     validation_indexes.append(clust.compute_mean_silhouette(X=clustering_datamatrix, predicted_labels=labels))
     # Calinski-Habaraz index
     validation_indexes.append(clust.compute_calinski_habaraz(X=clustering_datamatrix, predicted_labels=labels))
+    # Davies-Bouldin index
+    validation_indexes.append(clust.compute_db(X=clustering_datamatrix, centroids=centroids, labels=labels, cluster_number=cluster_num))
 
     return validation_indexes
 
