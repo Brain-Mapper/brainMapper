@@ -14,13 +14,12 @@ from editCollectionsView import EditCollectionsView
 from exportView import ExportView
 from calculationView import CalculationView
 
-
-
 if __name__ == '__main__':
     if __package__ is None:
         import sys
         from os import path
-        sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+
+        sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
         from BrainMapper import *
     else:
         from ..BrainMapper import *
@@ -31,20 +30,20 @@ class Help(QMainWindow):
         super(QMainWindow, self).__init__()
         self.setWindowTitle('Help')
         self.setWindowIcon(QtGui.QIcon(':ressources/help.png'))
-        self.setFixedSize(465,235)
+        self.setFixedSize(465, 235)
         centralwidget = QWidget(self)
         horizontalLayoutWidget = QWidget(centralwidget)
         horizontalLayoutWidget.setGeometry(QRect(0, 0, 461, 231));
         horizontalLayout = QHBoxLayout(horizontalLayoutWidget);
-       
+
         label = QLabel(horizontalLayoutWidget)
         pixmap = QPixmap(':ressources/logo.png')
         label.setPixmap(pixmap)
         label.resize(pixmap.width(), pixmap.height())
-        label.move(10,10)
+        label.move(10, 10)
 
         horizontalLayout.addWidget(label)
-        
+
         verticalLayout = QVBoxLayout()
         label1 = QLabel(horizontalLayoutWidget)
         label1.setText("BrainMapper icon made by Graziella Husson")
@@ -68,7 +67,7 @@ class Help(QMainWindow):
 
         pushButton = QPushButton(horizontalLayoutWidget)
         pushButton.setText("Show help")
-        pushButton.clicked.connect(lambda : self.openUrl(""))
+        pushButton.clicked.connect(lambda: self.openUrl(""))
         verticalLayout.addWidget(pushButton)
 
         horizontalLayout.addLayout(verticalLayout)
@@ -76,11 +75,11 @@ class Help(QMainWindow):
         self.setCentralWidget(centralwidget);
         self.show()
 
-    def openUrl(self,url):
+    def openUrl(self, url):
         url = QtCore.QUrl('https://brain-mapper.github.io/BrainMapper-help/')
         if not QtGui.QDesktopServices.openUrl(url):
             QtGui.QMessageBox.warning(self, 'Open Url', 'Could not open url')
- 
+
 
 # In PyQt we cannot open two windows at a time easily, so we will have to change the central widget of our app
 # according to what the user clicks on... To do so, we will use an instance of the following class
@@ -90,15 +89,13 @@ class Help(QMainWindow):
 # We will use an instance of it as the central widget of our application, thus facilitating the switch
 # between the different views of our application
 class HomePage(QWidget):
-
     def __init__(self, parent=None):
-
         super(HomePage, self).__init__(parent)
 
         # Initialize a stack (pile) widget
         self.stack = QStackedWidget()
-        layout = QVBoxLayout(self) # vertical layout
-        layout.addWidget(self.stack) # stack in the vertical layout
+        layout = QVBoxLayout(self)  # vertical layout
+        layout.addWidget(self.stack)  # stack in the vertical layout
 
         # Here are the custom widgets we will put on the stack
         self.mainview = MainView()
@@ -132,7 +129,7 @@ class HomePage(QWidget):
         self.mainview.showExport.connect(self.updateExportView)
         self.export.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
 
-    # -- when mainView widget emits signal showCalcul, change current Widget in stack to calculation widget
+        # -- when mainView widget emits signal showCalcul, change current Widget in stack to calculation widget
         self.mainview.showCalcul.connect(partial(self.stack.setCurrentWidget, self.calculation))
         # -- when calculation widget emits signal showMain, change current Widget in stack to main view widget
         self.calculation.showMain.connect(partial(self.stack.setCurrentWidget, self.mainview))
@@ -148,7 +145,7 @@ class HomePage(QWidget):
     def updateEditView(self):
         self.edit_colls.fill_coll()
         self.stack.setCurrentWidget(self.edit_colls)
-    
+
     def updateMain(self):
         self.mainview.update()
 
@@ -164,30 +161,29 @@ class HomePage(QWidget):
 
 
 class UI(QtGui.QMainWindow):
-
     # ---------- Box Layout Set up with Widgets ---------
     # Since we cannot change the layout of a QtMainWindow, we will use a CENTRAL WIDGET (var homepage)
     # This central widget is an instance of HomePage class here above, and represents a stack of widgets
     # This stack contains several custom widgets from and to we will change as the users clicks on buttons
-    
+
     def __init__(self):
         super(UI, self).__init__()
-        
+
         self.initUI()
-        
+
     def initUI(self):
 
-        self.statusBar() # lower bar for tips
-        
+        self.statusBar()  # lower bar for tips
+
         global homepage
         homepage = HomePage()
         self.setCentralWidget(homepage)
-        
+
         # WINDOW PARAMETERS
         rec = QApplication.desktop().availableGeometry()
         screenHeight = rec.height()
         screenWidth = rec.width()
-        self.setGeometry(300, 200, screenWidth/1.5, screenHeight/1.4)
+        self.setGeometry(300, 200, screenWidth / 1.5, screenHeight / 1.4)
         self.setWindowTitle('BrainMapper')
         self.setWindowIcon(QtGui.QIcon(':ressources/logo.png'))
 
@@ -218,76 +214,115 @@ class UI(QtGui.QMainWindow):
         niftiAction.setShortcut('Ctrl+N')
         niftiAction.triggered.connect(self.fromNiFile)
 
+        workspaceImportAction = QtGui.QAction('&Import workspace', self)
+        workspaceImportAction.setStatusTip(
+            'Import Set and ImageCollection from a workspace and add its to the current set')
+        workspaceImportAction.triggered.connect(self.fromWorkspace)
+
+        workspaceSaveAction = QtGui.QAction('&Save workspace', self)
+        workspaceSaveAction.setStatusTip('Save the current worksapce')
+        workspaceSaveAction.triggered.connect(self.workspaceSave)
+
         # ADDING ACTIONS TO MENUS
         fileMenu = menubar.addMenu('&Program')
         fileMenu.addAction(saveAction)
         fileMenu.addAction(exitAction)
+        workspaceMenu = menubar.addMenu('&Workspace')
+        workspaceMenu.addAction(workspaceImportAction)
+        workspaceMenu.addAction(workspaceSaveAction)
         SetMenu = menubar.addMenu('&New Set')
         SetMenu.addAction(setAction)
         CollecMenu = menubar.addMenu('&New Collection')
-        CollecMenu.addAction(excelAction) 
-        CollecMenu.addAction(niftiAction) 
+        CollecMenu.addAction(excelAction)
+        CollecMenu.addAction(niftiAction)
 
         self.show()
-
 
     def buttonClicked(self):
         print "Test passed. SUCCESS!"
 
     def fromNiFile(self):
-# -- We create a collection with the list of images the user selected and give it to the main view and the edit view
+        # -- We create a collection with the list of images the user selected and give it to the main view and the edit view
         file = QFileDialog.getOpenFileNames()
         if (file != ""):
-            try:
-                collec = do_image_collection(file)
-                homepage.mainview.show_coll(collec)
-                homepage.edit_colls.fill_coll()
-            except:
-                err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
+            # try:
+            collec = do_image_collection(file)
+            homepage.mainview.show_coll(collec)
+            homepage.edit_colls.fill_coll()
+            # except:
+            #    err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
 
-# -- We create a collection with the list of images the user selected and give it to the main view and the edit view
-
+        # -- We create a collection with the list of images the user selected and give it to the main view and the edit view
 
     def fromExcel(self):
-        file = str(QFileDialog.getOpenFileName())
+        file = QFileDialog.getOpenFileName()
         if (file != ""):
-            try:
-                collec = simple_import(file, os.path.join(os.path.dirname(__file__), 'ressources/template_mni/mni_icbm152_t1_tal_nlin_asym_09a.nii'))
-                homepage.mainview.show_coll(collec)
-                homepage.edit_colls.fill_coll()
-            except:
-                err = QtGui.QMessageBox.critical(self, "Error",
-                                                 "An error has occured. Maybe you tried to open a non-CSV file")
-        
+            # try:
+            collec = simple_import(file, os.path.join(os.path.dirname(__file__),
+                                                      'ressources/template_mni/mni_icbm152_t1_tal_nlin_asym_09a.nii'))
+            homepage.mainview.show_coll(collec)
+            homepage.edit_colls.fill_coll()
+            # except:
+            #     err = QtGui.QMessageBox.critical(self, "Error",
+            #                                      "An error has occured. Maybe you tried to open a non-CSV file")
+
+    def fromWorkspace(self):
+        folder_path = str(QFileDialog.getExistingDirectory())
+        if (file != ""):
+            test = general_workspace_import_control(folder_path)
+            print test
+            if test is None:
+                general_workspace_import(folder_path)
+                for key in get_workspace_set():
+                    homepage.mainview.show_set(key)
+                    rm_workspace_set(key)
+                    # Problem to fix : the list is not properly clean, if we don't do rm all, smthg is left in the list...
+                ##                    print "list before rm all"
+                ##                    for i in get_workspace_set():
+                ##                        print i
+                rm_all_workspace_set()
+            ##                    print "list"
+            ##                    for i in get_workspace_set():
+            ##                        print i
+
+            else:
+                err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. " + test)
+
+    def workspaceSave(self):
+        folder_path = str(QFileDialog.getExistingDirectory())
+        general_workspace_save(folder_path)
+
     def showHelp(self):
         self.w = Help()
 
     def createSet(self):
-# -- We create a set with the name given by the user (if its free) and give it to the mainpage
+        # -- We create a set with the name given by the user (if its free) and give it to the mainpage
         text, ok = QInputDialog.getText(self, 'Create a Set', "Enter a name for your set :")
-        if str(text)!= "":
+        if str(text) != "":
             try:
                 new_ok = True
-                not_ok = ['^','[','<','>',':',';',',','?','"','*','|','/',']','+','$']
+                not_ok = ['^', '[', '<', '>', ':', ';', ',', '?', '"', '*', '|', '/', ']', '+', '$']
                 for i in not_ok:
                     if i in str(text):
                         new_ok = False
                 if new_ok and not exists_set(str(text)):
                     new_set = newSet(str(text))
                     homepage.mainview.show_set(new_set)
-                else :
-                    err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
-            except :
-                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
+                else:
+                    err = QtGui.QMessageBox.critical(self, "Error",
+                                                     "The name you entered is not valid (empty, invalid caracter or already exists)")
+            except:
+                err = QtGui.QMessageBox.critical(self, "Error",
+                                                 "The name you entered is not valid (" + str(sys.exc_info()[0]) + ")")
+
 
 def main():
-    
     app = QtGui.QApplication(sys.argv)
 
     # INIT APP STYLE ACCORDING TO OS
 
     OS = sys.platform
-    print("user os : "+ str(OS))
+    print("user os : " + str(OS))
     #
     # for s in QStyleFactory.keys():
     #     print(s)
@@ -301,7 +336,7 @@ def main():
         app.setStyle(QStyleFactory.create("Cleanlooks"))
     elif sys.platform.startswith('cygwin'):
         app.setStyle(QStyleFactory.create("Windows"))
-    else :
+    else:
         app.setStyle(QStyleFactory.create("GTK+"))
 
     print str(app.style())
@@ -311,5 +346,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-

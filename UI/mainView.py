@@ -29,6 +29,7 @@ from BrainMapper import *
 import resources
 import ourLib.ExcelExport.excelExport as ee
 import time
+from ourLib.dataExtraction.image_recreation import *
 
 
 class CollButton(QtGui.QCheckBox):
@@ -278,6 +279,13 @@ class SetButton(QtGui.QWidget):
             except :
                 err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
 
+    def addFullSubSet(self,ssSet):
+        text = ssSet.get_name()
+        self.SSList.addItem(str(text))
+        self.my_set.get_sub_set(str(text)).setParent(self.my_set)
+        add_set(ssSet)
+
+
     def changeName(self):
         # -- This changeName will change the name of the set selected. 
         text, ok = QInputDialog.getText(self, 'Rename a set',
@@ -339,7 +347,9 @@ class SetAccessBar(QtGui.QTabWidget):
         self.tab2.vbox2 = QtGui.QVBoxLayout()
         self.tab3.vbox3 = QtGui.QVBoxLayout()
 
-        my_set = newSet("default")
+        default_name = datetime.fromtimestamp(int(round(time.time()))).strftime('%Y-%m-%d %H:%M:%S')
+        
+        my_set = newSet(default_name[2:])
         set_current_set(my_set)
 
         group.setLayout(self.tab1.vbox)
@@ -398,7 +408,20 @@ class SetAccessBar(QtGui.QTabWidget):
 
     def add(self, my_set):
         # -- This add will add a SetButton
-        self.tab1.vbox.addWidget(SetButton(my_set,self))
+        rec = QApplication.desktop().availableGeometry()
+        mainwind_h = rec.height()
+        mainwind_w = rec.width()
+        new_set_button = SetButton(my_set,self)
+        if (my_set.number_of_collection() != 0):
+            for i in my_set.get_coll().values() :
+                new_set_button.vizu.add(i)
+                add_coll(i)
+        if (my_set.number_of_subset() != 0 ):
+            for i in my_set.getAllSubSets():
+                new_set_button.addFullSubSet(i)
+                self.add(i)
+        new_set_button.setMaximumSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
+        self.tab1.vbox.addWidget(new_set_button)
 
     def add2(self):
         for j in getClusterResultSets():
@@ -508,52 +531,75 @@ class MainView(QtGui.QWidget):
         get_current_vizu().add(coll)
 
     def export(self):
-        # if (get_selected()):
-        #     choice = QtGui.QMessageBox.question(self, 'Export selected files',
-        #                                         "Export into a NIfTI file? (if No : Excel file)",
-        #                                         QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-        #     if choice == QtGui.QMessageBox.Yes:
-        #         export_nifti()
-        #     else:
-        #         extract_data_from_selected()
-        #         export_excel()
-        #         self.showExport.emit()
-        # else:
-        #     QtGui.QMessageBox.information(self, "Selection empty", "There's nothing to export.")
         if get_selected():
-            choice = QtGui.QMessageBox()
-            choice.setWindowTitle('Export dataSet')
+            export_choice = QtGui.QMessageBox()
+            export_choice.setWindowTitle('Export dataSet')
 
             nifti_opt = QRadioButton("Export to Nifti")
-            excel_export = QRadioButton("Export to CSV")
+            excel_opt = QRadioButton("Export to CSV")
             nifti_opt.setChecked(True)
 
-            l = choice.layout()
-            l.setContentsMargins(20, 0, 0, 20)
-            l.addWidget(QLabel("You have selected (" + str(len(
+            l1 = export_choice.layout()
+            l1.setContentsMargins(20, 0, 0, 20)
+            l1.addWidget(QLabel("You have selected (" + str(len(
                 get_selected())) + ") image collections. \nPlease select the way "
                                    "you would like to export these files : "),
-                        l.rowCount() - 3, 0, 1, l.columnCount() - 2, Qt.AlignCenter)
+                        l1.rowCount() - 3, 0, 1, l1.columnCount() - 2, Qt.AlignCenter)
             rb_box = QtGui.QGroupBox()
             vbox = QtGui.QVBoxLayout()
             vbox.addWidget(nifti_opt)
-            vbox.addWidget(excel_export)
+            vbox.addWidget(excel_opt)
 
             rb_box.setLayout(vbox)
-            l.addWidget(rb_box, l.rowCount() - 2, 0, Qt.AlignCenter)
+            l1.addWidget(rb_box, l1.rowCount() - 2, 0, Qt.AlignCenter)
 
-            choice.setStandardButtons(QMessageBox.Cancel | QMessageBox.Apply)
+            export_choice.setStandardButtons(QMessageBox.Cancel | QMessageBox.Apply)
 
-            ret = choice.exec_()
+            ret = export_choice.exec_()
 
             if ret == QtGui.QMessageBox.Apply:
 
                 if nifti_opt.isChecked():
+
+                    folder_path = str(QFileDialog.getExistingDirectory())
+                    image_recreation_from_list(folder_path, selected)
+
                     export_nifti()
 
-                elif excel_export.isChecked():
-                    (f_path, f_name) = os.path.split(str(QFileDialog.getSaveFileName(self, "Browse Directory")))
-                    extract_data_from_selected()
+                elif excel_opt.isChecked():
+                    type_choice = QtGui.QMessageBox()
+                    type_choice.setWindowTitle('Export excel all or centroid')
+
+                    all_opt = QRadioButton("Export all points")
+                    centroid_opt = QRadioButton("Export only the centroid of each file")
+                    all_opt.setChecked(True)
+
+                    l2 = type_choice.layout()
+                    l2.setContentsMargins(20, 0, 0, 20)
+                    l2.addWidget(QLabel(" Excel Export \nPlease select the type of export"),
+                                 l2.rowCount() - 3, 0, 1, l2.columnCount() - 2, Qt.AlignCenter)
+
+                    rb_box = QtGui.QGroupBox()
+                    vbox = QtGui.QVBoxLayout()
+                    vbox.addWidget(all_opt)
+                    vbox.addWidget(centroid_opt)
+
+                    rb_box.setLayout(vbox)
+                    l2.addWidget(rb_box, l2.rowCount() - 2, 0, Qt.AlignCenter)
+
+                    type_choice.setStandardButtons(QMessageBox.Cancel | QMessageBox.Apply)
+
+                    ret = type_choice.exec_()
+
+                    if ret == QtGui.QMessageBox.Apply:
+
+                        (f_path, f_name) = os.path.split(str(QFileDialog.getSaveFileName(self, "Browse Directory")))
+
+                        if all_opt.isChecked():
+                            extract_data_from_selected()
+                        elif centroid_opt.isChecked():
+                            extract_data_as_centroids_from_selected()
+
                     ee.simple_export(f_name, f_path, get_current_usableDataset())
                     export_excel()
 
