@@ -86,7 +86,6 @@ class CollectionsView(QtGui.QWidget):
         self.j = 1
         super(CollectionsView, self).__init__()
 
-
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height() / 1.4
         mainwind_w = rec.width() / 1.5
@@ -95,6 +94,23 @@ class CollectionsView(QtGui.QWidget):
         print self.max
 
         self.setStyleSheet("background-color: white;")
+
+        buttonsBox = QtGui.QHBoxLayout()
+        buttonsBox.addStretch(1)
+
+        deselectButton = QtGui.QPushButton("Deselect all")
+        deselectButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/circle.png'))
+        deselectButton.clicked.connect(self.deselectAll)
+        deselectButton.setStatusTip("Deselect all Image Collections in THIS set")
+        deselectButton.setFixedSize(QSize(mainwind_w / 8, mainwind_h / 20))
+        buttonsBox.addWidget(deselectButton,0, Qt.AlignRight)
+
+        selectButton = QtGui.QPushButton("Select all")
+        selectButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
+        selectButton.clicked.connect(self.selectAll)
+        selectButton.setStatusTip("Select all Image Collections in THIS set")
+        selectButton.setFixedSize(QSize(mainwind_w / 8, mainwind_h / 20))
+        buttonsBox.addWidget(selectButton,0, Qt.AlignRight)
 
         self.name = label
         set_current_vizu(self)
@@ -106,24 +122,7 @@ class CollectionsView(QtGui.QWidget):
         self.title2.setFixedHeight(20)
         self.title2.setAlignment(QtCore.Qt.AlignCenter)
         self.title2.setStyleSheet(title_style)
-
-        buttonsBox = QtGui.QHBoxLayout()
-        buttonsBox.addStretch(1)
-
-        deselectButton = QtGui.QPushButton("Deselect all")
-        deselectButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/circle.png'))
-        deselectButton.clicked.connect(self.deselectAll)
-        deselectButton.setStatusTip("Deselect all Image Collections in this set")
-        deselectButton.setFixedSize(QSize(mainwind_w / 8, mainwind_h / 20))
-        buttonsBox.addWidget(deselectButton,0, Qt.AlignRight)
-
-        selectButton = QtGui.QPushButton("Select all")
-        selectButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
-        selectButton.clicked.connect(self.selectAll)
-        selectButton.setStatusTip("Select all Image Collections in this set")
-        selectButton.setFixedSize(QSize(mainwind_w / 8, mainwind_h / 20))
-        buttonsBox.addWidget(selectButton,0, Qt.AlignRight)
-
+        
         self.vbox = QtGui.QGridLayout()
         self.vbox.setAlignment(QtCore.Qt.AlignTop)
 
@@ -187,7 +186,7 @@ class CollectionsView(QtGui.QWidget):
             if isinstance(i, QCheckBox):
                 if not (i.isChecked()):
                     i.toggle()
-                    add_coll(i.coll)
+                    add_coll(i.coll)   
 
 class SetButton(QtGui.QWidget):
     # -- The SetButton class will display all info for a set
@@ -234,13 +233,13 @@ class SetButton(QtGui.QWidget):
         hbox.addWidget(self.SSList)
 
         self.setLayout(hbox)
-        self.setFixedSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
+        self.setMinimumSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
 
     def showSubSet(self):
         # -- When we click on an item in the list of subset, we update current vizu and set
         new_set = getSetByName(self.SSList.currentText())
         set_current_set(new_set)
-        self.parent().parent().parent().parent().parent().parent().updateSet(new_set)
+        self.parent().parent().parent().parent().parent().parent().parent().updateSet(new_set)
 
     def updateSubSetName(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
@@ -253,8 +252,8 @@ class SetButton(QtGui.QWidget):
         # -- This current_set will vizualize the set and the collections inside when pressed
         set_current_set(self.my_set)
         set_current_vizu(self.vizu)
-        self.parent().parent().parent().parent().parent().parent().parent().parent().updateVizu(self.vizu)
-        self.parent().parent().parent().parent().parent().parent().parent().parent().upCollLabel()
+        self.parent().parent().parent().parent().parent().parent().parent().parent().parent().updateVizu(self.vizu)
+        self.parent().parent().parent().parent().parent().parent().parent().parent().parent().upCollLabel()
 
     def addSubet(self):
         # -- This addSubet will add a subset to the set selected. 
@@ -274,7 +273,7 @@ class SetButton(QtGui.QWidget):
                     self.my_set.get_sub_set(str(text)).setParent(self.my_set)
                     add_set(ssSet)
                     set_current_set(ssSet)
-                    self.parent().parent().parent().parent().parent().parent().add(ssSet)
+                    self.parent().parent().parent().parent().parent().parent().parent().add(ssSet)
                 else :
                     err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
             except :
@@ -320,42 +319,60 @@ class SetButton(QtGui.QWidget):
                 err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
 
 
-class SetAccessBar(QtGui.QTabWidget):
+class SetAccessBar(QtGui.QWidget):
     # -- The SetAccessBar class will display all sets created
     def __init__(self, parent=None):
         # -- Creates all abjects we need
         super(SetAccessBar, self).__init__(parent=parent)
 
-        self.tab1 = QWidget()
-        self.addTab(self.tab1, "Tab 1")
-        self.setTabText(0, "All")
-        self.tab2 = QWidget()
-        self.addTab(self.tab2, "Tab 2")
-        self.setTabText(1, "Clustering")
-        self.tab3 = QWidget()
-        self.addTab(self.tab3, "Tab 3")
-        self.setTabText(2, "Calculation")
+        self.qtab = QtGui.QTabWidget()
+        self.qtab.tab1 = QWidget()
+        self.qtab.addTab(self.qtab.tab1, "Tab 1")
+        self.qtab.setTabText(0, "All")
+        self.qtab.tab2 = QWidget()
+        self.qtab.addTab(self.qtab.tab2, "Tab 2")
+        self.qtab.setTabText(1, "Clustering")
+        self.qtab.tab3 = QWidget()
+        self.qtab.addTab(self.qtab.tab3, "Tab 3")
+        self.qtab.setTabText(2, "Calculation")
 
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height() / 1.4
         mainwind_w = rec.width() / 1.5
         self.setMaximumSize(QSize(mainwind_w / 3.76, mainwind_h))
 
+        buttonsBox = QtGui.QHBoxLayout()
+        buttonsBox.addStretch(1)
+
+        deselectButton = QtGui.QPushButton("Deselect all")
+        deselectButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/circle.png'))
+        deselectButton.clicked.connect(self.deselectAll)
+        deselectButton.setStatusTip("Deselect all Image Collections in ALL sets")
+        deselectButton.setFixedSize(QSize(mainwind_w / 8, mainwind_h / 20))
+        buttonsBox.addWidget(deselectButton,0, Qt.AlignRight)
+
+        selectButton = QtGui.QPushButton("Select all")
+        selectButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
+        selectButton.clicked.connect(self.selectAll)
+        selectButton.setStatusTip("Select all Image Collections in ALL sets")
+        selectButton.setFixedSize(QSize(mainwind_w / 8, mainwind_h / 20))
+        buttonsBox.addWidget(selectButton,0, Qt.AlignRight)
+
         group = QtGui.QGroupBox()
         group2 = QtGui.QGroupBox()
         group3 = QtGui.QGroupBox()
-        self.tab1.vbox = QtGui.QVBoxLayout()
-        self.tab2.vbox2 = QtGui.QVBoxLayout()
-        self.tab3.vbox3 = QtGui.QVBoxLayout()
+        self.qtab.tab1.vbox = QtGui.QVBoxLayout()
+        self.qtab.tab2.vbox2 = QtGui.QVBoxLayout()
+        self.qtab.tab3.vbox3 = QtGui.QVBoxLayout()
 
         default_name = datetime.fromtimestamp(int(round(time.time()))).strftime('%Y-%m-%d %H:%M:%S')
         
         my_set = newSet(default_name[2:])
         set_current_set(my_set)
 
-        group.setLayout(self.tab1.vbox)
-        group2.setLayout(self.tab2.vbox2)
-        group3.setLayout(self.tab3.vbox3)
+        group.setLayout(self.qtab.tab1.vbox)
+        group2.setLayout(self.qtab.tab2.vbox2)
+        group3.setLayout(self.qtab.tab3.vbox3)
 
         scroll = QtGui.QScrollArea()
         scroll.setWidget(group)
@@ -372,39 +389,44 @@ class SetAccessBar(QtGui.QTabWidget):
         scroll3.setWidgetResizable(True)
         scroll3.setFixedHeight(mainwind_h*0.8)
         
-        self.tab1.vbox.addWidget(SetButton(my_set,self))
+        self.qtab.tab1.vbox.addWidget(SetButton(my_set,self))
 
         hbox = QtGui.QVBoxLayout()
 
         title_style = "QLabel { background-color : #ffcc33 ; color : black;  font-style : bold; font-size : 14px;}"
         title1 = QtGui.QLabel('List of sets and sub sets')
-        title1.setFixedWidth(self.width() - 10)
+        title1.setFixedWidth(self.width() - 12)
         title1.setFixedHeight(20)
         title1.setAlignment(QtCore.Qt.AlignCenter)
         title1.setStyleSheet(title_style)
         hbox.addWidget(title1)
         hbox.addWidget(scroll)
-        self.tab1.setLayout(hbox)
+        self.qtab.tab1.setLayout(hbox)
 
         hbox2=QtGui.QVBoxLayout()
         title2 = QtGui.QLabel('Sets results of clustering')
-        title2.setFixedWidth(self.width()-10)
+        title2.setFixedWidth(self.width()-12)
         title2.setFixedHeight(20)
         title2.setAlignment(QtCore.Qt.AlignCenter)
         title2.setStyleSheet(title_style)
         hbox2.addWidget(title2)
         hbox2.addWidget(scroll2)
-        self.tab2.setLayout(hbox2)
+        self.qtab.tab2.setLayout(hbox2)
 
         hbox3=QtGui.QVBoxLayout()
         title3 = QtGui.QLabel('Sets results of calculation')
-        title3.setFixedWidth(self.width()-10)
+        title3.setFixedWidth(self.width()-12)
         title3.setFixedHeight(20)
         title3.setAlignment(QtCore.Qt.AlignCenter)
         title3.setStyleSheet(title_style)
         hbox3.addWidget(title3)
         hbox3.addWidget(scroll3)
-        self.tab3.setLayout(hbox3)
+        self.qtab.tab3.setLayout(hbox3)
+
+        glob = QtGui.QVBoxLayout()
+        glob.addWidget(self.qtab)
+        glob.addLayout(buttonsBox)
+        self.setLayout(glob)
                
 
     def add(self, my_set):
@@ -421,8 +443,8 @@ class SetAccessBar(QtGui.QTabWidget):
             for i in my_set.getAllSubSets():
                 new_set_button.addFullSubSet(i)
                 self.add(i)
-        new_set_button.setMaximumSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
-        self.tab1.vbox.addWidget(new_set_button)
+        new_set_button.setMaximumSize(QSize(self.qtab.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
+        self.qtab.tab1.vbox.addWidget(new_set_button)
 
     def add2(self):
         for j in getClusterResultSets():
@@ -430,7 +452,7 @@ class SetAccessBar(QtGui.QTabWidget):
             for c in j.get_all_nifti_set():
                 s.vizu.add(c)
                 add_coll(c)
-            self.tab2.vbox2.addWidget(s)
+            self.qtab.tab2.vbox2.addWidget(s)
             rmClusterResultSets(j)
 
     def add3(self):
@@ -439,26 +461,40 @@ class SetAccessBar(QtGui.QTabWidget):
             for c in j.get_all_nifti_set():
                 s.vizu.add(c)
                 add_coll(c)
-            self.tab3.vbox3.addWidget(s)
+            self.qtab.tab3.vbox3.addWidget(s)
         rmAllCalculResultSets()
     
     def update(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
-        items = (self.tab1.vbox.itemAt(j).widget() for j in range(self.tab1.vbox.count()))
+        items = (self.qtab.tab1.vbox.itemAt(j).widget() for j in range(self.qtab.tab1.vbox.count()))
         for i in items:
             if isinstance(i, SetButton):
                 i.updateSubSetName()
-        self.parent().parent().upCollLabel()
+        self.parent().parent().parent().upCollLabel()
 
     def updateSet(self,new_set):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
-        items = (self.tab1.vbox.itemAt(j).widget() for j in range(self.tab1.vbox.count()))
+        items = (self.qtab.tab1.vbox.itemAt(j).widget() for j in range(self.qtab.tab1.vbox.count()))
         for i in items:
             if isinstance(i, SetButton):
                 if i.my_set.get_name() == new_set.get_name():
                     set_current_vizu(i.vizu)
                     self.parent().parent().updateVizu(i.vizu)
                     self.parent().parent().upCollLabel()
+    
+    def deselectAll(self):
+        tabs = [self.qtab.tab1.vbox, self.qtab.tab2.vbox2, self.qtab.tab3.vbox3]
+        for tab in tabs :
+            set_buttons = (tab.itemAt(j).widget() for j in range(tab.count()))
+            for set_button in set_buttons:
+                set_button.vizu.deselectAll()
+
+    def selectAll(self):
+        tabs = [self.qtab.tab1.vbox, self.qtab.tab2.vbox2, self.qtab.tab3.vbox3]
+        for tab in tabs :
+            set_buttons = (tab.itemAt(j).widget() for j in range(tab.count()))
+            for set_button in set_buttons:
+                set_button.vizu.selectAll()
 
 class MainView(QtGui.QWidget):
     # -- ! ATTRIBUTES SHARED by EVERY class instance ! --
