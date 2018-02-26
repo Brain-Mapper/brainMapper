@@ -323,20 +323,25 @@ class SetAccessBar(QtGui.QWidget):
         # -- Creates all abjects we need
         super(SetAccessBar, self).__init__(parent=parent)
 
-        self.qtab = QtGui.QTabWidget()
-        self.qtab.tab1 = QWidget()
-        self.qtab.addTab(self.qtab.tab1, "Tab 1")
-        self.qtab.setTabText(0, "All")
-        self.qtab.tab2 = QWidget()
-        self.qtab.addTab(self.qtab.tab2, "Tab 2")
-        self.qtab.setTabText(1, "Clustering")
-        self.qtab.tab3 = QWidget()
-        self.qtab.addTab(self.qtab.tab3, "Tab 3")
-        self.qtab.setTabText(2, "Calculation")
-
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height() / 1.4
         mainwind_w = rec.width() / 1.5
+        
+        self.qtab = QtGui.QTabWidget()
+        self.qtab.tab1 = QWidget()
+        self.qtab.tab1.setMaximumSize(QSize(mainwind_w / 3.76, mainwind_h))
+        self.qtab.addTab(self.qtab.tab1, "Tab 1")
+        self.qtab.setTabText(0, "All")
+        self.qtab.tab2 = QWidget()
+        self.qtab.tab2.setMaximumSize(QSize(mainwind_w / 3.76, mainwind_h))
+        self.qtab.addTab(self.qtab.tab2, "Tab 2")
+        self.qtab.setTabText(1, "Clustering")
+        self.qtab.tab3 = QWidget()
+        self.qtab.tab3.setMaximumSize(QSize(mainwind_w / 3.76, mainwind_h))
+        self.qtab.addTab(self.qtab.tab3, "Tab 3")
+        self.qtab.setTabText(2, "Calculation")
+
+        
         self.setMaximumSize(QSize(mainwind_w / 3.76, mainwind_h))
 
         buttonsBox = QtGui.QHBoxLayout()
@@ -441,7 +446,8 @@ class SetAccessBar(QtGui.QWidget):
             for i in my_set.getAllSubSets():
                 new_set_button.addFullSubSet(i)
                 self.add(i)
-        new_set_button.setMaximumSize(QSize(self.qtab.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
+        
+        new_set_button.setMinimumSize(QSize(225, mainwind_h / 8))
         self.qtab.tab1.vbox.addWidget(new_set_button)
 
     def add2(self):
