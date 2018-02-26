@@ -93,8 +93,6 @@ class CollectionsView(QtGui.QWidget):
         self.max = int((mainwind_w / 1.35)/150)
         print self.max
 
-        self.setStyleSheet("background-color: white;")
-
         buttonsBox = QtGui.QHBoxLayout()
         buttonsBox.addStretch(1)
 
@@ -233,7 +231,7 @@ class SetButton(QtGui.QWidget):
         hbox.addWidget(self.SSList)
 
         self.setLayout(hbox)
-        self.setMinimumSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
+        self.setFixedSize(QSize(self.parent().frameGeometry().width() * 0.8, mainwind_h / 8))
 
     def showSubSet(self):
         # -- When we click on an item in the list of subset, we update current vizu and set
