@@ -17,6 +17,8 @@ from PyQt4.QtCore import Qt
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 
+import os
+
 
 # Inherits QTableWidget
 class ClusteringDataTable(QtGui.QTableWidget):
@@ -134,6 +136,12 @@ class ClusteringResultsPopUp(QtGui.QWidget):
     #CONSTRUCTOR
     def __init__(self, app_logo_path, save_icon_path):
         super(ClusteringResultsPopUp, self).__init__()
+
+        # The directory to which we must export !
+        self.directory_export = ""
+        # The name of the text file to which we export
+        self.filename = None
+
         self.setWindowTitle("Clustering Results")
         self.setWindowIcon(QtGui.QIcon(app_logo_path))
 
@@ -143,7 +151,8 @@ class ClusteringResultsPopUp(QtGui.QWidget):
 
         self.save_button = QtGui.QPushButton('Save to text file')
         self.save_button.setIcon(QtGui.QIcon(save_icon_path))
-        self.save_button.setToolTip('Export validation indexes to text file')
+        self.save_button.setStatusTip('Export validation indexes to text file')
+        self.save_button.clicked.connect(self.export_as_textfile)
 
         savebox.addStretch(1)
         savebox.addWidget(self.save_button)
@@ -176,5 +185,58 @@ class ClusteringResultsPopUp(QtGui.QWidget):
         self.info_panel.insertPlainText("Davies-Bouldin index: \t\t " + str(validation_values[2]) + "\n\n")
 
 
+    def export_as_textfile(self):
+        browser = QtGui.QMessageBox()
+        browser.setWindowTitle('Export Validation Indexes as text file')
+        # browser.setIcon(QtGui.QMessageBox_Icon(":ressources/logo.png"))
 
+        l = browser.layout()
+        l.setContentsMargins(20, 0, 0, 20)
+        l.addWidget(QtGui.QLabel("Please select the directory of export and the text file's name \n"
+                                 "(no special characters are allowed!)"),
+                    l.rowCount() - 3, 0, 1, l.columnCount() - 2, Qt.AlignCenter)
+        rb_box = QtGui.QGroupBox()
+
+        # A file browser widget
+        browse_files_widget = QtGui.QWidget()
+        browseBox = QtGui.QHBoxLayout()
+
+        self.file_path_display = QtGui.QLineEdit()
+        browseBox.addWidget(self.file_path_display)
+
+        browseButton = QtGui.QPushButton('Browse')
+        # --- Connect to a class function when button is clicked on ---
+        browseButton.clicked.connect(self.select_directory)
+        browseBox.addWidget(browseButton)
+        browse_files_widget.setLayout(browseBox)
+
+        # A filename input prompt
+        self.filename_display = QtGui.QLineEdit()
+
+        vbox = QtGui.QVBoxLayout()
+        vbox.addWidget(browse_files_widget)
+        vbox.addWidget(self.filename_display)
+
+        rb_box.setLayout(vbox)
+        l.addWidget(rb_box, l.rowCount() - 2, 0, Qt.AlignCenter)
+
+        browser.setStandardButtons(QtGui.QMessageBox.Ok| QtGui.QMessageBox.Cancel)
+
+        ret = browser.exec_()
+
+        if ret == QtGui.QMessageBox.Ok:
+            self.filename = str(self.filename_display.text())
+
+            if self.filename is not None :
+                filepath = os.path.join(self.directory_export,self.filename+'.txt')
+                with open(filepath, 'w') as index_file:
+                    index_file.write(self.info_panel.toPlainText())
+
+    def select_directory(self):
+        """
+        Open a browser to select a directory path and put the result into directoryEdit
+        """
+        file = str(QtGui.QFileDialog.getExistingDirectory(self, "Browse Directory"))
+        self.directory_export = file
+        self.file_path_display.setText(file)
 
