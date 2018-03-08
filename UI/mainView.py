@@ -634,7 +634,6 @@ class MainView(QtGui.QWidget):
 
             rb_box.setLayout(vbox)
             l.addWidget(rb_box, l.rowCount()-2, 0, Qt.AlignCenter)
-            # l.addWidget(QtGui.QSpacerItem(500, 0, QSizePolicy.Minimum, QSizePolicy.Expanding), l.rowCount()-1, 0, 1, l.columnCount(), Qt.AlignCenter)
 
             choice.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
