@@ -9,7 +9,7 @@
 # HISTORY
 #
 # 12 feb 2018 - Initial coding. (@yoshcraft, Raphael A.)
-# encoding=utf8  
+#
 import sys  
 
 reload(sys)  
@@ -38,9 +38,11 @@ def simple_import(csv_file_path, template_mni_path, currentSet):
     :return: imageCollection
     """
 
-    # For french language, encode to latin1 -> to be able to take files with special characters of french in their file path
+    # For french language, encode to latin1 ->
+    # to be able to take files with special characters of french in their file path
+    # -- Tested this, works on GNULinux but not on Windows, so taken off --
     filename = csv_file_path.toLatin1().data()
-    file = open(filename, "rb", encoding='ISO-8859-1')
+    file = open(filename, "rb")     #encoding='ISO-8859-1')
 
     simple_header = [
         u'File_Name_Nifti',
