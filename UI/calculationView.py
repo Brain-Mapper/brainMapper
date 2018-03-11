@@ -752,12 +752,14 @@ class CalculationView(QtGui.QWidget):
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Threshold":
             try:
-                algorithm_result, output = run_calculation(algorithm, nifti_selected, [self.thresholdMin.text(), self.thresholdMax.text()] )
+                min =  float(self.thresholdMin.text())
+                max =  float(self.thresholdMax.text())
+                algorithm_result, output = run_calculation(algorithm, nifti_selected, [min,max] )
                 self.console.setText(">>> \n"+output)                
                 self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:
                 QtGui.QMessageBox.warning(self, "Error",
-                                          "Impossible to execute "+algorithm+" algorithm")
+                                          "Impossible to execute "+algorithm+" algorithm\nPlease enter the lower bound (Min) and higher bound (Max). These two arguments must be double value (ex: 5.63)")
 
 
 

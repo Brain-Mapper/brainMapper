@@ -246,9 +246,7 @@ def run_calculation(selectedAlgorithm, nifti_collection, arguments):
             min = "-100000.0"
         if max == "":
             max = "100000.0"
-        file_result, output = calcul.threshold_opperation(nifti_collection,min,max)
-        file_result, output = calcul.erosion_opperation(nifti_collection, arguments)
-
+        file_result, output = calcul.threshold_opperation(nifti_collection,[min,max])
     return file_result, output
 
 

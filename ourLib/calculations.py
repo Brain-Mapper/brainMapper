@@ -264,6 +264,7 @@ def linear_combination_opperation(Nifti_file_collection, coef):
 def normalization_opperation(Nifti_file_collection):
     (lx, ly, lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
+    result=[]
     for file in Nifti_file_collection:
         list_voxels = extract(file)
         somme_value = sum(list_voxels)
@@ -274,10 +275,11 @@ def normalization_opperation(Nifti_file_collection):
             z = int(voxels[2])
             intensity = voxels[3]
             file_Nifti_clusterised[x][y][z] = intensity / somme_value
+        result.append(file_Nifti_clusterised)
     print('Normalized process is successfull !')
     output = "[Algorithm] > Normalization\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         Nifti_file_collection) + "\n[Arguments] > None\n[Output] > One Nifti file for each input file"
-    return ([file_Nifti_clusterised], output) 
+    return (result, output) 
 
 
 # Extract volume of voxel's center of gravity from a nifti file
@@ -382,7 +384,10 @@ def entropie_opperation(Nifti_file_collection):
 
     return (None, output)
     
-def threshold_opperation(Nifti_file_collection,min=-100000,max=100000):
+def threshold_opperation(Nifti_file_collection,arguments):
+    result = []
+    min = arguments[0]
+    max = arguments[1]
     for file in Nifti_file_collection:
 
         file_Nifti_clusterised = np.zeros(file.nib_image.shape, dtype='f')
@@ -392,12 +397,13 @@ def threshold_opperation(Nifti_file_collection,min=-100000,max=100000):
             y = int(voxels[1])
             z = int(voxels[2])
             intensity = voxels[3]
-            if(intensity<float(min) or intensity>float(max)):
+            if(intensity<min or intensity>max):
                 file_Nifti_clusterised[x][y][z] = 0
             else:
                 file_Nifti_clusterised[x][y][z] = intensity
+        result.append(file_Nifti_clusterised)
     print('Threshold process is successfull !')
     output = "[Algorithm] > Normalization\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         Nifti_file_collection) + "\n[Arguments] > None\n[Output] > One Nifti file for each input file"
-    return ([file_Nifti_clusterised], output) 
+    return (result, output) 
     
