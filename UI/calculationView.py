@@ -618,7 +618,7 @@ class CalculationView(QtGui.QWidget):
                 template_affine = template_data.affine
                 recreate_image = Nifti1Image(matrixData, template_affine)
                 ni_image = NifImage(""+str(time.time()*1000), recreate_image)
-                ni_image.set_filename("file_"+algorithm+"_"+str(id(ni_image)))             
+                ni_image.set_filename("file_"+algorithm+"_"+str(id(ni_image))+".nii")             
                 coll.add(ni_image)
             setCalculation.add_collection(coll)
             makeCalculResultSet(setCalculation)
@@ -698,7 +698,6 @@ class CalculationView(QtGui.QWidget):
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
@@ -714,7 +713,6 @@ class CalculationView(QtGui.QWidget):
             try:
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, arguments)
                 self.console.setText(">>> \n"+output)                
-                self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
             except:
                 QtGui.QMessageBox.warning(self, "Error",
                                           "Impossible to execute "+algorithm+" algorithm")
