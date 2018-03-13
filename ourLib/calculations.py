@@ -30,10 +30,10 @@ def get_data(img):
     return data
 
 def max_value(list):    
-    max = list[0]
+    max = list[0][3]
     for e in list:
-        if e > max:
-            max = e
+        if int(e[3]) > max:
+            max = int(e[3])
     return max
 
 def min_value(list):    
@@ -267,14 +267,14 @@ def normalization_opperation(Nifti_file_collection):
     result=[]
     for file in Nifti_file_collection:
         list_voxels = extract(file)
-        somme_value = sum(list_voxels)
+        max = float(max_value(list_voxels))
         #data = file.get_copy_img_data()
         for voxels in list_voxels:
             x = int(voxels[0])
             y = int(voxels[1])
             z = int(voxels[2])
-            intensity = voxels[3]
-            file_Nifti_clusterised[x][y][z] = intensity / somme_value
+            intensity = float(voxels[3])
+            file_Nifti_clusterised[x][y][z] = intensity / max
         result.append(file_Nifti_clusterised)
     print('Normalized process is successfull !')
     output = "[Algorithm] > Normalization\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
