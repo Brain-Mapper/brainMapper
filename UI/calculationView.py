@@ -618,7 +618,7 @@ class CalculationView(QtGui.QWidget):
                 template_affine = template_data.affine
                 recreate_image = Nifti1Image(matrixData, template_affine)
                 ni_image = NifImage(""+str(time.time()*1000), recreate_image)
-                ni_image.set_filename("file_"+algorithm+"_"+str(id(ni_image))+".nii")             
+                ni_image.set_filename("file_"+str(algorithm)+"_"+str(id(ni_image))+".nii")             
                 coll.add(ni_image)
             setCalculation.add_collection(coll)
             makeCalculResultSet(setCalculation)
