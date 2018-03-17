@@ -169,7 +169,7 @@ class ClusteringResultsPopUp(QtGui.QWidget):
 
         self.setLayout(vbox)
 
-    def update_details(self, clustering_method, user_values, validation_values):
+    def update_details(self, clustering_method, user_values, centroids, validation_values):
         self.info_panel.setText("")
 
         self.info_panel.insertPlainText(clustering_method+"\n-----------------------------------------------------------------------------\n")
@@ -178,6 +178,15 @@ class ClusteringResultsPopUp(QtGui.QWidget):
             self.info_panel.insertPlainText(param_name+"\t\t\t "+user_values[param_name]+"\n")
 
         self.info_panel.insertPlainText("-----------------------------------------------------------------------------\n\n")
+        self.info_panel.insertPlainText(
+            "Cluster centroids\n-----------------------------------------------------------------------------\n")
+        count = 0
+        for c in centroids:
+            self.info_panel.insertPlainText("Cluster "+str(count)+": \t\t" + str(c)+"\n")
+            count = count+1
+
+        self.info_panel.insertPlainText(
+            "-----------------------------------------------------------------------------\n\n")
         self.info_panel.insertPlainText("Validation Indexes\n-----------------------------------------------------------------------------\n")
 
         self.info_panel.insertPlainText("Mean Silhouette : \t\t "+str(validation_values[0])+"\n\n")

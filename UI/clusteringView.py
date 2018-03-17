@@ -235,7 +235,7 @@ class ClusteringView(QtGui.QWidget):
         self.results_popup.setGeometry(QRect(100, 100, 500, 300))
 
         if self.label is not None:
-            self.results_popup.update_details(method_name, user_params, clustering_validation_indexes(self.label,
+            self.results_popup.update_details(method_name, user_params, self.centroids, clustering_validation_indexes(self.label,
                                                                                                       self.centroids,
                                                                                                       int(user_params["n_clusters"])))
 
