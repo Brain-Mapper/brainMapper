@@ -110,20 +110,40 @@ class ClusteringGraphs(QtGui.QWidget):
         self.grid = QtGui.QGridLayout()
         self.grid.setSpacing(8)
 
+        hist_widget = QtGui.QWidget()
+        hist_box = QtGui.QVBoxLayout()
+
+        hist_title = QtGui.QLabel("Cluster assignments Histogram")
+        hist_title.setStyleSheet("background-color : #99cccc; font-size: 14px;")
+
         self.graph1 = pg.GraphicsWindow()
         self.graph1.resize(300, 150)
         self.graph1.setStatusTip("Show an histogram representing the number of points in each cluster.")
+
+        hist_box.addWidget(hist_title)
+        hist_box.addWidget(self.graph1)
+        hist_widget.setLayout(hist_box)
+
+        sil_widget = QtGui.QWidget()
+        sil_box = QtGui.QVBoxLayout()
+
+        sil_title = QtGui.QLabel("Samples Silhouette")
+        sil_title.setStyleSheet("background-color : #99cccc; font-size: 14px;")
 
         self.graph2 = pg.GraphicsWindow()
         self.graph2.resize(300, 150)
         self.graph2.setStatusTip("Show the silhouette of the clustering results")
 
+        sil_box.addWidget(sil_title)
+        sil_box.addWidget(self.graph2)
+        sil_widget.setLayout(sil_box)
+
 
         # Set up for 3D graph, not used in final version
         # self.graph2 = gl.GLViewWidget()
         # self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        self.grid.addWidget(self.graph1, 1, 0)
-        self.grid.addWidget(self.graph2, 1, 1)
+        self.grid.addWidget(hist_widget, 1, 0)
+        self.grid.addWidget(sil_widget, 1, 1)
 
         graphBox.addWidget(graph_title)
         graphBox.addLayout(self.grid)
