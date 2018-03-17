@@ -112,9 +112,16 @@ class ClusteringGraphs(QtGui.QWidget):
 
         self.graph1 = pg.GraphicsWindow()
         self.graph1.resize(300, 150)
-        self.graph1.setStatusTip("Show an histogramm representing the number of points in each cluster.")
-        self.graph2 = gl.GLViewWidget()
-        self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.graph1.setStatusTip("Show an histogram representing the number of points in each cluster.")
+
+        self.graph2 = pg.GraphicsWindow()
+        self.graph2.resize(300, 150)
+        self.graph2.setStatusTip("Show the silhouette of the clustering results")
+
+
+        # Set up for 3D graph, not used in final version
+        # self.graph2 = gl.GLViewWidget()
+        # self.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         self.grid.addWidget(self.graph1, 1, 0)
         self.grid.addWidget(self.graph2, 1, 1)
 
@@ -126,6 +133,9 @@ class ClusteringGraphs(QtGui.QWidget):
 
     def clear_graph1(self):
         self.graph1.clear()
+
+    def clear_graph2(self):
+        self.graph2.clear()
 
 
 class ClusteringResultsPopUp(QtGui.QWidget):

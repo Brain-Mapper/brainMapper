@@ -79,10 +79,9 @@ def do_image_collection(files):
     name = name[1]
     coll.set_name(name[:-1])
     for file in files:
-
         # For french language, encode to latin1 -> to be able to take files with special characters of french in their file path
         filename = file.toLatin1().data()
-        
+
         image = open_nifti(filename)
         coll.add(image)
     add_coll(coll)  # We add the collection create to selected by default
@@ -212,9 +211,18 @@ def clustering_validation_indexes(labels, centroids, cluster_num):
     # Calinski-Habaraz index
     validation_indexes.append(clust.compute_calinski_habaraz(X=clustering_datamatrix, predicted_labels=labels))
     # Davies-Bouldin index
-    validation_indexes.append(clust.compute_db(X=clustering_datamatrix, centroids=centroids, labels=labels, cluster_number=cluster_num))
+    validation_indexes.append(
+        clust.compute_db(X=clustering_datamatrix, centroids=centroids, labels=labels, cluster_number=cluster_num))
 
     return validation_indexes
+
+
+def compute_sample_silhouettes(labels):
+    clustering_datamatrix = currentUsableDataset.export_as_clusterizable()
+    return clust.compute_samples_silhouette(X=clustering_datamatrix, predicted_labels=labels)
+
+
+# ------------------------ CLUSTERING FUNCTIONS END HERE ---------------------------------------------------------
 
 
 def run_calculation(selectedAlgorithm, nifti_collection, arguments):
@@ -240,13 +248,13 @@ def run_calculation(selectedAlgorithm, nifti_collection, arguments):
     if selectedAlgorithm == "Entropy":
         file_result, output = calcul.entropie_opperation(nifti_collection)
     if selectedAlgorithm == "Erosion":
-        file_result, output = calcul.erosion_opperation(nifti_collection,arguments)
+        file_result, output = calcul.erosion_opperation(nifti_collection, arguments)
     if selectedAlgorithm == "Dilation":
-        file_result, output = calcul.dilation_opperation(nifti_collection,arguments)
+        file_result, output = calcul.dilation_opperation(nifti_collection, arguments)
     if selectedAlgorithm == "Opening":
-        file_result, output = calcul.opening_opperation(nifti_collection,arguments)
+        file_result, output = calcul.opening_opperation(nifti_collection, arguments)
     if selectedAlgorithm == "Closing":
-        file_result, output = calcul.closing_opperation(nifti_collection,arguments)
+        file_result, output = calcul.closing_opperation(nifti_collection, arguments)
     if selectedAlgorithm == "Threshold":
         min = arguments[0]
         max = arguments[1]
@@ -254,7 +262,7 @@ def run_calculation(selectedAlgorithm, nifti_collection, arguments):
             min = "-100000.0"
         if max == "":
             max = "100000.0"
-        file_result, output = calcul.threshold_opperation(nifti_collection,[min,max])
+        file_result, output = calcul.threshold_opperation(nifti_collection, [min, max])
     return file_result, output
 
 
@@ -693,5 +701,3 @@ def rm_workspace_set(my_set):
 
 def get_workspace_set():
     return workspace_sets
-
-

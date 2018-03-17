@@ -172,7 +172,8 @@ class ClusteringView(QtGui.QWidget):
         self.centroids = clustering_results[1]
         self.table_displayer.fill_clust_labels(self.label)
         self.add_hist(param_dict, self.label)
-        self.add_3D(self.table_displayer.clustering_usable_dataset, self.label)
+        self.add_silhouette(self.label)
+        # self.add_3D(self.table_displayer.clustering_usable_dataset, self.label)
 
     def export(self):
         if self.label is not None:
@@ -205,6 +206,17 @@ class ClusteringView(QtGui.QWidget):
         # Using stepMode=True causes the plot to draw two lines for each sample.
         # notice that len(x) == len(y)+1
         plt.plot(x, y, stepMode=True, fillLevel=0, brush=(0, 0, 255, 150))
+
+    def add_silhouette(self, labels):
+        self.resultsGraphs.clear_graph2()
+        plt = self.resultsGraphs.graph2.addPlot()
+
+        sample_silhouettes = compute_sample_silhouettes(labels)
+
+        # make interesting distribution of values
+        vals = np.hstack([sample_silhouettes])
+        plt.plot(vals, fillLevel=0, brush=(0, 245, 0, 150))
+
 
     def add_3D(self, clustering_usable_dataset, label):
         old = self.resultsGraphs.grid.itemAt(1).widget()
