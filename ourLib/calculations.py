@@ -19,6 +19,7 @@ from scipy import ndimage
 
 from dataExtraction.extractor import extract
 
+
 # Take as argument the nifti's path file and load this one
 def load_nifti(nifti_file):
     img = nib.load(nifti_file)
@@ -29,44 +30,47 @@ def get_data(img):
     data = np.array(img.get_data(), copy=True)
     return data
 
-def max_value(list):    
+
+def max_value(list):
     max = list[0][3]
     for e in list:
         if int(e[3]) > max:
             max = int(e[3])
     return max
 
-def min_value(list):    
+
+def min_value(list):
     min = list[0]
     for e in list:
         if e < min:
             min = e
     return min
-    
+
+
 def Extract_voxels_from_Nifti_file(data):
     mask = data > 0
     nb_interesting_voxels = len(data[mask].T)
     list_voxels = np.zeros(shape=(nb_interesting_voxels, 3))
-    
-    lx,ly,lz = data.shape
+
+    lx, ly, lz = data.shape
     c = 0
-    for x in range(1,lx):
-        if data[x].sum()>0:
-            for y in range(1,ly):
-                if data[x][y].sum()>0:
-                    for z in range(1,lz):
-                        if data[x][y][z]>0:
-                            list_voxels[c]=[int(x),int(y),int(z)]
-                            c=c+1
+    for x in range(1, lx):
+        if data[x].sum() > 0:
+            for y in range(1, ly):
+                if data[x][y].sum() > 0:
+                    for z in range(1, lz):
+                        if data[x][y][z] > 0:
+                            list_voxels[c] = [int(x), int(y), int(z)]
+                            c = c + 1
     return list_voxels.astype(int)
-    
+
 
 def max_shape(Nifti_collection):
     max_X = 0
     max_Y = 0
     max_Z = 0
     for file in Nifti_collection:
-        #img = load_nifti(file)
+        # img = load_nifti(file)
         (x, y, z) = file.nib_image.shape
         if x > max_X:
             max_X = x
@@ -85,8 +89,8 @@ def save_nifti(data_nifti, filename):
 def extract_name_without_path(list_nif_img):
     list_name = ""
     for nifimage in list_nif_img:
-        #(x, name) = path.split(nifimage)
-    
+        # (x, name) = path.split(nifimage)
+
         list_name = list_name + "\'" + nifimage.filename + "\' "
     return list_name
 
@@ -101,7 +105,7 @@ def addition_opperation(list_of_NifImage_obj):
     output = "[Algorithm] > Addition\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         list_of_NifImage_obj) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
-    return ([file_Nifti_clusterised], output)    
+    return ([file_Nifti_clusterised], output)
 
 
 def mean_opperation(list_of_NifImage_obj):
@@ -116,11 +120,11 @@ def mean_opperation(list_of_NifImage_obj):
         list_of_NifImage_obj) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
     return ([file_Nifti_clusterised], output)
-    
-    
-def erosion_opperation(list_of_NifImage_obj,argument):
-    (lx, ly, lz) = max_shape(list_of_NifImage_obj)  
-    result=[]
+
+
+def erosion_opperation(list_of_NifImage_obj, argument):
+    (lx, ly, lz) = max_shape(list_of_NifImage_obj)
+    result = []
     for file in list_of_NifImage_obj:
         file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
         data = file.get_copy_img_data()
@@ -128,13 +132,14 @@ def erosion_opperation(list_of_NifImage_obj,argument):
         result.append(file_Nifti_clusterised.astype(dtype='f'))
     print('Erosion process is successfull !')
     output = "[Algorithm] > Erosion\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
-        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = "+argument+"\n[Output] > One Nifti file with dimensions : {" + str(
+        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = " + argument + "\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
-    return (result, output) 
-    
-def dilation_opperation(list_of_NifImage_obj,argument):
-    (lx, ly, lz) = max_shape(list_of_NifImage_obj)  
-    result=[]
+    return (result, output)
+
+
+def dilation_opperation(list_of_NifImage_obj, argument):
+    (lx, ly, lz) = max_shape(list_of_NifImage_obj)
+    result = []
     for file in list_of_NifImage_obj:
         file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
         data = file.get_copy_img_data()
@@ -142,13 +147,14 @@ def dilation_opperation(list_of_NifImage_obj,argument):
         result.append(file_Nifti_clusterised.astype(dtype='f'))
     print('Dilation process is successfull !')
     output = "[Algorithm] > Dilation\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
-        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = "+argument+"\n[Output] > One Nifti file with dimensions : {" + str(
+        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = " + argument + "\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
-    return (result, output) 
-    
-def opening_opperation(list_of_NifImage_obj,argument):
-    (lx, ly, lz) = max_shape(list_of_NifImage_obj)  
-    result=[]
+    return (result, output)
+
+
+def opening_opperation(list_of_NifImage_obj, argument):
+    (lx, ly, lz) = max_shape(list_of_NifImage_obj)
+    result = []
     for file in list_of_NifImage_obj:
         file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
         data = file.get_copy_img_data()
@@ -156,13 +162,14 @@ def opening_opperation(list_of_NifImage_obj,argument):
         result.append(file_Nifti_clusterised.astype(dtype='f'))
     print('Opening process is successfull !')
     output = "[Algorithm] > Opening\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
-        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = "+argument+"\n[Output] > One Nifti file with dimensions : {" + str(
+        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = " + argument + "\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
-    return (result, output) 
+    return (result, output)
 
-def closing_opperation(list_of_NifImage_obj,argument):
-    (lx, ly, lz) = max_shape(list_of_NifImage_obj)  
-    result=[]
+
+def closing_opperation(list_of_NifImage_obj, argument):
+    (lx, ly, lz) = max_shape(list_of_NifImage_obj)
+    result = []
     for file in list_of_NifImage_obj:
         file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
         data = file.get_copy_img_data()
@@ -170,9 +177,9 @@ def closing_opperation(list_of_NifImage_obj,argument):
         result.append(file_Nifti_clusterised.astype(dtype='f'))
     print('Closing process is successfull !')
     output = "[Algorithm] > Closing\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
-        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = "+argument+"\n[Output] > One Nifti file with dimensions : {" + str(
+        list_of_NifImage_obj) + "\n[Arguments] > Nb iteration = " + argument + "\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
-    return (result, output) 
+    return (result, output)
 
 
 def or_opperation(list_of_NifImage_obj):
@@ -180,7 +187,7 @@ def or_opperation(list_of_NifImage_obj):
     file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
     for file in list_of_NifImage_obj:
         list_voxels = extract(file)
-        #data = file.get_copy_img_data()
+        # data = file.get_copy_img_data()
         for voxels in list_voxels:
             x = int(voxels[0])
             y = int(voxels[1])
@@ -190,7 +197,8 @@ def or_opperation(list_of_NifImage_obj):
     output = "[Algorithm] > Boolean Union\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         list_of_NifImage_obj) + "\n[Arguments] > None\n[Output] > One Nifti file with dimensions : {" + str(
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
-    return ([file_Nifti_clusterised], output)    
+    return ([file_Nifti_clusterised], output)
+
 
 def and_opperation(list_of_NifImage_obj):
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)
@@ -239,7 +247,7 @@ def mask_opperation(mask, file, arguments):
     return ([file_Nifti_clusterised], output)
 
 
-#TO REVIEW
+# TO REVIEW
 def linear_combination_opperation(Nifti_file_collection, coef):
     (lx, ly, lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
@@ -260,15 +268,16 @@ def linear_combination_opperation(Nifti_file_collection, coef):
         lx) + ", " + str(ly) + ", " + str(lz) + "}"
     return ([file_Nifti_clusterised], output)
 
-#ERROR WHY ?
+
+# ERROR WHY ?
 def normalization_opperation(Nifti_file_collection):
     (lx, ly, lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
-    result=[]
+    result = []
     for file in Nifti_file_collection:
         list_voxels = extract(file)
         max = float(max_value(list_voxels))
-        #data = file.get_copy_img_data()
+        # data = file.get_copy_img_data()
         for voxels in list_voxels:
             x = int(voxels[0])
             y = int(voxels[1])
@@ -279,7 +288,7 @@ def normalization_opperation(Nifti_file_collection):
     print('Normalized process is successfull !')
     output = "[Algorithm] > Normalization\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         Nifti_file_collection) + "\n[Arguments] > None\n[Output] > One Nifti file for each input file"
-    return (result, output) 
+    return (result, output)
 
 
 # Extract volume of voxel's center of gravity from a nifti file
@@ -303,14 +312,13 @@ def baricentre_opperation(Nifti_file_collection, arguments):
     (lx, ly, lz) = max_shape(Nifti_file_collection)
     for file in Nifti_file_collection:
         list_voxels = extract(file)
-        #(x, name) = path.split(file)
+        # (x, name) = path.split(file)
         output = output + baricentre_calculation_opperation(file.filename, list_voxels) + "\n"
-
 
     return None, output
 
 
-#------------------------ Valentina's calculations functions using project structures ------------------------------
+# ------------------------ Valentina's calculations functions using project structures ------------------------------
 
 def image_centroid(a_nifti_image):
     """
@@ -333,7 +341,7 @@ def image_centroid(a_nifti_image):
     count = 0
 
     for voxel in extracted:
-        print voxel
+        # print voxel
         centroid_x = centroid_x + voxel[0]
         centroid_y = centroid_y + voxel[1]
         centroid_z = centroid_z + voxel[2]
@@ -341,12 +349,13 @@ def image_centroid(a_nifti_image):
         count = count + 1
 
     # Centroid - X,Y,Z, Intensity means
-    centroid[0] = np.array([centroid_x/count, centroid_y/count, centroid_z/count, centroid_intensity/count])
+    centroid[0] = np.array([centroid_x / count, centroid_y / count, centroid_z / count, centroid_intensity / count])
 
     # Saves memory !
     del extracted
 
     return centroid
+
 
 # ----------------------------------------------------------------------------------------------
 
@@ -375,16 +384,18 @@ def entropie_opperation(Nifti_file_collection):
     output = "[Algorithm] > Entropy\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         Nifti_file_collection) + "\n[Arguments] > None\n[Output] >\n"
     for file in Nifti_file_collection:
-        #img = load_nifti(file)
+        # img = load_nifti(file)
         data = file.get_copy_img_data()
         list_voxels = extract(file)
-        #(x, name) = path.split(file)
-        output = output + "File \'" + file.filename + "\' | Entropy = " + str(entropie(data, list_voxels, lx * ly * lz)) + "\n"
+        # (x, name) = path.split(file)
+        output = output + "File \'" + file.filename + "\' | Entropy = " + str(
+            entropie(data, list_voxels, lx * ly * lz)) + "\n"
     print('Entropy process is successfull !')
 
-    return (None, output)
-    
-def threshold_opperation(Nifti_file_collection,arguments):
+    return None, output
+
+
+def threshold_opperation(Nifti_file_collection, arguments):
     result = []
     min = arguments[0]
     max = arguments[1]
@@ -397,7 +408,7 @@ def threshold_opperation(Nifti_file_collection,arguments):
             y = int(voxels[1])
             z = int(voxels[2])
             intensity = voxels[3]
-            if(intensity<min or intensity>max):
+            if (intensity < min or intensity > max):
                 file_Nifti_clusterised[x][y][z] = 0
             else:
                 file_Nifti_clusterised[x][y][z] = intensity
@@ -405,5 +416,4 @@ def threshold_opperation(Nifti_file_collection,arguments):
     print('Threshold process is successfull !')
     output = "[Algorithm] > Normalization\n[Input] > Nifti(s) file(s) : " + extract_name_without_path(
         Nifti_file_collection) + "\n[Arguments] > None\n[Output] > One Nifti file for each input file"
-    return (result, output) 
-    
+    return (result, output)

@@ -167,7 +167,7 @@ class UsableDataSet(object):
                         found = False
         # recreate nifti image from this points
         for key in point_dict.keys():
-            print key
+            # print key
             recreate_affine = template_affine
             recreate_data = zeros(template_shape)
 

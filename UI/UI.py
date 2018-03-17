@@ -265,7 +265,7 @@ class UI(QtGui.QMainWindow):
         folder_path = str(QFileDialog.getExistingDirectory())
         if (file != ""):
             test = general_workspace_import_control(folder_path)
-            print test
+            # print test
             if test is None:
                 general_workspace_import(folder_path)
                 for key in get_workspace_set():

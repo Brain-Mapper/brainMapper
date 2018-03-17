@@ -42,17 +42,18 @@ class CollButton(QtGui.QCheckBox):
 
         list = self.coll.get_img_list()
 
-        try :
+        try:
             dates = []
-            for l in list :
+            for l in list:
                 dates.append(creation_date(str(l)))
             date = max(dates)
             d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
-        except :
+        except:
             d = datetime.fromtimestamp(int(round(time.time()))).strftime('%Y-%m-%d')
-        label = "Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d)
+        label = "Name : " + str(self.coll.name) + "\nNIfTI : " + str(len(list)) + "\nLast modified : " + str(d)
         self.setText(label)
-        self.setStyleSheet("CollButton {background-color : #eee; spacing: 5px;border: 2px solid #99cccc;border-radius: 8px;padding: 1px 18px 1px 3px;max-width: 225%;}; CollButton::indicator {width: 13px; height: 13px;};")
+        self.setStyleSheet(
+            "CollButton {background-color : #eee; spacing: 5px;border: 2px solid #99cccc;border-radius: 8px;padding: 1px 18px 1px 3px;max-width: 225%;}; CollButton::indicator {width: 13px; height: 13px;};")
 
     def selectColl(self):
         # -- This selectColl will add or delete the collection from the selected ones
@@ -65,17 +66,17 @@ class CollButton(QtGui.QCheckBox):
         # -- This update will update the information of the collection if they have changed in the edit collection view
         list = self.coll.get_img_list()
         try:
-            if list :
+            if list:
                 dates = []
-                for l in list :
+                for l in list:
                     dates.append(creation_date(str(l)))
                 date = max(dates)
                 d = datetime.fromtimestamp(int(round(date))).strftime('%Y-%m-%d')
-            else :
+            else:
                 d = datetime.fromtimestamp(int(round(time.time()))).strftime('%Y-%m-%d')
         except:
             d = datetime.fromtimestamp(int(round(time.time()))).strftime('%Y-%m-%d')
-        self.setText("Name : "+str(self.coll.name)+"\nNIfTI : "+str(len(list))+"\nLast modified : "+str(d))
+        self.setText("Name : " + str(self.coll.name) + "\nNIfTI : " + str(len(list)) + "\nLast modified : " + str(d))
 
 
 class CollectionsView(QtGui.QWidget):
@@ -86,13 +87,12 @@ class CollectionsView(QtGui.QWidget):
         self.j = 1
         super(CollectionsView, self).__init__()
 
-
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height() / 1.4
         mainwind_w = rec.width() / 1.5
         self.setMinimumSize(QSize(mainwind_w / 1.35, mainwind_h * 0.9))
-        self.max = int((mainwind_w / 1.35)/150)
-        print self.max
+        self.max = int((mainwind_w / 1.35) / 150)
+        # print self.max
 
         self.setStyleSheet("background-color: white;")
 
@@ -115,14 +115,14 @@ class CollectionsView(QtGui.QWidget):
         deselectButton.clicked.connect(self.deselectAll)
         deselectButton.setStatusTip("Deselect all Image Collections in this set")
         deselectButton.setFixedSize(QSize(mainwind_w / 8, mainwind_h / 20))
-        buttonsBox.addWidget(deselectButton,0, Qt.AlignRight)
+        buttonsBox.addWidget(deselectButton, 0, Qt.AlignRight)
 
         selectButton = QtGui.QPushButton("Select all")
         selectButton.setIcon(QtGui.QIcon(':ressources/app_icons_png/checking.png'))
         selectButton.clicked.connect(self.selectAll)
         selectButton.setStatusTip("Select all Image Collections in this set")
         selectButton.setFixedSize(QSize(mainwind_w / 8, mainwind_h / 20))
-        buttonsBox.addWidget(selectButton,0, Qt.AlignRight)
+        buttonsBox.addWidget(selectButton, 0, Qt.AlignRight)
 
         self.vbox = QtGui.QGridLayout()
         self.vbox.setAlignment(QtCore.Qt.AlignTop)
@@ -142,7 +142,6 @@ class CollectionsView(QtGui.QWidget):
 
         self.setLayout(hbox)
 
-
     def add(self, my_coll):
         # -- This add will add a collection to vizualize according to the grid 3 x X where X is unlimited thanks to the scroll bar
         self.vbox.addWidget(CollButton(my_coll), self.j, self.i)
@@ -160,7 +159,7 @@ class CollectionsView(QtGui.QWidget):
                 if tRM:  # List not empty
                     coll_to_RM = tRM[0]
                     if (i.coll == coll_to_RM):
-                        print i.coll
+                        # print i.coll
                         i.setParent(None)
                         del i
                     else:
@@ -188,6 +187,7 @@ class CollectionsView(QtGui.QWidget):
                 if not (i.isChecked()):
                     i.toggle()
                     add_coll(i.coll)
+
 
 class SetButton(QtGui.QWidget):
     # -- The SetButton class will display all info for a set
@@ -275,17 +275,18 @@ class SetButton(QtGui.QWidget):
                     add_set(ssSet)
                     set_current_set(ssSet)
                     self.parent().parent().parent().parent().parent().parent().add(ssSet)
-                else :
-                    err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
-            except :
-                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
+                else:
+                    err = QtGui.QMessageBox.critical(self, "Error",
+                                                     "The name you entered is not valid (empty, invalid caracter or already exists)")
+            except:
+                err = QtGui.QMessageBox.critical(self, "Error",
+                                                 "The name you entered is not valid (" + str(sys.exc_info()[0]) + ")")
 
-    def addFullSubSet(self,ssSet):
+    def addFullSubSet(self, ssSet):
         text = ssSet.get_name()
         self.SSList.addItem(str(text))
         self.my_set.get_sub_set(str(text)).setParent(self.my_set)
         add_set(ssSet)
-
 
     def changeName(self):
         # -- This changeName will change the name of the set selected. 
@@ -300,7 +301,7 @@ class SetButton(QtGui.QWidget):
                         new_ok = False
                 if new_ok and not exists_set(str(text)):
                     rm_set(self.my_set)
-                    if(self.my_set.getParent() != None): #if its a subset
+                    if (self.my_set.getParent() != None):  # if its a subset
                         self.my_set.getParent().remove_subset(self.my_set.get_name())
                         self.my_set.set_name(str(text))
                         self.my_set.getParent().add_subset(self.my_set)
@@ -314,10 +315,12 @@ class SetButton(QtGui.QWidget):
                     self.setB.setMaximumSize(size)
                     add_set(self.my_set)
                     self.parent().parent().parent().parent().parent().parent().update()
-                else :
-                    err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid (empty, invalid caracter or already exists)")
-            except :
-                err = QtGui.QMessageBox.critical(self, "Error", "The name you entered is not valid ("+str(sys.exc_info()[0])+")")
+                else:
+                    err = QtGui.QMessageBox.critical(self, "Error",
+                                                     "The name you entered is not valid (empty, invalid caracter or already exists)")
+            except:
+                err = QtGui.QMessageBox.critical(self, "Error",
+                                                 "The name you entered is not valid (" + str(sys.exc_info()[0]) + ")")
 
 
 class SetAccessBar(QtGui.QTabWidget):
@@ -349,7 +352,7 @@ class SetAccessBar(QtGui.QTabWidget):
         self.tab3.vbox3 = QtGui.QVBoxLayout()
 
         default_name = datetime.fromtimestamp(int(round(time.time()))).strftime('%Y-%m-%d %H:%M:%S')
-        
+
         my_set = newSet(default_name[2:])
         set_current_set(my_set)
 
@@ -360,19 +363,19 @@ class SetAccessBar(QtGui.QTabWidget):
         scroll = QtGui.QScrollArea()
         scroll.setWidget(group)
         scroll.setWidgetResizable(True)
-        scroll.setFixedHeight(mainwind_h*0.8)
-        
+        scroll.setFixedHeight(mainwind_h * 0.8)
+
         scroll2 = QtGui.QScrollArea()
         scroll2.setWidget(group2)
         scroll2.setWidgetResizable(True)
-        scroll2.setFixedHeight(mainwind_h*0.8)
-        
+        scroll2.setFixedHeight(mainwind_h * 0.8)
+
         scroll3 = QtGui.QScrollArea()
         scroll3.setWidget(group3)
         scroll3.setWidgetResizable(True)
-        scroll3.setFixedHeight(mainwind_h*0.8)
-        
-        self.tab1.vbox.addWidget(SetButton(my_set,self))
+        scroll3.setFixedHeight(mainwind_h * 0.8)
+
+        self.tab1.vbox.addWidget(SetButton(my_set, self))
 
         hbox = QtGui.QVBoxLayout()
 
@@ -386,9 +389,9 @@ class SetAccessBar(QtGui.QTabWidget):
         hbox.addWidget(scroll)
         self.tab1.setLayout(hbox)
 
-        hbox2=QtGui.QVBoxLayout()
+        hbox2 = QtGui.QVBoxLayout()
         title2 = QtGui.QLabel('Sets results of clustering')
-        title2.setFixedWidth(self.width()-10)
+        title2.setFixedWidth(self.width() - 10)
         title2.setFixedHeight(20)
         title2.setAlignment(QtCore.Qt.AlignCenter)
         title2.setStyleSheet(title_style)
@@ -396,28 +399,27 @@ class SetAccessBar(QtGui.QTabWidget):
         hbox2.addWidget(scroll2)
         self.tab2.setLayout(hbox2)
 
-        hbox3=QtGui.QVBoxLayout()
+        hbox3 = QtGui.QVBoxLayout()
         title3 = QtGui.QLabel('Sets results of calculation')
-        title3.setFixedWidth(self.width()-10)
+        title3.setFixedWidth(self.width() - 10)
         title3.setFixedHeight(20)
         title3.setAlignment(QtCore.Qt.AlignCenter)
         title3.setStyleSheet(title_style)
         hbox3.addWidget(title3)
         hbox3.addWidget(scroll3)
         self.tab3.setLayout(hbox3)
-               
 
     def add(self, my_set):
         # -- This add will add a SetButton
         rec = QApplication.desktop().availableGeometry()
         mainwind_h = rec.height()
         mainwind_w = rec.width()
-        new_set_button = SetButton(my_set,self)
+        new_set_button = SetButton(my_set, self)
         if (my_set.number_of_collection() != 0):
-            for i in my_set.get_coll().values() :
+            for i in my_set.get_coll().values():
                 new_set_button.vizu.add(i)
                 add_coll(i)
-        if (my_set.number_of_subset() != 0 ):
+        if (my_set.number_of_subset() != 0):
             for i in my_set.getAllSubSets():
                 new_set_button.addFullSubSet(i)
                 self.add(i)
@@ -426,7 +428,7 @@ class SetAccessBar(QtGui.QTabWidget):
 
     def add2(self):
         for j in getClusterResultSets():
-            s = SetButton(j,self)
+            s = SetButton(j, self)
             for c in j.get_all_nifti_set():
                 s.vizu.add(c)
                 add_coll(c)
@@ -435,13 +437,13 @@ class SetAccessBar(QtGui.QTabWidget):
 
     def add3(self):
         for j in getCalculResultSets():
-            s = SetButton(j,self)
+            s = SetButton(j, self)
             for c in j.get_all_nifti_set():
                 s.vizu.add(c)
                 add_coll(c)
             self.tab3.vbox3.addWidget(s)
         rmAllCalculResultSets()
-    
+
     def update(self):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
         items = (self.tab1.vbox.itemAt(j).widget() for j in range(self.tab1.vbox.count()))
@@ -450,7 +452,7 @@ class SetAccessBar(QtGui.QTabWidget):
                 i.updateSubSetName()
         self.parent().parent().upCollLabel()
 
-    def updateSet(self,new_set):
+    def updateSet(self, new_set):
         # -- Update the list of subsets shown. Usefull when a sub set is renamed
         items = (self.tab1.vbox.itemAt(j).widget() for j in range(self.tab1.vbox.count()))
         for i in items:
@@ -459,6 +461,7 @@ class SetAccessBar(QtGui.QTabWidget):
                     set_current_vizu(i.vizu)
                     self.parent().parent().updateVizu(i.vizu)
                     self.parent().parent().upCollLabel()
+
 
 class MainView(QtGui.QWidget):
     # -- ! ATTRIBUTES SHARED by EVERY class instance ! --
@@ -524,9 +527,6 @@ class MainView(QtGui.QWidget):
         containerVbox.addLayout(buttonsBox)
         self.setLayout(containerVbox)
 
-    def buttonClicked(self):
-        print "Test passed. SUCCESS!"
-
     def show_coll(self, coll):
         # -- This show_coll will adda collection to the current vizu
         get_current_vizu().add(coll)
@@ -543,10 +543,10 @@ class MainView(QtGui.QWidget):
             l1 = export_choice.layout()
             l1.setContentsMargins(20, 0, 0, 20)
             l1.addWidget(QLabel("You have selected (" + str(len(
-                get_selected())) + ") image collections. \nThere is a total of (" + str(get_selected_images_number())+
+                get_selected())) + ") image collections. \nThere is a total of (" + str(get_selected_images_number()) +
                                 ") NIfTI images to be treated. \nPlease select the way "
-                                   "you would like to export these files : "),
-                        l1.rowCount() - 3, 0, 1, l1.columnCount() - 2, Qt.AlignCenter)
+                                "you would like to export these files : "),
+                         l1.rowCount() - 3, 0, 1, l1.columnCount() - 2, Qt.AlignCenter)
             rb_box = QtGui.QGroupBox()
             vbox = QtGui.QVBoxLayout()
             vbox.addWidget(nifti_opt)
@@ -565,8 +565,6 @@ class MainView(QtGui.QWidget):
 
                     folder_path = str(QFileDialog.getExistingDirectory())
                     image_recreation_from_list(folder_path, selected)
-
-                    export_nifti()
 
                 elif excel_opt.isChecked():
                     type_choice = QtGui.QMessageBox()
@@ -603,15 +601,12 @@ class MainView(QtGui.QWidget):
                             extract_data_as_centroids_from_selected()
 
                     ee.simple_export(f_name, f_path, get_current_usableDataset())
-                    export_excel()
 
                 else:
-                    print "WTF ?!!?"
+                    print "There was a problem in export options"
 
         else:
             QtGui.QMessageBox.information(self, "Selection empty", "There's nothing to export.")
-
-
 
     def extract_and_cluster(self):
         if get_selected():
@@ -625,9 +620,10 @@ class MainView(QtGui.QWidget):
             l = choice.layout()
             l.setContentsMargins(20, 0, 0, 20)
             l.addWidget(QLabel("You have selected (" + str(len(
-                                                    get_selected())) + ") image collections. \nThere is a total of ("
-                               + str(get_selected_images_number()) + ") NIfTI images to be treated. \n\nPlease select the way "
-                                                                       "you would like each file to be represented : "),
+                get_selected())) + ") image collections. \nThere is a total of ("
+                               + str(
+                get_selected_images_number()) + ") NIfTI images to be treated. \n\nPlease select the way "
+                                                "you would like each file to be represented : "),
                         l.rowCount() - 3, 0, 1, l.columnCount() - 2, Qt.AlignCenter)
             rb_box = QtGui.QGroupBox()
             vbox = QtGui.QVBoxLayout()
@@ -635,7 +631,7 @@ class MainView(QtGui.QWidget):
             vbox.addWidget(centroid_opt)
 
             rb_box.setLayout(vbox)
-            l.addWidget(rb_box, l.rowCount()-2, 0, Qt.AlignCenter)
+            l.addWidget(rb_box, l.rowCount() - 2, 0, Qt.AlignCenter)
 
             choice.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
@@ -649,8 +645,8 @@ class MainView(QtGui.QWidget):
                 elif centroid_opt.isChecked():
                     extract_data_as_centroids_from_selected()
 
-                else :
-                    print "WTF ?!!?"
+                else:
+                    print "There was a problem in data extraction options"
 
                 self.showClust.emit()
 
@@ -699,10 +695,8 @@ class MainView(QtGui.QWidget):
             label = label[:nb] + "-"
         self.collectionsDisplayBox.update_label(label)
 
-
     def updateClusterRes(self):
         self.setAccessBox.add2()
 
     def updateCalculRes(self):
         self.setAccessBox.add3()
-

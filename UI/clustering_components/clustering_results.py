@@ -117,21 +117,21 @@ class ClusteringGraphs(QtGui.QWidget):
         hist_title.setStyleSheet("background-color : #99cccc; font-size: 14px;")
 
         self.graph1 = pg.GraphicsWindow()
-        self.graph1.resize(300, 150)
+        self.graph1.resize(300, 200)
         self.graph1.setStatusTip("Show an histogram representing the number of points in each cluster.")
 
         hist_box.addWidget(hist_title)
         hist_box.addWidget(self.graph1)
         hist_widget.setLayout(hist_box)
 
-        sil_widget = QtGui.QWidget()
+        sil_widget = QtGui.QWidget( )
         sil_box = QtGui.QVBoxLayout()
 
         sil_title = QtGui.QLabel("Samples Silhouette")
         sil_title.setStyleSheet("background-color : #99cccc; font-size: 14px;")
 
         self.graph2 = pg.GraphicsWindow()
-        self.graph2.resize(300, 150)
+        self.graph2.resize(300, 200)
         self.graph2.setStatusTip("Show the silhouette of the clustering results")
 
         sil_box.addWidget(sil_title)

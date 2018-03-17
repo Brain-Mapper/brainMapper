@@ -235,12 +235,8 @@ class ClusteringView(QtGui.QWidget):
     def go_back(self):
         # -- When the user wants to return to the main view, we reinit the cluster view
         self.resultsGraphs.graph1.clear()
-        old = self.resultsGraphs.grid.itemAt(1).widget()
-        self.resultsGraphs.grid.removeWidget(old)
-        old.setParent(None)
-        self.resultsGraphs.graph2 = gl.GLViewWidget()
-        self.resultsGraphs.graph2.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        self.resultsGraphs.grid.addWidget(self.resultsGraphs.graph2, 1, 1)
+        self.resultsGraphs.graph2.clear()
+
         self.showMain.emit()
 
     def popup_results_details(self, method_name, user_params):

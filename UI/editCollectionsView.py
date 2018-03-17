@@ -195,7 +195,7 @@ class InfosBar(QtGui.QWidget):
                 self.redo(get_current_coll())
             except:
                 err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. Maybe you tried to open a non-NIfTI file")
-                print (sys.exc_info()[0])
+                # print (sys.exc_info()[0])
         
 
     def save(self):

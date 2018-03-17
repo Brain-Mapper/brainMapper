@@ -132,16 +132,6 @@ def get_selected_images_number():
     return img_num
 
 
-def export_nifti():
-    print("Export into NIfTI...")
-    print selected
-
-
-def export_excel():
-    print("Export into Excel...")
-    print selected
-
-
 def extract_data_from_selected():
     """
     Extract the interesting data from the selected image collections using extractor's module functions.
@@ -389,7 +379,7 @@ def delete_current_coll():
     add_toRM(coll)  # We use toRM this time with a collection (toRM is rested just after used)
     set_current_coll(None)  # The current collection become None
     this_set.remove_collection(coll.name)
-    print this_set.number_of_collection()  # To verify if the collection is well deleted from the data and not only from UI
+    # print this_set.number_of_collection()  # To verify if the collection is well deleted from the data and not only from UI
 
 
 def save_modifs():
