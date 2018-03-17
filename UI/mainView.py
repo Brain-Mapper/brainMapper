@@ -543,7 +543,8 @@ class MainView(QtGui.QWidget):
             l1 = export_choice.layout()
             l1.setContentsMargins(20, 0, 0, 20)
             l1.addWidget(QLabel("You have selected (" + str(len(
-                get_selected())) + ") image collections. \nPlease select the way "
+                get_selected())) + ") image collections. \nThere is a total of (" + str(get_selected_images_number())+
+                                ") NIfTI images to be treated. \nPlease select the way "
                                    "you would like to export these files : "),
                         l1.rowCount() - 3, 0, 1, l1.columnCount() - 2, Qt.AlignCenter)
             rb_box = QtGui.QGroupBox()
@@ -624,7 +625,8 @@ class MainView(QtGui.QWidget):
             l = choice.layout()
             l.setContentsMargins(20, 0, 0, 20)
             l.addWidget(QLabel("You have selected (" + str(len(
-                                                    get_selected())) + ") image collections. \nPlease select the way "
+                                                    get_selected())) + ") image collections. \nThere is a total of ("
+                               + str(get_selected_images_number()) + ") NIfTI images to be treated. \n\nPlease select the way "
                                                                        "you would like each file to be represented : "),
                         l.rowCount() - 3, 0, 1, l.columnCount() - 2, Qt.AlignCenter)
             rb_box = QtGui.QGroupBox()

@@ -70,6 +70,9 @@ class ImageCollection(object):
     def get_img_list(self):
         return self.nifimage_dict
 
+    def get_image_total_num(self):
+        return len(self.nifimage_dict)
+
     def set_name(self, new):
         self.name = new
 

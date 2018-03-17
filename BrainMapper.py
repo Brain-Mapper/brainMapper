@@ -126,6 +126,13 @@ def get_selected():
     return selected
 
 
+def get_selected_images_number():
+    img_num = 0
+    for imgc in selected:
+        img_num = img_num + imgc.get_image_total_num()
+    return img_num
+
+
 def export_nifti():
     print("Export into NIfTI...")
     print selected
