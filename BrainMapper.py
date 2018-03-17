@@ -11,6 +11,7 @@
 # 28 november 2017 - Initial design and coding. (@Graziella-Husson, Graziella Husson)
 # 12 february 2018 - Added documentation (@vz-chameleon, Valentina Zelaya)
 
+
 from ourLib.niftiHandlers.nifimage import NifImage
 from ourLib.niftiHandlers.imagecollection import ImageCollection
 from ourLib.niftiHandlers.set import Set

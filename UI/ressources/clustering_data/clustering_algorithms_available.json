@@ -33,6 +33,11 @@
   "KMedoids" : { "algo_info": "KMedoids clustering uses the median value of all the points in a given cluster instead of the mean",
       "algo_usecase" : "General-purpose, even cluster size, flat geometry, not too many clusters.",
       "param_list" : {
+        "init": {
+          "param_info" : "A way to initialise the centers : randomly or kmeans++ (see Arthur, D. and Vassilvitskii, S. k-means++: the advantages of careful seeding. ACM-SIAM symposiumon Discrete algorithms. 2007)",
+          "type" : ["random","k-means++"],
+          "default" : "k-means++"
+        },
         "n_clusters" : {
           "param_info" : "The number of clusters the user wishes to obtain",
           "type" : "int",

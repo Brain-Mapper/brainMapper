@@ -16,7 +16,8 @@
 
 from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
 from sklearn.neighbors import DistanceMetric
-from sklearn.metrics import silhouette_score, silhouette_samples, calinski_harabaz_score
+from sklearn.metrics import silhouette_score, silhouette_samples, calinski_harabaz_score, euclidean_distances
+from sklearn.utils.extmath import row_norms, stable_cumsum
 from scipy.spatial import distance
 import numpy as np
 import random
@@ -33,7 +34,7 @@ def perform_kmeans(param_dict, X):
 def perform_agglomerative_clustering(param_dict, X) :
     agglo_clust = AgglomerativeClustering(n_clusters=int(param_dict["n_clusters"]), affinity=param_dict["affinity"],
                                           linkage=param_dict["linkage"]).fit(X)
-    return agglo_clust.labels_, "No labels"
+    return agglo_clust.labels_, agglo_clust.cluster_centers_
 
 
 def perform_DBSCAN(param_dict, X):
@@ -43,7 +44,7 @@ def perform_DBSCAN(param_dict, X):
 
 def perform_kmedoids(param_dict, X):
     distances_matrix_pairwise = compute_distances(X, param_dict['metric'])
-    medoids_result = kmedoids_cluster(X, distances_matrix_pairwise, int(param_dict["n_clusters"]))
+    medoids_result = kmedoids_cluster(str(param_dict["init"]), X, distances_matrix_pairwise, int(param_dict["n_clusters"]))
 
     return medoids_result
 
@@ -65,19 +66,16 @@ def compute_distances(data_matrix, distance, normalize=False):
     return dist.pairwise(data_matrix)
 
 
-def kmedoids_cluster(data_matrix, distances, k=3):
+def kmedoids_cluster(init_mode, data_matrix, distances, k=3):
     """
     Perform kmedoids clustering
     :param distances: The symmetric matrix of distances between data points
     :param k: number of clusters
     :return: array of cluster labels and latest medoids
     """
-    m = distances.shape[0]  # number of points
 
     # Pick k random medoids and keep their indexes in data_matrix
-    curr_medoids_index = np.array([-1] * k)
-    while not len(np.unique(curr_medoids_index)) == k:
-        curr_medoids_index = np.array([random.randint(0, m - 1) for _ in range(k)])
+    curr_medoids_index = init_clusters(init_mode, data_matrix, k)
 
     curr_medoids = np.zeros(shape=(k, data_matrix.shape[1]))
 
@@ -110,6 +108,77 @@ def kmedoids_cluster(data_matrix, distances, k=3):
         c = c+1
 
     return clusters_labels, curr_medoids
+
+
+def init_clusters(init_mode, data_matrix, k):
+    centers_index = np.array([-1] * k)
+    m = data_matrix.shape[0]  # number of points
+    n = data_matrix.shape[1]  # number of features
+
+    centers = np.empty((m, n), dtype=data_matrix.dtype)
+
+    if init_mode == 'random':
+        while not len(np.unique(centers_index)) == k:
+            centers_index = np.array([random.randint(0, m - 1) for _ in range(k)])
+
+    elif init_mode == 'k-means++':
+
+        # precompute squared norms of data points
+        x_squared_norms = row_norms(data_matrix, squared=True)
+
+        # This is what Arthur/Vassilvitskii tried, in Arthur, D. and Vassilvitskii, S.
+        # "k-means++: the advantages of careful seeding". ACM-SIAM symposium
+        # on Discrete algorithms. 2007
+        n_local_trials = 2 + int(np.log(k))
+
+        # Pick first center randomly
+        center_id = random.randint(0, m-1)
+        centers_index[0]=center_id
+        centers[0] = data_matrix[center_id]
+
+        # Initialize list of closest distances and calculate current potential
+        closest_dist_sq = euclidean_distances(
+            centers[0, np.newaxis], data_matrix, Y_norm_squared=x_squared_norms,
+            squared=True)
+        current_pot = closest_dist_sq.sum()
+
+        # Pick the remaining n_clusters-1 points
+        for c in range(1, k):
+            # Choose center candidates by sampling with probability proportional
+            # to the squared distance to the closest existing center
+            rand_vals = np.random.random_sample(n_local_trials) * current_pot
+            candidate_ids = np.searchsorted(stable_cumsum(closest_dist_sq),
+                                            rand_vals)
+
+            # Compute distances to center candidates
+            distance_to_candidates = euclidean_distances(
+                data_matrix[candidate_ids], data_matrix, Y_norm_squared=x_squared_norms, squared=True)
+
+            # Decide which candidate is the best
+            best_candidate = None
+            best_pot = None
+            best_dist_sq = None
+            for trial in range(n_local_trials):
+                # Compute potential when including center candidate
+                new_dist_sq = np.minimum(closest_dist_sq,
+                                         distance_to_candidates[trial])
+                new_pot = new_dist_sq.sum()
+
+                # Store result if it is the best local trial so far
+                if (best_candidate is None) or (new_pot < best_pot):
+                    best_candidate = candidate_ids[trial]
+                    best_pot = new_pot
+                    best_dist_sq = new_dist_sq
+
+            centers_index[c] = best_candidate
+            centers[c] = data_matrix[best_candidate]
+            current_pot = best_pot
+            closest_dist_sq = best_dist_sq
+
+    else:
+        raise ValueError('Init mode unknown !')
+
+    return centers_index
 
 
 def assign_points_to_clusters(medoids, distances):
