@@ -226,3 +226,20 @@ class Set(object):
 
     def getAllSubSets(self):
         return self.subset_dict.values()
+
+    def get_all_subsets_subsubsets(self):
+
+        def recursive_scan_of_subsets(subset_list, a_set):
+
+            if len(a_set.subset_dict.values()) == 0:
+                return subset_list
+            else:
+                for subset in a_set.subset_dict.values():
+                    subset_list.append(subset)
+
+                for subset in a_set.subset_dict.values():
+                    recursive_scan_of_subsets(subset_list, subset)
+
+        return recursive_scan_of_subsets([], self)
+
+
