@@ -48,6 +48,11 @@ def min_value(list):
 
 
 def Extract_voxels_from_Nifti_file(data):
+    """
+    Extract from Nifti file, the list of voxels where intensity values are positives
+    :param data: The matrix containing the nifti voxels data
+    :return: The list of voxels where intensity values are positives
+    """
     mask = data > 0
     nb_interesting_voxels = len(data[mask].T)
     list_voxels = np.zeros(shape=(nb_interesting_voxels, 3))
@@ -66,6 +71,11 @@ def Extract_voxels_from_Nifti_file(data):
 
 
 def max_shape(Nifti_collection):
+    """
+    Max shape beetween a collection of nifti file in each dimension
+    :param data: Nifti collection
+    :return: The max matrix shape
+    """
     max_X = 0
     max_Y = 0
     max_Z = 0
@@ -96,6 +106,11 @@ def extract_name_without_path(list_nif_img):
 
 
 def addition_opperation(list_of_NifImage_obj):
+    """
+    Addition opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: List with the one Nifti image object resulting from the Addition opperation
+    """
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)
     file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
     for file in list_of_NifImage_obj:
@@ -109,6 +124,11 @@ def addition_opperation(list_of_NifImage_obj):
 
 
 def mean_opperation(list_of_NifImage_obj):
+    """
+    Mean opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: List with the one Nifti image object resulting from the Mean opperation
+    """
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)
     file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
     for file in list_of_NifImage_obj:
@@ -123,6 +143,11 @@ def mean_opperation(list_of_NifImage_obj):
 
 
 def erosion_opperation(list_of_NifImage_obj, argument):
+    """
+    Erosion opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: List with the one Nifti image object resulting from the Erosion opperation
+    """
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)
     result = []
     for file in list_of_NifImage_obj:
@@ -138,6 +163,11 @@ def erosion_opperation(list_of_NifImage_obj, argument):
 
 
 def dilation_opperation(list_of_NifImage_obj, argument):
+    """
+    Dilatation opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: List with the one Nifti image object resulting from the Dilatation opperation
+    """
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)
     result = []
     for file in list_of_NifImage_obj:
@@ -153,6 +183,11 @@ def dilation_opperation(list_of_NifImage_obj, argument):
 
 
 def opening_opperation(list_of_NifImage_obj, argument):
+    """
+    Opening opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: List with the one Nifti image object resulting from the Opening opperation
+    """
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)
     result = []
     for file in list_of_NifImage_obj:
@@ -168,6 +203,11 @@ def opening_opperation(list_of_NifImage_obj, argument):
 
 
 def closing_opperation(list_of_NifImage_obj, argument):
+    """
+    Closing opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: List with the one Nifti image object resulting from the Closing opperation
+    """
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)
     result = []
     for file in list_of_NifImage_obj:
@@ -183,6 +223,11 @@ def closing_opperation(list_of_NifImage_obj, argument):
 
 
 def or_opperation(list_of_NifImage_obj):
+    """
+    Or opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: List with the one Nifti image object resulting from the Or opperation
+    """
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)
     file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
     for file in list_of_NifImage_obj:
@@ -201,6 +246,11 @@ def or_opperation(list_of_NifImage_obj):
 
 
 def and_opperation(list_of_NifImage_obj):
+    """
+    And opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: List with the one Nifti image object resulting from the And opperation
+    """
     (lx, ly, lz) = max_shape(list_of_NifImage_obj)
     file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
     list_pix = []
@@ -269,8 +319,12 @@ def linear_combination_opperation(Nifti_file_collection, coef):
     return ([file_Nifti_clusterised], output)
 
 
-# ERROR WHY ?
 def normalization_opperation(Nifti_file_collection):
+    """
+    Normalization opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: List with the Nifti image object resulting from the Normalization opperation
+    """
     (lx, ly, lz) = max_shape(Nifti_file_collection)
     file_Nifti_clusterised = np.zeros(shape=(lx, ly, lz), dtype='f')
     result = []
@@ -293,6 +347,11 @@ def normalization_opperation(Nifti_file_collection):
 
 # Extract volume of voxel's center of gravity from a nifti file
 def baricentre_opperation(Nifti_file_collection, arguments):
+    """
+    Barycentre opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: None
+    """
     def baricentre_calculation_opperation(NiftiName, list_voxels):
         mean_x = 0
         mean_y = 0
@@ -361,6 +420,11 @@ def image_centroid(a_nifti_image):
 
 
 def entropie_opperation(Nifti_file_collection):
+    """
+    Entropie opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: None
+    """
     def entropie(data, list_voxels, nbPixTot):
         symbol = []
         occurForEachSymbol = []
@@ -396,6 +460,11 @@ def entropie_opperation(Nifti_file_collection):
 
 
 def threshold_opperation(Nifti_file_collection, arguments):
+    """
+    Threshold opperation between a list of Nifti Image Object
+    :param data: List of Nifti Image Object
+    :return: List with the Nifti image object resulting from the Threshold opperation
+    """
     result = []
     min = arguments[0]
     max = arguments[1]
