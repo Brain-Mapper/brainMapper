@@ -265,21 +265,17 @@ class UI(QtGui.QMainWindow):
         folder_path = str(QFileDialog.getExistingDirectory())
         if (file != ""):
             test = general_workspace_import_control(folder_path)
+            temp = []
             # print test
             if test is None:
                 general_workspace_import(folder_path)
                 for key in get_workspace_set():
-                    homepage.mainview.show_set(key)
-                    rm_workspace_set(key)
-                    # Problem to fix : the list is not properly clean, if we don't do rm all, smthg is left in the list...
-                ##                    print "list before rm all"
-                ##                    for i in get_workspace_set():
-                ##                        print i
+                    if not key in temp :
+                        homepage.mainview.show_set(key)
+                        temp.append(key)
+                        for i in key.get_all_subsets_subsubsets():
+                            temp.append(i)    
                 rm_all_workspace_set()
-            ##                    print "list"
-            ##                    for i in get_workspace_set():
-            ##                        print i
-
             else:
                 err = QtGui.QMessageBox.critical(self, "Error", "An error has occured. " + test)
 

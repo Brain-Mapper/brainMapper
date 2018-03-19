@@ -238,7 +238,7 @@ class Set(object):
                     subset_list.append(subset)
 
                 for subset in a_set.subset_dict.values():
-                    recursive_scan_of_subsets(subset_list, subset)
+                    return recursive_scan_of_subsets(subset_list, subset)
 
         return recursive_scan_of_subsets([], self)
 
