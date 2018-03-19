@@ -291,7 +291,7 @@ class CalculationView(QtGui.QWidget):
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("TO WRITE")
+        description = QTextEdit("In mathematical morphology, the closing of a set (binary image) A by a structuring element B is the erosion of the dilation of that set, A * B = ( A (+) B ) (-) B, denote the dilation and erosion, respectively. In image processing, closing is, together with opening, the basic workhorse of morphological noise removal. Opening removes small objects, while closing removes small holes.")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
         
@@ -328,7 +328,7 @@ class CalculationView(QtGui.QWidget):
         
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("NO IMPLEMENTED")
+        description = QTextEdit("Dilation (usually represented by (+)) is one of the basic operations in mathematical morphology. Originally developed for binary images, it has been expanded first to grayscale images, and then to complete lattices. The dilation operation usually uses a structuring element for probing and expanding the shapes contained in the input image.")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
 
@@ -388,7 +388,7 @@ class CalculationView(QtGui.QWidget):
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("NO IMPLEMENTED")
+        description = QTextEdit("Erosion (usually represented by (-)) is one of two fundamental operations (the other being dilation) in morphological image processing from which all other morphological operations are based. It was originally defined for binary images, later being extended to grayscale images, and subsequently to complete lattices.")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
 
@@ -537,7 +537,7 @@ class CalculationView(QtGui.QWidget):
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("TO WRITE")
+        description = QTextEdit("In morphological opening ( A (-) B ) (+) B, erosion operation removes objects that are smaller than structuring element B and dilation operation restores the shape of remaining objects. However, restoring accuracy in dilation operation highly depends on the type of structuring element and the shape of restoring objects. The opening by reconstruction method is able to restore the objects completely after erosion applied.")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
         
@@ -577,7 +577,7 @@ class CalculationView(QtGui.QWidget):
         layout.addRow(descrip)
 
         descbox = QtGui.QVBoxLayout()
-        description = QTextEdit("TO WRITE")
+        description = QTextEdit("The threshold operation allows you to store only voxels whose intensity value is between the min and max parameters. All voxels that do not meet this criterion have their intensity that becomes zero. If no value is assigned to min and max then their values will be less the infinite and the less infinite respectively.")
         description.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         description.setReadOnly(True)
         
@@ -586,7 +586,7 @@ class CalculationView(QtGui.QWidget):
         algorithm.setStyleSheet("background-color: #FFCC33;")
         
         calcul = QTextEdit("")
-        calcul.setText("TO WRITE")
+        calcul.setText("For each voxels in Nifti:\n\tif not min<voxels.intensity<max:\n\t\tvoxels.intensity = 0")
         calcul.setReadOnly(True)
         calcul.setFixedHeight(70)
         descbox.addWidget(algorithm)
@@ -750,8 +750,14 @@ class CalculationView(QtGui.QWidget):
                                           "Impossible to execute "+algorithm+" algorithm")
         if algorithm=="Threshold":
             try:
-                min =  float(self.thresholdMin.text())
-                max =  float(self.thresholdMax.text())
+                try:
+                    min = float(self.thresholdMin.text())
+                except:
+                    min = -1000000.0
+                try:
+                    max =  float(self.thresholdMax.text())
+                except:
+                    max = 1000000.0
                 algorithm_result, output = run_calculation(algorithm, nifti_selected, [min,max] )
                 self.console.setText(">>> \n"+output)                
                 self.popUpSaveFileResultCalculation(algorithm,algorithm_result)
