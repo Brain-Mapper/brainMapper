@@ -16,7 +16,7 @@ This project was designed and developped by :
 ```
 Raphael Agathon
 Maxime Cluchague
-Graziella Husson
+Graziella Husson (@Graziella-Husson)
 Valentina Zelaya (@vz-chameleon)
 ```
 
