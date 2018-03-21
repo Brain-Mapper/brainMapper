@@ -21,11 +21,11 @@ Valentina Zelaya (@vz-chameleon)
 ```
 
 ## Getting Started
-To install on Linux and Mac (Unix-based) :
+### To install on Linux and Mac (Unix-based) :
  - 
  - 
  
-To install on Windows :
+### To install on Windows :
  - Install anaconda for windows: https://www.anaconda.com/download/. Tick the option "Add Anaconda to my PATH variable".
  - In a terminal :
 ```
