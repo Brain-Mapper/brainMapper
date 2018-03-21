@@ -26,9 +26,25 @@ To install on Linux and Mac (Unix-based) :
  - 
  
 To install on Windows :
- - 
- - 
-
+ - Install anaconda for windows: https://www.anaconda.com/download/. Tick the option "Add Anaconda to my PATH variable".
+ - In a terminal :
+```
+conda install python=2.7
+activate root
+conda install -c anaconda pyqt=4.11.4
+conda install numpy
+conda install scikit-learn
+conda install pyqtgraph
+conda install pyopengl
+conda install -c conda-forge nibabel
+```
+ - Download the .zip project on the GitHub repository. Decompress it, and create a .bat file (carefull with the extensions in windows, sometime a .txt will be added and you cannot see it.).
+ - In the .bat file (This file has to be in the same folder than the decompressed .zip.):
+```
+cd brainMapper-master/UI
+python UI.py
+```
+ - Create a .bat shortcut on your Desktop.
  
 ## License
 
