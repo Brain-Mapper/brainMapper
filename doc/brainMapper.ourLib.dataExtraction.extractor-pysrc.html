@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>brainMapper.ourLib.dataExtraction.extractor</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="brainMapper.ourLib-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;brainMapper ::
+        <a href="brainMapper.ourLib-module.html">Package&nbsp;ourLib</a> ::
+        <a href="brainMapper.ourLib.dataExtraction-module.html">Package&nbsp;dataExtraction</a> ::
+        Module&nbsp;extractor
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="brainMapper.ourLib.dataExtraction.extractor-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="brainMapper.ourLib.dataExtraction.extractor-module.html">Module brainMapper.ourLib.dataExtraction.extractor</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment"># NAME</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">#        extractor</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"># DESCRIPTION</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#       The module 'extractor.py' contains all the functions necessary to extract</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment">#       the interesting data from NifTi files (the voxels with a non-zero intensity)</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#       These interesting voxels are returned as a usable data array :</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">#           lines = nb_interesting_voxels</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment">#           columns = X, Y, Z, Intensity</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># HISTORY</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment"># 8 december 2017 - Initial design and coding. (@vz-chameleon, Valentina Z.)</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment"># 11 december 2017 - First attempts at masking  (@vz-chameleon, Valentina Z.)</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment"># 18 december 2017 - Added Maxime's functions for data extraction (@maximeCluchague via @vz-chameleon)</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment"># 5 january 2018 - Adding another data extraction function, depending on numpy (@vz-chameleon)</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment"># 12 february 2018 - Added functions to extract data using centroids</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-comment"># Lib dependency imports</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">numpy</tt> <tt class="py-keyword">as</tt> <tt class="py-name">np</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">sys</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">os</tt> <tt class="py-keyword">import</tt> <tt class="py-name">path</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-keyword">if</tt> <tt id="link-0" class="py-name" targets="Variable brainMapper.ourLib.ExcelExport.__package__=brainMapper.ourLib.ExcelExport-module.html#__package__,Variable brainMapper.ourLib.ExcelExport.excelExport.__package__=brainMapper.ourLib.ExcelExport.excelExport-module.html#__package__,Variable brainMapper.ourLib.Import.__package__=brainMapper.ourLib.Import-module.html#__package__,Variable brainMapper.ourLib.Import.excelImport.__package__=brainMapper.ourLib.Import.excelImport-module.html#__package__,Variable brainMapper.ourLib.__package__=brainMapper.ourLib-module.html#__package__,Variable brainMapper.ourLib.calculations.__package__=brainMapper.ourLib.calculations-module.html#__package__,Variable brainMapper.ourLib.clustering.__package__=brainMapper.ourLib.clustering-module.html#__package__,Variable brainMapper.ourLib.dataExtraction.__package__=brainMapper.ourLib.dataExtraction-module.html#__package__,Variable brainMapper.ourLib.dataExtraction.extractor.__package__=brainMapper.ourLib.dataExtraction.extractor-module.html#__package__,Variable brainMapper.ourLib.dataExtraction.image_recreation.__package__=brainMapper.ourLib.dataExtraction.image_recreation-module.html#__package__,Variable brainMapper.ourLib.dataExtraction.usable_data.__package__=brainMapper.ourLib.dataExtraction.usable_data-module.html#__package__,Variable brainMapper.ourLib.niftiHandlers.__package__=brainMapper.ourLib.niftiHandlers-module.html#__package__,Variable brainMapper.ourLib.niftiHandlers.imagecollection.__package__=brainMapper.ourLib.niftiHandlers.imagecollection-module.html#__package__,Variable brainMapper.ourLib.niftiHandlers.nifimage.__package__=brainMapper.ourLib.niftiHandlers.nifimage-module.html#__package__,Variable brainMapper.ourLib.niftiHandlers.set.__package__=brainMapper.ourLib.niftiHandlers.set-module.html#__package__"><a title="brainMapper.ourLib.ExcelExport.__package__
+brainMapper.ourLib.ExcelExport.excelExport.__package__
+brainMapper.ourLib.Import.__package__
+brainMapper.ourLib.Import.excelImport.__package__
+brainMapper.ourLib.__package__
+brainMapper.ourLib.calculations.__package__
+brainMapper.ourLib.clustering.__package__
+brainMapper.ourLib.dataExtraction.__package__
+brainMapper.ourLib.dataExtraction.extractor.__package__
+brainMapper.ourLib.dataExtraction.image_recreation.__package__
+brainMapper.ourLib.dataExtraction.usable_data.__package__
+brainMapper.ourLib.niftiHandlers.__package__
+brainMapper.ourLib.niftiHandlers.imagecollection.__package__
+brainMapper.ourLib.niftiHandlers.nifimage.__package__
+brainMapper.ourLib.niftiHandlers.set.__package__" class="py-name" href="#" onclick="return doclink('link-0', '__package__', 'link-0');">__package__</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line">    <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">dirname</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">dirname</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">abspath</tt><tt class="py-op">(</tt><tt class="py-name">__file__</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line">    <tt class="py-keyword">from</tt> <tt id="link-1" class="py-name" targets="Module brainMapper.ourLib.dataExtraction.usable_data=brainMapper.ourLib.dataExtraction.usable_data-module.html"><a title="brainMapper.ourLib.dataExtraction.usable_data" class="py-name" href="#" onclick="return doclink('link-1', 'usable_data', 'link-1');">usable_data</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Class brainMapper.ourLib.dataExtraction.usable_data.UsableDataCollection=brainMapper.ourLib.dataExtraction.usable_data.UsableDataCollection-class.html"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataCollection" class="py-name" href="#" onclick="return doclink('link-2', 'UsableDataCollection', 'link-2');">UsableDataCollection</a></tt><tt class="py-op">,</tt> <tt id="link-3" class="py-name" targets="Class brainMapper.ourLib.dataExtraction.usable_data.UsableDataSet=brainMapper.ourLib.dataExtraction.usable_data.UsableDataSet-class.html"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataSet" class="py-name" href="#" onclick="return doclink('link-3', 'UsableDataSet', 'link-3');">UsableDataSet</a></tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line">    <tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Module brainMapper.ourLib.calculations=brainMapper.ourLib.calculations-module.html"><a title="brainMapper.ourLib.calculations" class="py-name" href="#" onclick="return doclink('link-4', 'calculations', 'link-4');">calculations</a></tt> <tt class="py-keyword">import</tt> <tt id="link-5" class="py-name" targets="Function brainMapper.ourLib.calculations.image_centroid()=brainMapper.ourLib.calculations-module.html#image_centroid"><a title="brainMapper.ourLib.calculations.image_centroid" class="py-name" href="#" onclick="return doclink('link-5', 'image_centroid', 'link-5');">image_centroid</a></tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line">    <tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Package brainMapper.ourLib.dataExtraction=brainMapper.ourLib.dataExtraction-module.html"><a title="brainMapper.ourLib.dataExtraction" class="py-name" href="#" onclick="return doclink('link-6', 'dataExtraction', 'link-6');">dataExtraction</a></tt><tt class="py-op">.</tt><tt id="link-7" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data" class="py-name" href="#" onclick="return doclink('link-7', 'usable_data', 'link-1');">usable_data</a></tt> <tt class="py-keyword">import</tt> <tt id="link-8" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataCollection" class="py-name" href="#" onclick="return doclink('link-8', 'UsableDataCollection', 'link-2');">UsableDataCollection</a></tt><tt class="py-op">,</tt> <tt id="link-9" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataSet" class="py-name" href="#" onclick="return doclink('link-9', 'UsableDataSet', 'link-3');">UsableDataSet</a></tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"> </tt>
+<a name="extract"></a><div id="extract-def"><a name="L33"></a><tt class="py-lineno"> 33</tt> <a class="py-toggle" href="#" id="extract-toggle" onclick="return toggle('extract');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.dataExtraction.extractor-module.html#extract">extract</a><tt class="py-op">(</tt><tt class="py-param">a_nifti_img_obj</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="extract-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="extract-expanded"><a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-docstring">    Extract data from a NIfTI file representation as an array of arrays</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-docstring">    :param a_nifti_img_obj: A NifImage instance</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"><tt class="py-docstring">    :return: An array (nb_voxels_non_zero_intensity)x4 containing several arrays [X,Y,Z,Intensity]</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">    <tt class="py-comment"># # Check if given param is NifImage class instance</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">    <tt class="py-comment"># if not isinstance(a_nifti_img_obj, NifImage):</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">    <tt class="py-comment">#     raise ValueError(</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">    <tt class="py-comment">#     'extract function takes a NifImage class instance but ' + a_nifti_img_obj.___class___ + ' instance was given')</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">    <tt class="py-comment"># Array stacking is memory consuming</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line">    <tt class="py-comment"># We must create an array that will be the size of extracted data</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line">    <tt class="py-comment"># shape : lines = number of voxels found for which intensity is superior to 0</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">    <tt class="py-comment">#           col = four columns : X,Y,Z and intensity (for now...)</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">    <tt class="py-comment"># Safe copy the data so you won't modify the original image data (see NifImage class)</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">    <tt class="py-comment"># finite=True is given as an argument to replace NaN or Inf values by zeros</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">    <tt class="py-name">img_data</tt> <tt class="py-op">=</tt> <tt class="py-name">a_nifti_img_obj</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Method brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_copy_img_data()=brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_copy_img_data"><a title="brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_copy_img_data" class="py-name" href="#" onclick="return doclink('link-10', 'get_copy_img_data', 'link-10');">get_copy_img_data</a></tt><tt class="py-op">(</tt><tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line">    <tt class="py-comment"># img_data&gt;0 returns a boolean mask the same size as the image with :</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line">    <tt class="py-comment">#     False if voxel value is not &gt;0, True if it is</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">    <tt class="py-name">mask</tt> <tt class="py-op">=</tt> <tt class="py-name">img_data</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">0</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">    <tt class="py-comment"># img_data[img_data&gt;0].T gives out an array with only positive values in it</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">    <tt class="py-name">nb_interesting_voxels</tt> <tt class="py-op">=</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">img_data</tt><tt class="py-op">[</tt><tt class="py-name">mask</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">T</tt><tt class="py-op">)</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">    <tt id="link-11" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data" class="py-name" href="#" onclick="return doclink('link-11', 'usable_data', 'link-1');">usable_data</a></tt> <tt class="py-op">=</tt> <tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">zeros</tt><tt class="py-op">(</tt><tt class="py-name">shape</tt><tt class="py-op">=</tt><tt class="py-op">(</tt><tt class="py-name">nb_interesting_voxels</tt><tt class="py-op">,</tt> <tt class="py-number">4</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">    <tt class="py-comment"># --- Incorporating Maxime's search</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">    <tt class="py-comment"># (modified by vz-chameleon to return an array that can be used in clustering)</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line">    <tt class="py-name">lx</tt><tt class="py-op">,</tt> <tt class="py-name">ly</tt><tt class="py-op">,</tt> <tt class="py-name">lz</tt> <tt class="py-op">=</tt> <tt class="py-name">img_data</tt><tt class="py-op">.</tt><tt class="py-name">shape</tt>  <tt class="py-comment"># length of the three image axis</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">    <tt class="py-name">c</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt>  <tt class="py-comment"># counter for array construction</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">x</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">,</tt> <tt class="py-name">lx</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">        <tt class="py-comment"># If there is at least one value NOT EQUAL to zero, the other dimensions are worth exploring</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">img_data</tt><tt class="py-op">[</tt><tt class="py-name">x</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">sum</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">y</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">,</tt> <tt class="py-name">ly</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">img_data</tt><tt class="py-op">[</tt><tt class="py-name">x</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">y</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">sum</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">                    <tt class="py-keyword">for</tt> <tt class="py-name">z</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">,</tt> <tt class="py-name">lz</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">                        <tt class="py-name">voxel_intensity</tt> <tt class="py-op">=</tt> <tt class="py-name">img_data</tt><tt class="py-op">[</tt><tt class="py-name">x</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">y</tt><tt class="py-op">]</tt><tt class="py-op">[</tt><tt class="py-name">z</tt><tt class="py-op">]</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">                        <tt class="py-keyword">if</tt> <tt class="py-name">voxel_intensity</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">                            <tt id="link-12" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data" class="py-name" href="#" onclick="return doclink('link-12', 'usable_data', 'link-1');">usable_data</a></tt><tt class="py-op">[</tt><tt class="py-name">c</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">x</tt><tt class="py-op">,</tt> <tt class="py-name">y</tt><tt class="py-op">,</tt> <tt class="py-name">z</tt><tt class="py-op">,</tt> <tt class="py-name">voxel_intensity</tt><tt class="py-op">]</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">                            <tt class="py-name">c</tt> <tt class="py-op">=</tt> <tt class="py-name">c</tt> <tt class="py-op">+</tt> <tt class="py-number">1</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">    <tt class="py-keyword">del</tt> <tt class="py-name">img_data</tt>  <tt class="py-comment"># deleting safe copy of image data saves a lot of memory !</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt id="link-13" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data" class="py-name" href="#" onclick="return doclink('link-13', 'usable_data', 'link-1');">usable_data</a></tt> </tt>
+</div><a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line"> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line"><tt class="py-comment"># This version is 0.01 seconds slower than the first one</tt> </tt>
+<a name="extract2"></a><div id="extract2-def"><a name="L86"></a><tt class="py-lineno"> 86</tt> <a class="py-toggle" href="#" id="extract2-toggle" onclick="return toggle('extract2');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.dataExtraction.extractor-module.html#extract2">extract2</a><tt class="py-op">(</tt><tt class="py-param">a_nifti_img_obj</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="extract2-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="extract2-expanded"><a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">    <tt class="py-comment"># Safe copy the data so you won't modify the original image data (see NifImage class)</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">    <tt class="py-comment"># finite=True is given as an argument to replace NaN or Inf values by zeros</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">    <tt class="py-name">img_data</tt> <tt class="py-op">=</tt> <tt class="py-name">a_nifti_img_obj</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name"><a title="brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_copy_img_data" class="py-name" href="#" onclick="return doclink('link-14', 'get_copy_img_data', 'link-10');">get_copy_img_data</a></tt><tt class="py-op">(</tt><tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line"> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">    <tt class="py-comment"># img_data&gt;0 returns a boolean mask the same size as the image with :</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">    <tt class="py-comment">#     False if voxel value is not &gt;0, True if it is</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">    <tt class="py-name">mask</tt> <tt class="py-op">=</tt> <tt class="py-name">img_data</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">0</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">    <tt class="py-keyword">del</tt> <tt class="py-name">img_data</tt>    <tt class="py-comment"># saves a LOT of memory</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">    <tt id="link-15" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data" class="py-name" href="#" onclick="return doclink('link-15', 'usable_data', 'link-1');">usable_data</a></tt> <tt class="py-op">=</tt> <tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">nonzero</tt><tt class="py-op">(</tt><tt class="py-name">mask</tt><tt class="py-op">)</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt id="link-16" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data" class="py-name" href="#" onclick="return doclink('link-16', 'usable_data', 'link-1');">usable_data</a></tt> </tt>
+</div><a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line"> </tt>
+<a name="extract_from_collection"></a><div id="extract_from_collection-def"><a name="L101"></a><tt class="py-lineno">101</tt> <a class="py-toggle" href="#" id="extract_from_collection-toggle" onclick="return toggle('extract_from_collection');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.dataExtraction.extractor-module.html#extract_from_collection">extract_from_collection</a><tt class="py-op">(</tt><tt class="py-param">a_nifti_imgcoll_obj</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="extract_from_collection-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="extract_from_collection-expanded"><a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line"><tt class="py-docstring">    Extract data from a NIfTI collection as a concatenated array of results from extract(nifiamge)</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line"><tt class="py-docstring">    :param a_nifti_imgcoll_obj: An ImageCollection instance</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line"><tt class="py-docstring">    :return: An array of arrays [X,Y,Z, Intensity]</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">    <tt class="py-comment"># # Check if given param is ImageCollection class instance</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">    <tt class="py-comment"># if not a.__class__ is ImageCollection:</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">    <tt class="py-comment">#     raise ValueError(</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">    <tt class="py-comment">#         'extract_from_collection function takes a ImageCollection class instance but ' + str(type(a_nifti_imgcoll_obj)) + ' instance was given')</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">    <tt class="py-name">collection_usable_data</tt> <tt class="py-op">=</tt> <tt id="link-17" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataCollection" class="py-name" href="#" onclick="return doclink('link-17', 'UsableDataCollection', 'link-2');">UsableDataCollection</a></tt><tt class="py-op">(</tt><tt class="py-name">a_nifti_imgcoll_obj</tt><tt class="py-op">.</tt><tt id="link-18" class="py-name" targets="Method brainMapper.ourLib.niftiHandlers.imagecollection.ImageCollection.get_name()=brainMapper.ourLib.niftiHandlers.imagecollection.ImageCollection-class.html#get_name,Method brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_name()=brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_name,Method brainMapper.ourLib.niftiHandlers.set.Set.get_name()=brainMapper.ourLib.niftiHandlers.set.Set-class.html#get_name"><a title="brainMapper.ourLib.niftiHandlers.imagecollection.ImageCollection.get_name
+brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_name
+brainMapper.ourLib.niftiHandlers.set.Set.get_name" class="py-name" href="#" onclick="return doclink('link-18', 'get_name', 'link-18');">get_name</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line"> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">    <tt class="py-comment"># For each NifImage istance in the collection, extract data and stack results</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">    <tt class="py-name">img_list</tt> <tt class="py-op">=</tt> <tt class="py-name">a_nifti_imgcoll_obj</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name" targets="Method brainMapper.ourLib.niftiHandlers.imagecollection.ImageCollection.get_img_list()=brainMapper.ourLib.niftiHandlers.imagecollection.ImageCollection-class.html#get_img_list"><a title="brainMapper.ourLib.niftiHandlers.imagecollection.ImageCollection.get_img_list" class="py-name" href="#" onclick="return doclink('link-19', 'get_img_list', 'link-19');">get_img_list</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">     </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">nifimg</tt> <tt class="py-keyword">in</tt> <tt class="py-name">img_list</tt><tt class="py-op">.</tt><tt class="py-name">items</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">        <tt class="py-name">collection_usable_data</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name" targets="Method brainMapper.ourLib.dataExtraction.usable_data.UsableDataCollection.add_extracted_data_entry()=brainMapper.ourLib.dataExtraction.usable_data.UsableDataCollection-class.html#add_extracted_data_entry"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataCollection.add_extracted_data_entry" class="py-name" href="#" onclick="return doclink('link-20', 'add_extracted_data_entry', 'link-20');">add_extracted_data_entry</a></tt><tt class="py-op">(</tt><tt class="py-name">nifimg</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt id="link-21" class="py-name" targets="Function brainMapper.ourLib.dataExtraction.extractor.extract()=brainMapper.ourLib.dataExtraction.extractor-module.html#extract"><a title="brainMapper.ourLib.dataExtraction.extractor.extract" class="py-name" href="#" onclick="return doclink('link-21', 'extract', 'link-21');">extract</a></tt><tt class="py-op">(</tt><tt class="py-name">nifimg</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line"> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">collection_usable_data</tt> </tt>
+</div><a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line"> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line"> </tt>
+<a name="extract_from_collection_list"></a><div id="extract_from_collection_list-def"><a name="L122"></a><tt class="py-lineno">122</tt> <a class="py-toggle" href="#" id="extract_from_collection_list-toggle" onclick="return toggle('extract_from_collection_list');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.dataExtraction.extractor-module.html#extract_from_collection_list">extract_from_collection_list</a><tt class="py-op">(</tt><tt class="py-param">a_nifti_imgcoll_list</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="extract_from_collection_list-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="extract_from_collection_list-expanded"><a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"><tt class="py-docstring">    Extract data from a NIfTI collection list containing several collections as a concatenated array of extract_from_collection(imgcoll)</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"><tt class="py-docstring">    :param a_nifti_imgcoll_list:</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line"><tt class="py-docstring">    :return: An array of arrays [X,Y,Z,Intensity]</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">    <tt class="py-comment"># # Check if all elements of list are ImageCollection class instances</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">    <tt class="py-comment"># print(isinstance(x, ImageCollection) for x in a_nifti_imgcoll_list)</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">    <tt class="py-comment"># print(all(ImageCollection is x.__class___ for x in a_nifti_imgcoll_list))</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">    <tt class="py-comment"># if not all(isinstance(x, ImageCollection) for x in a_nifti_imgcoll_list):</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">    <tt class="py-comment">#     raise ValueError('extract_from_collection_list function takes an ImageCollection instances list : at least one '</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">    <tt class="py-comment">#                      'of given list elements is not an ImageCollection instance ! ')</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line"> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">    <tt class="py-name">clustering_usable_data</tt> <tt class="py-op">=</tt> <tt id="link-22" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataSet" class="py-name" href="#" onclick="return doclink('link-22', 'UsableDataSet', 'link-3');">UsableDataSet</a></tt><tt class="py-op">(</tt><tt class="py-string">'Test Dataset'</tt><tt class="py-op">)</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line"> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">imgcoll</tt> <tt class="py-keyword">in</tt> <tt class="py-name">a_nifti_imgcoll_list</tt><tt class="py-op">:</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">        <tt class="py-name">clustering_usable_data</tt><tt class="py-op">.</tt><tt id="link-23" class="py-name" targets="Method brainMapper.ourLib.dataExtraction.usable_data.UsableDataSet.add_usable_data_collection()=brainMapper.ourLib.dataExtraction.usable_data.UsableDataSet-class.html#add_usable_data_collection"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataSet.add_usable_data_collection" class="py-name" href="#" onclick="return doclink('link-23', 'add_usable_data_collection', 'link-23');">add_usable_data_collection</a></tt><tt class="py-op">(</tt><tt id="link-24" class="py-name" targets="Function brainMapper.ourLib.dataExtraction.extractor.extract_from_collection()=brainMapper.ourLib.dataExtraction.extractor-module.html#extract_from_collection"><a title="brainMapper.ourLib.dataExtraction.extractor.extract_from_collection" class="py-name" href="#" onclick="return doclink('link-24', 'extract_from_collection', 'link-24');">extract_from_collection</a></tt><tt class="py-op">(</tt><tt class="py-name">imgcoll</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">clustering_usable_data</tt> </tt>
+</div><a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line"> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line"> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line"><tt class="py-comment"># ---------------------------------------------------------------------</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line"><tt class="py-comment"># -------------------------- Using centroids --------------------------</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line"><tt class="py-comment"># ---------------------------------------------------------------------</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line"> </tt>
+<a name="extract_from_collection_as_centroid"></a><div id="extract_from_collection_as_centroid-def"><a name="L147"></a><tt class="py-lineno">147</tt> <a class="py-toggle" href="#" id="extract_from_collection_as_centroid-toggle" onclick="return toggle('extract_from_collection_as_centroid');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.dataExtraction.extractor-module.html#extract_from_collection_as_centroid">extract_from_collection_as_centroid</a><tt class="py-op">(</tt><tt class="py-param">a_nifti_imgcoll_obj</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="extract_from_collection_as_centroid-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="extract_from_collection_as_centroid-expanded"><a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line"><tt class="py-docstring">    Extract data from a collection using centroids calculated using image_centroid functions from calculations module</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line"><tt class="py-docstring">    :param a_nifti_imgcoll_obj: An ImageCollection instance</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line"><tt class="py-docstring">    :return: A UsableDataCollection instance</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">    <tt class="py-comment"># Import function that calculates the centroid of a NifImage instance is here to avoid circular imports</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">    <tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt class="py-op">.</tt><tt id="link-25" class="py-name"><a title="brainMapper.ourLib.calculations" class="py-name" href="#" onclick="return doclink('link-25', 'calculations', 'link-4');">calculations</a></tt> <tt class="py-keyword">import</tt> <tt id="link-26" class="py-name"><a title="brainMapper.ourLib.calculations.image_centroid" class="py-name" href="#" onclick="return doclink('link-26', 'image_centroid', 'link-5');">image_centroid</a></tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line">    <tt class="py-name">collection_usable_data</tt> <tt class="py-op">=</tt> <tt id="link-27" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataCollection" class="py-name" href="#" onclick="return doclink('link-27', 'UsableDataCollection', 'link-2');">UsableDataCollection</a></tt><tt class="py-op">(</tt><tt class="py-name">a_nifti_imgcoll_obj</tt><tt class="py-op">.</tt><tt id="link-28" class="py-name"><a title="brainMapper.ourLib.niftiHandlers.imagecollection.ImageCollection.get_name
+brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_name
+brainMapper.ourLib.niftiHandlers.set.Set.get_name" class="py-name" href="#" onclick="return doclink('link-28', 'get_name', 'link-18');">get_name</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">    <tt class="py-comment"># For each NifImage istance in the collection, extract data and stack results</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">    <tt class="py-name">img_list</tt> <tt class="py-op">=</tt> <tt class="py-name">a_nifti_imgcoll_obj</tt><tt class="py-op">.</tt><tt id="link-29" class="py-name"><a title="brainMapper.ourLib.niftiHandlers.imagecollection.ImageCollection.get_img_list" class="py-name" href="#" onclick="return doclink('link-29', 'get_img_list', 'link-19');">get_img_list</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line"> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">    <tt class="py-comment"># For each img, ad the result of calculations' module functions, image_centroid, to the usable data set</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">nifimg</tt> <tt class="py-keyword">in</tt> <tt class="py-name">img_list</tt><tt class="py-op">.</tt><tt class="py-name">items</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">        <tt class="py-name">collection_usable_data</tt><tt class="py-op">.</tt><tt id="link-30" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataCollection.add_extracted_data_entry" class="py-name" href="#" onclick="return doclink('link-30', 'add_extracted_data_entry', 'link-20');">add_extracted_data_entry</a></tt><tt class="py-op">(</tt><tt class="py-name">nifimg</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt id="link-31" class="py-name"><a title="brainMapper.ourLib.calculations.image_centroid" class="py-name" href="#" onclick="return doclink('link-31', 'image_centroid', 'link-5');">image_centroid</a></tt><tt class="py-op">(</tt><tt class="py-name">nifimg</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line"> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">collection_usable_data</tt> </tt>
+</div><a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line"> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line"> </tt>
+<a name="extract_from_collection_list_using_centroids"></a><div id="extract_from_collection_list_using_centroids-def"><a name="L166"></a><tt class="py-lineno">166</tt> <a class="py-toggle" href="#" id="extract_from_collection_list_using_centroids-toggle" onclick="return toggle('extract_from_collection_list_using_centroids');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.dataExtraction.extractor-module.html#extract_from_collection_list_using_centroids">extract_from_collection_list_using_centroids</a><tt class="py-op">(</tt><tt class="py-param">a_nifti_imgcoll_list</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="extract_from_collection_list_using_centroids-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="extract_from_collection_list_using_centroids-expanded"><a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line"><tt class="py-docstring">    Extract data from a collection list using centroids as representation</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line"><tt class="py-docstring">    This function calls 'extract_from_collection_as_centroid(a_nifti_imgcoll)' function</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line"><tt class="py-docstring">    :param a_nifti_imgcoll_list: A list of ImageCollections instances</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line"><tt class="py-docstring">    :return: A UsableDataSet instance</tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">    <tt class="py-name">centroids_usable_data</tt> <tt class="py-op">=</tt> <tt id="link-32" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataSet" class="py-name" href="#" onclick="return doclink('link-32', 'UsableDataSet', 'link-3');">UsableDataSet</a></tt><tt class="py-op">(</tt><tt class="py-string">'Clustering with centroids'</tt><tt class="py-op">)</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line"> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">imgcoll</tt> <tt class="py-keyword">in</tt> <tt class="py-name">a_nifti_imgcoll_list</tt><tt class="py-op">:</tt> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">        <tt class="py-name">centroids_usable_data</tt><tt class="py-op">.</tt><tt id="link-33" class="py-name"><a title="brainMapper.ourLib.dataExtraction.usable_data.UsableDataSet.add_usable_data_collection" class="py-name" href="#" onclick="return doclink('link-33', 'add_usable_data_collection', 'link-23');">add_usable_data_collection</a></tt><tt class="py-op">(</tt><tt id="link-34" class="py-name" targets="Function brainMapper.ourLib.dataExtraction.extractor.extract_from_collection_as_centroid()=brainMapper.ourLib.dataExtraction.extractor-module.html#extract_from_collection_as_centroid"><a title="brainMapper.ourLib.dataExtraction.extractor.extract_from_collection_as_centroid" class="py-name" href="#" onclick="return doclink('link-34', 'extract_from_collection_as_centroid', 'link-34');">extract_from_collection_as_centroid</a></tt><tt class="py-op">(</tt><tt class="py-name">imgcoll</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line"> </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">centroids_usable_data</tt> </tt>
+</div><a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="brainMapper.ourLib-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

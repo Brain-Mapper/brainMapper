@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>brainMapper.ourLib.niftiHandlers.nifimage</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="brainMapper.ourLib-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;brainMapper ::
+        <a href="brainMapper.ourLib-module.html">Package&nbsp;ourLib</a> ::
+        <a href="brainMapper.ourLib.niftiHandlers-module.html">Package&nbsp;niftiHandlers</a> ::
+        Module&nbsp;nifimage
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="brainMapper.ourLib.niftiHandlers.nifimage-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="brainMapper.ourLib.niftiHandlers.nifimage-module.html">Module brainMapper.ourLib.niftiHandlers.nifimage</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment"># NAME</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment">#        nif-image</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"># DESCRIPTION</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#       'nif-image' contains methods and the class 'ImageCollection' that represent and allow to</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment">#       open, create and save a single NIfTI file</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#       It will allow us to have a folder representation of the NIfTI files</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment"># HISTORY</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># 12 december 2017 - Initial design and coding. (Valentina Zelaya, @vz-chameleon)</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment"># System imports</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">copy</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-comment"># Lib dependency imports</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">numpy</tt> <tt class="py-keyword">as</tt> <tt class="py-name">np</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">nibabel</tt> <tt class="py-keyword">as</tt> <tt class="py-name">nib</tt> </tt>
+<a name="NifImage"></a><div id="NifImage-def"><a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-comment">#import nilearn.plotting as nilplot</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt> <a class="py-toggle" href="#" id="NifImage-toggle" onclick="return toggle('NifImage');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html">NifImage</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="NifImage-expanded"><a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-docstring">    A custom structure for representing NIfTI files in the application (uses Nibabel library to access NIfTI files data)</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">    <tt class="py-comment"># Declare class attributes</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line">    <tt class="py-comment"># Initialize instance attributes with empty values because several constructors needed</tt> </tt>
+<a name="NifImage.__init__"></a><div id="NifImage.__init__-def"><a name="L32"></a><tt class="py-lineno"> 32</tt> <a class="py-toggle" href="#" id="NifImage.__init__-toggle" onclick="return toggle('NifImage.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">filename</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">nibabel_image</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.__init__-expanded"><a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line">        <tt class="py-comment"># type: (str, object) -&gt; NifImage</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">filename</tt> <tt class="py-op">=</tt> <tt class="py-name">filename</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt> <tt class="py-op">=</tt> <tt class="py-name">nibabel_image</tt> </tt>
+</div><a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">classmethod</tt> </tt>
+<a name="NifImage.from_file"></a><div id="NifImage.from_file-def"><a name="L38"></a><tt class="py-lineno"> 38</tt> <a class="py-toggle" href="#" id="NifImage.from_file-toggle" onclick="return toggle('NifImage.from_file');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#from_file">from_file</a><tt class="py-op">(</tt><tt class="py-param">cls</tt><tt class="py-op">,</tt> <tt class="py-param">one_filename</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.from_file-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.from_file-expanded"><a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-docstring">           Create a new NifImage from file path</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-docstring">           Nibabel chooses automatically to create a Spatial Image of class NIfTI1 or NIfTI2</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-docstring">           :param one_filename: the path to the .nii file to store</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-docstring">           :return: a NifImage instance</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-docstring">           """</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">cls</tt><tt class="py-op">(</tt><tt class="py-name">one_filename</tt><tt class="py-op">,</tt> <tt class="py-name">nib</tt><tt class="py-op">.</tt><tt class="py-name">load</tt><tt class="py-op">(</tt><tt class="py-name">one_filename</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">classmethod</tt> </tt>
+<a name="NifImage.from_array"></a><div id="NifImage.from_array-def"><a name="L48"></a><tt class="py-lineno"> 48</tt> <a class="py-toggle" href="#" id="NifImage.from_array-toggle" onclick="return toggle('NifImage.from_array');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#from_array">from_array</a><tt class="py-op">(</tt><tt class="py-param">cls</tt><tt class="py-op">,</tt> <tt class="py-param">new_filename</tt><tt class="py-op">,</tt> <tt class="py-param">image_data_array</tt><tt class="py-op">,</tt> <tt class="py-param">affine</tt><tt class="py-op">,</tt> <tt class="py-param">nifti_format</tt><tt class="py-op">=</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.from_array-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.from_array-expanded"><a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-docstring">        Create a new NifImage from a data array</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-docstring">        Default format is NIfTI1</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-docstring">        :param new_filename: the new image's filename (for future saving)</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-docstring">        :param image_data_array: the new image's data</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"><tt class="py-docstring">        :param affine: the affine transformation matrix (real world -&gt; MNI)</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-docstring">        :param nifti_format: the NIfTI file format required (1 or 2, other values raise error)</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-docstring">        :return: a NifImage instance</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">nifti_format</tt> <tt class="py-op">==</tt> <tt class="py-number">2</tt><tt class="py-op">:</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">            <tt class="py-name">nib_nifti_class</tt> <tt class="py-op">=</tt> <tt class="py-name">nib</tt><tt class="py-op">.</tt><tt class="py-name">Nifti2Image</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line">        <tt class="py-keyword">elif</tt> <tt class="py-name">nifti_format</tt> <tt class="py-op">==</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">            <tt class="py-name">nib_nifti_class</tt> <tt class="py-op">=</tt> <tt class="py-name">nib</tt><tt class="py-op">.</tt><tt class="py-name">Nifti1Image</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">'nifti_format must be 1 or 2,  %s was given'</tt> <tt class="py-op">%</tt> <tt class="py-name">nifti_format</tt><tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">cls</tt><tt class="py-op">(</tt><tt class="py-name">new_filename</tt><tt class="py-op">,</tt> <tt class="py-name">nib_nifti_class</tt><tt class="py-op">(</tt><tt class="py-name">image_data_array</tt><tt class="py-op">,</tt> <tt class="py-name">affine</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">    <tt class="py-decorator">@</tt><tt class="py-decorator">classmethod</tt> </tt>
+<a name="NifImage.like"></a><div id="NifImage.like-def"><a name="L69"></a><tt class="py-lineno"> 69</tt> <a class="py-toggle" href="#" id="NifImage.like-toggle" onclick="return toggle('NifImage.like');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#like">like</a><tt class="py-op">(</tt><tt class="py-param">cls</tt><tt class="py-op">,</tt> <tt class="py-param">new_filename</tt><tt class="py-op">,</tt> <tt class="py-param">ref_img</tt><tt class="py-op">,</tt> <tt class="py-param">image_data_array</tt><tt class="py-op">,</tt> <tt class="py-param">same_header</tt><tt class="py-op">=</tt><tt class="py-name">False</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.like-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.like-expanded"><a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-docstring">        :param new_filename: the new image's filename (for future saving)</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-docstring">        :param ref_img: a NifImage instance that will serve as reference</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-docstring">        :param image_data_array: the new image's data</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt class="py-docstring">        :param same_header: TRUE if we must use the same header as the ref_img's, FALSE if not (default)</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt class="py-docstring">        :return: a new NifImage instance</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">        <tt class="py-name">affine</tt> <tt class="py-op">=</tt> <tt class="py-name">ref_img</tt><tt class="py-op">.</tt><tt id="link-0" class="py-name" targets="Method brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_affine_matrix()=brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_affine_matrix"><a title="brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_affine_matrix" class="py-name" href="#" onclick="return doclink('link-0', 'get_affine_matrix', 'link-0');">get_affine_matrix</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">        <tt class="py-name">header</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">same_header</tt><tt class="py-op">:</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">            <tt class="py-name">header</tt> <tt class="py-op">=</tt> <tt class="py-name">copy</tt><tt class="py-op">.</tt><tt class="py-name">deepcopy</tt><tt class="py-op">(</tt><tt class="py-name">ref_img</tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Method brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_header()=brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_header"><a title="brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_header" class="py-name" href="#" onclick="return doclink('link-1', 'get_header', 'link-1');">get_header</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">        <tt class="py-name">nib_nifti_class</tt> <tt class="py-op">=</tt> <tt class="py-name">ref_img</tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Method brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_img_class()=brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_img_class"><a title="brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_img_class" class="py-name" href="#" onclick="return doclink('link-2', 'get_img_class', 'link-2');">get_img_class</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line"> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">cls</tt><tt class="py-op">(</tt><tt class="py-name">new_filename</tt><tt class="py-op">,</tt> <tt class="py-name">nib_nifti_class</tt><tt class="py-op">(</tt><tt class="py-name">image_data_array</tt><tt class="py-op">,</tt> <tt class="py-name">affine</tt><tt class="py-op">,</tt> <tt class="py-name">header</tt><tt class="py-op">=</tt><tt class="py-name">header</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"> </tt>
+<a name="NifImage.set_filename"></a><div id="NifImage.set_filename-def"><a name="L88"></a><tt class="py-lineno"> 88</tt> <a class="py-toggle" href="#" id="NifImage.set_filename-toggle" onclick="return toggle('NifImage.set_filename');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#set_filename">set_filename</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">new_filename</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.set_filename-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.set_filename-expanded"><a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">filename</tt> <tt class="py-op">=</tt> <tt class="py-name">new_filename</tt> </tt>
+</div><a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line"> </tt>
+<a name="NifImage.get_affine_matrix"></a><div id="NifImage.get_affine_matrix-def"><a name="L91"></a><tt class="py-lineno"> 91</tt> <a class="py-toggle" href="#" id="NifImage.get_affine_matrix-toggle" onclick="return toggle('NifImage.get_affine_matrix');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_affine_matrix">get_affine_matrix</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.get_affine_matrix-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.get_affine_matrix-expanded"><a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-docstring">        Return the NIfTI images' affine</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line"><tt class="py-docstring">        An affine is the matrix that allows to pass from real world coordinates to</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"><tt class="py-docstring">        the image coordinates (here, to MNI coordinates)</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"><tt class="py-docstring">        :return: array</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt><tt class="py-op">.</tt><tt class="py-name">affine</tt> </tt>
+</div><a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"> </tt>
+<a name="NifImage.get_header"></a><div id="NifImage.get_header-def"><a name="L100"></a><tt class="py-lineno">100</tt> <a class="py-toggle" href="#" id="NifImage.get_header-toggle" onclick="return toggle('NifImage.get_header');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_header">get_header</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.get_header-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.get_header-expanded"><a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt><tt class="py-op">.</tt><tt class="py-name">header</tt> </tt>
+</div><a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line"> </tt>
+<a name="NifImage.get_img_class"></a><div id="NifImage.get_img_class-def"><a name="L103"></a><tt class="py-lineno">103</tt> <a class="py-toggle" href="#" id="NifImage.get_img_class-toggle" onclick="return toggle('NifImage.get_img_class');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_img_class">get_img_class</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.get_img_class-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.get_img_class-expanded"><a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt><tt class="py-op">.</tt><tt class="py-name">__class__</tt> </tt>
+</div><a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line"> </tt>
+<a name="NifImage.get_nib_image"></a><div id="NifImage.get_nib_image-def"><a name="L106"></a><tt class="py-lineno">106</tt> <a class="py-toggle" href="#" id="NifImage.get_nib_image-toggle" onclick="return toggle('NifImage.get_nib_image');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_nib_image">get_nib_image</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.get_nib_image-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.get_nib_image-expanded"><a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt> </tt>
+</div><a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line"> </tt>
+<a name="NifImage.get_copy_img_data"></a><div id="NifImage.get_copy_img_data-def"><a name="L109"></a><tt class="py-lineno">109</tt> <a class="py-toggle" href="#" id="NifImage.get_copy_img_data-toggle" onclick="return toggle('NifImage.get_copy_img_data');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_copy_img_data">get_copy_img_data</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">finite_values</tt><tt class="py-op">=</tt><tt class="py-name">False</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.get_copy_img_data-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.get_copy_img_data-expanded"><a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line"><tt class="py-docstring">        Get the image data safely by using copy.deepcopy() so that if we modify</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line"><tt class="py-docstring">        the data, it won't affect the original image</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"><tt class="py-docstring">        :param finite_values: FALSE if NaN and inf values in data array must be kept,TRUE if NaN and inf are to be replaced by 0</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line"><tt class="py-docstring">        :return: array</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">        <tt class="py-name">img_data</tt> <tt class="py-op">=</tt> <tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">array</tt><tt class="py-op">(</tt><tt class="py-name">copy</tt><tt class="py-op">.</tt><tt class="py-name">deepcopy</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt><tt class="py-op">.</tt><tt id="link-3" class="py-name" targets="Function brainMapper.ourLib.calculations.get_data()=brainMapper.ourLib.calculations-module.html#get_data"><a title="brainMapper.ourLib.calculations.get_data" class="py-name" href="#" onclick="return doclink('link-3', 'get_data', 'link-3');">get_data</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line"> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">        <tt class="py-comment"># Some nifti images have NaN and inf as data values...</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">finite_values</tt><tt class="py-op">:</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">            <tt class="py-name">infinite_values_mask</tt> <tt class="py-op">=</tt> <tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">logical_not</tt><tt class="py-op">(</tt><tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">isfinite</tt><tt class="py-op">(</tt><tt class="py-name">img_data</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">            <tt class="py-name">img_data</tt><tt class="py-op">[</tt><tt class="py-name">infinite_values_mask</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line"> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">img_data</tt> </tt>
+</div><a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"> </tt>
+<a name="NifImage.get_info"></a><div id="NifImage.get_info-def"><a name="L125"></a><tt class="py-lineno">125</tt> <a class="py-toggle" href="#" id="NifImage.get_info-toggle" onclick="return toggle('NifImage.get_info');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_info">get_info</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.get_info-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.get_info-expanded"><a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">        <tt class="py-name">info</tt> <tt class="py-op">=</tt> <tt class="py-string">""</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">            <tt class="py-name">info</tt> <tt class="py-op">=</tt> <tt class="py-string">"Location : %s\nSpatial Image : %s\n(\n shape=%s,\n affine=%s\n)"</tt> <tt class="py-op">%</tt> \ </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">                   <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">filename</tt><tt class="py-op">,</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">                    <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt><tt class="py-op">.</tt><tt class="py-name">__class__</tt><tt class="py-op">.</tt><tt class="py-name">__name__</tt><tt class="py-op">,</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">                    <tt class="py-name">repr</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt><tt class="py-op">.</tt><tt class="py-name">shape</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">                    <tt class="py-name">repr</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt><tt class="py-op">.</tt><tt class="py-name">affine</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">            <tt class="py-keyword">pass</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">info</tt> </tt>
+</div><a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line"> </tt>
+<a name="NifImage.is_binary_image"></a><div id="NifImage.is_binary_image-def"><a name="L137"></a><tt class="py-lineno">137</tt> <a class="py-toggle" href="#" id="NifImage.is_binary_image-toggle" onclick="return toggle('NifImage.is_binary_image');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#is_binary_image">is_binary_image</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.is_binary_image-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.is_binary_image-expanded"><a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">array_equal</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name"><a title="brainMapper.ourLib.calculations.get_data" class="py-name" href="#" onclick="return doclink('link-4', 'get_data', 'link-3');">get_data</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Method brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_copy_img_data()=brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_copy_img_data"><a title="brainMapper.ourLib.niftiHandlers.nifimage.NifImage.get_copy_img_data" class="py-name" href="#" onclick="return doclink('link-5', 'get_copy_img_data', 'link-5');">get_copy_img_data</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">astype</tt><tt class="py-op">(</tt><tt class="py-name">bool</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"> </tt>
+<a name="NifImage.save_to_file"></a><div id="NifImage.save_to_file-def"><a name="L140"></a><tt class="py-lineno">140</tt> <a class="py-toggle" href="#" id="NifImage.save_to_file-toggle" onclick="return toggle('NifImage.save_to_file');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#save_to_file">save_to_file</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">folder_path</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.save_to_file-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.save_to_file-expanded"><a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt><tt class="py-op">.</tt><tt class="py-name">to_filename</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">folder_path</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">filename</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line"> </tt>
+<a name="NifImage.get_name"></a><div id="NifImage.get_name-def"><a name="L143"></a><tt class="py-lineno">143</tt> <a class="py-toggle" href="#" id="NifImage.get_name-toggle" onclick="return toggle('NifImage.get_name');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_name">get_name</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.get_name-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.get_name-expanded"><a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">filename</tt> </tt>
+</div><a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line"> </tt>
+<a name="NifImage.get_img_data"></a><div id="NifImage.get_img_data-def"><a name="L146"></a><tt class="py-lineno">146</tt> <a class="py-toggle" href="#" id="NifImage.get_img_data-toggle" onclick="return toggle('NifImage.get_img_data');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="brainMapper.ourLib.niftiHandlers.nifimage.NifImage-class.html#get_img_data">get_img_data</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NifImage.get_img_data-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="NifImage.get_img_data-expanded"><a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line">        <tt class="py-name">data</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">nib_image</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name"><a title="brainMapper.ourLib.calculations.get_data" class="py-name" href="#" onclick="return doclink('link-6', 'get_data', 'link-3');">get_data</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">        <tt class="py-name">data</tt> <tt class="py-op">=</tt> <tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">transpose</tt><tt class="py-op">(</tt><tt class="py-name">data</tt><tt class="py-op">,</tt> <tt class="py-op">[</tt><tt class="py-number">2</tt><tt class="py-op">,</tt><tt class="py-number">0</tt><tt class="py-op">,</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">        <tt class="py-name">d2</tt> <tt class="py-op">=</tt> <tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">empty</tt><tt class="py-op">(</tt><tt class="py-name">data</tt><tt class="py-op">.</tt><tt class="py-name">shape</tt> <tt class="py-op">+</tt> <tt class="py-op">(</tt><tt class="py-number">4</tt><tt class="py-op">,</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">dtype</tt><tt class="py-op">=</tt><tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">ubyte</tt><tt class="py-op">)</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">        <tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">data</tt> <tt class="py-op">*</tt> <tt class="py-op">(</tt><tt class="py-number">255.</tt><tt class="py-op">/</tt><tt class="py-op">(</tt><tt class="py-name">data</tt><tt class="py-op">.</tt><tt class="py-name">max</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">/</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">        <tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">,</tt> <tt class="py-number">1</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line">        <tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">,</tt> <tt class="py-number">2</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">        <tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">,</tt> <tt class="py-number">3</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">        <tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">,</tt> <tt class="py-number">3</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">.</tt><tt class="py-op">,</tt> <tt class="py-number">3</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">astype</tt><tt class="py-op">(</tt><tt class="py-name">float</tt><tt class="py-op">)</tt> <tt class="py-op">/</tt> <tt class="py-number">255.</tt><tt class="py-op">)</tt><tt class="py-op">**</tt><tt class="py-number">2</tt> <tt class="py-op">*</tt> <tt class="py-number">255</tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line"> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">        <tt class="py-comment"># RGB orientation lines (optional)</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">        <tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-op">:</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-number">255</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-number">255</tt><tt class="py-op">]</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">        <tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-op">:</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-number">255</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-number">255</tt><tt class="py-op">]</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">        <tt class="py-name">d2</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-op">:</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-number">255</tt><tt class="py-op">,</tt> <tt class="py-number">255</tt><tt class="py-op">]</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">d2</tt> </tt>
+</div></div><a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="brainMapper.ourLib-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
