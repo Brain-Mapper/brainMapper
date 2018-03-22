@@ -24,7 +24,7 @@ import nibabel as nib
 
 class NifImage(object):
     """
-    A custom structure for representing NIfTI files (uses Nibabel library to access NIfTI files data)
+    A custom structure for representing NIfTI files in the application (uses Nibabel library to access NIfTI files data)
     """
     # Declare class attributes
 
@@ -110,8 +110,7 @@ class NifImage(object):
         """
         Get the image data safely by using copy.deepcopy() so that if we modify
         the data, it won't affect the original image
-        :param finite_values: FALSE if NaN and inf values in data array must be kept,
-                                TRUE if NaN and inf are to be replaced by 0
+        :param finite_values: FALSE if NaN and inf values in data array must be kept,TRUE if NaN and inf are to be replaced by 0
         :return: array
         """
         img_data = np.array(copy.deepcopy(self.nib_image.get_data()))

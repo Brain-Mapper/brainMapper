@@ -26,8 +26,8 @@ def simple_import(csv_file_path, template_mni_path, currentSet):
     """
     Method to import imageColection from a excel file.
     For this :method we considere that :
-    - generated nifti have the same shape than the MNI152 one.
-    - generated nifti have the same affine than the MNI152 one.
+        - generated nifti have the same shape than the MNI152 one.
+        - generated nifti have the same affine than the MNI152 one.
 
     The generated nifti and the imageCollection are not save with this method. they are just laod.
     So nifimage object have their strict file name as file name
