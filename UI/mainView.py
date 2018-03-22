@@ -370,7 +370,7 @@ class SetAccessBar(QtGui.QWidget):
         self.qtab.tab2.vbox2 = QtGui.QVBoxLayout()
         self.qtab.tab3.vbox3 = QtGui.QVBoxLayout()
 
-        default_name = datetime.fromtimestamp(int(round(time.time()))).strftime('%Y-%m-%d %H:%M:%S')
+        default_name = datetime.fromtimestamp(int(round(time.time()))).strftime('%Y-%m-%d %H-%M-%S')
 
         my_set = newSet(default_name[2:])
         set_current_set(my_set)
