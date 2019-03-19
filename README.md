@@ -13,11 +13,20 @@ This tool has thus two components :
  
 ## Authors
 This project was designed and developped by :
+Version 1 : 
 ```
 Raphael Agathon
 Maxime Cluchague
 Graziella Husson (@Graziella-Husson)
 Valentina Zelaya (@vz-chameleon)
+```
+
+Version 2 : 
+```
+Marie Adler
+Aurélien Benoît
+Thomas Grassellini
+Lucie Martin
 ```
 
 ## Getting Started
@@ -48,8 +57,8 @@ python UI.py
  
 ## License
 
-This project is licensed under the GPL-3 License |MIT License | ???
+This project is licensed under the GPL-3 License. All other versions of this software should be released under the same license
 
 ## Acknowledgments
 
-* Hat tip to Dr Rech :P
+* Hat tip to Dr Fabien Rech 
